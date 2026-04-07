@@ -1,0 +1,122 @@
+﻿@import "tailwindcss";
+
+body {
+  margin: 0;
+  font-family:
+    "Pretendard",
+    -apple-system,
+    BlinkMacSystemFont,
+    system-ui,
+    Roboto,
+    sans-serif;
+}
+
+.kb-bg {
+  background:
+    radial-gradient(circle at 10% 10%, rgba(255, 211, 56, 0.38), transparent 40%),
+    radial-gradient(circle at 90% 15%, rgba(122, 92, 63, 0.24), transparent 32%),
+    linear-gradient(180deg, #f6f4ee 0%, #f0ede5 100%);
+}
+
+.kb-panel {
+  border: 1px solid rgba(34, 34, 34, 0.08);
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 12px 24px rgba(34, 34, 34, 0.06);
+  padding: 1rem;
+}
+
+.kb-card {
+  border: 1px solid rgba(34, 34, 34, 0.08);
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 8px 18px rgba(34, 34, 34, 0.05);
+  padding: 1rem;
+}
+
+.kb-card-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #64748b;
+}
+
+.kb-card-value {
+  margin-top: 0.45rem;
+  font-size: 1.5rem;
+  line-height: 1.1;
+  font-weight: 900;
+}
+
+.kb-card-accent-blue {
+  border-left: 5px solid #0ea5e9;
+}
+
+.kb-card-accent-red {
+  border-left: 5px solid #dc2626;
+}
+
+.kb-card-accent-yellow {
+  border-left: 5px solid #ffd338;
+}
+
+.kb-card-accent-brown {
+  border-left: 5px solid #7a5c3f;
+}
+
+.kb-nav-item {
+  display: inline-flex;
+  min-width: max-content;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 0.75rem;
+  padding: 0.6rem 0.9rem;
+  color: #475569;
+  transition: all 0.2s ease;
+}
+
+.kb-nav-item:hover {
+  background: #f5f4f1;
+  color: #222222;
+}
+
+.kb-nav-item-active {
+  background: #ffd338;
+  color: #222222;
+  font-weight: 700;
+}
+
+.kb-input {
+  width: 100%;
+  border: 1px solid rgba(34, 34, 34, 0.15);
+  border-radius: 0.65rem;
+  padding: 0.5rem 0.7rem;
+  font-size: 0.875rem;
+  background: #ffffff;
+}
+
+.kb-input:focus {
+  outline: 2px solid rgba(255, 211, 56, 0.6);
+  outline-offset: 1px;
+}
+
+.kb-btn-dark {
+  border-radius: 0.6rem;
+  background: #222222;
+  color: #ffd338;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.4rem 0.75rem;
+}
+
+.kb-btn-light {
+  border-radius: 0.6rem;
+  border: 1px solid rgba(34, 34, 34, 0.15);
+  background: #ffffff;
+  color: #374151;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.4rem 0.75rem;
+}
+
