@@ -18,24 +18,38 @@ body {
     linear-gradient(180deg, #f6f4ee 0%, #f0ede5 100%);
 }
 
+.kb-logo-mark {
+  display: grid;
+  place-items: center;
+  width: 2.7rem;
+  height: 2.7rem;
+  border-radius: 999px;
+  background: #222222;
+  color: #ffd338;
+  font-size: 0.82rem;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  box-shadow: 0 8px 16px rgba(34, 34, 34, 0.22);
+}
+
 .kb-panel {
   border: 1px solid rgba(34, 34, 34, 0.08);
-  border-radius: 1rem;
-  background: rgba(255, 255, 255, 0.92);
-  box-shadow: 0 12px 24px rgba(34, 34, 34, 0.06);
-  padding: 1rem;
+  border-radius: 1.1rem;
+  background: rgba(255, 255, 255, 0.93);
+  box-shadow: 0 12px 24px rgba(34, 34, 34, 0.07);
+  padding: 1.25rem;
 }
 
 .kb-card {
   border: 1px solid rgba(34, 34, 34, 0.08);
-  border-radius: 1rem;
-  background: rgba(255, 255, 255, 0.95);
-  box-shadow: 0 8px 18px rgba(34, 34, 34, 0.05);
-  padding: 1rem;
+  border-radius: 1.1rem;
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 10px 20px rgba(34, 34, 34, 0.07);
+  padding: 1.15rem;
 }
 
 .kb-card-label {
-  font-size: 0.75rem;
+  font-size: 0.78rem;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -43,35 +57,24 @@ body {
 }
 
 .kb-card-value {
-  margin-top: 0.45rem;
-  font-size: 1.5rem;
-  line-height: 1.1;
+  margin-top: 0.5rem;
+  font-size: 1.8rem;
+  line-height: 1.08;
   font-weight: 900;
 }
 
-.kb-card-accent-blue {
-  border-left: 5px solid #0ea5e9;
-}
-
-.kb-card-accent-red {
-  border-left: 5px solid #dc2626;
-}
-
-.kb-card-accent-yellow {
-  border-left: 5px solid #ffd338;
-}
-
-.kb-card-accent-brown {
-  border-left: 5px solid #7a5c3f;
-}
+.kb-card-accent-blue { border-left: 6px solid #0ea5e9; }
+.kb-card-accent-red { border-left: 6px solid #dc2626; }
+.kb-card-accent-yellow { border-left: 6px solid #ffd338; }
+.kb-card-accent-brown { border-left: 6px solid #7a5c3f; }
 
 .kb-nav-item {
   display: inline-flex;
   min-width: max-content;
   align-items: center;
-  gap: 0.5rem;
-  border-radius: 0.75rem;
-  padding: 0.6rem 0.9rem;
+  gap: 0.55rem;
+  border-radius: 0.85rem;
+  padding: 0.7rem 1rem;
   color: #475569;
   transition: all 0.2s ease;
 }
@@ -84,39 +87,62 @@ body {
 .kb-nav-item-active {
   background: #ffd338;
   color: #222222;
-  font-weight: 700;
+  font-weight: 800;
 }
 
 .kb-input {
   width: 100%;
   border: 1px solid rgba(34, 34, 34, 0.15);
-  border-radius: 0.65rem;
-  padding: 0.5rem 0.7rem;
-  font-size: 0.875rem;
+  border-radius: 0.75rem;
+  padding: 0.65rem 0.8rem;
+  font-size: 0.95rem;
   background: #ffffff;
 }
 
 .kb-input:focus {
-  outline: 2px solid rgba(255, 211, 56, 0.6);
+  outline: 2px solid rgba(255, 211, 56, 0.65);
   outline-offset: 1px;
 }
 
 .kb-btn-dark {
-  border-radius: 0.6rem;
+  border-radius: 0.7rem;
   background: #222222;
   color: #ffd338;
-  font-size: 0.75rem;
+  font-size: 0.82rem;
   font-weight: 700;
-  padding: 0.4rem 0.75rem;
+  padding: 0.5rem 0.9rem;
 }
 
 .kb-btn-light {
-  border-radius: 0.6rem;
+  border-radius: 0.7rem;
   border: 1px solid rgba(34, 34, 34, 0.15);
   background: #ffffff;
   color: #374151;
-  font-size: 0.75rem;
+  font-size: 0.82rem;
   font-weight: 700;
-  padding: 0.4rem 0.75rem;
+  padding: 0.5rem 0.9rem;
 }
 
+.kb-fab {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 35;
+  border: 0;
+  border-radius: 999px;
+  background: #222222;
+  color: #ffd338;
+  font-size: 0.9rem;
+  font-weight: 900;
+  padding: 0.85rem 1.1rem;
+  box-shadow: 0 16px 26px rgba(34, 34, 34, 0.35);
+}
+
+@media (min-width: 640px) {
+  .kb-fab {
+    right: 1.5rem;
+    bottom: 1.4rem;
+    font-size: 0.95rem;
+    padding: 0.95rem 1.25rem;
+  }
+}
