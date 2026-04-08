@@ -1,13 +1,13 @@
 ---
 name: "\U0001F41EBug"
-about: 버그 제보
+about: 버그 수정
 title: ''
 labels: bug
 assignees: ''
 
 ---
 
-🐛 버그 리포트 (Bug Report)
+🐛 버그 수정
 버그 설명
 어떤 버그인지 명확하고 간결하게 설명해 주세요.
 
