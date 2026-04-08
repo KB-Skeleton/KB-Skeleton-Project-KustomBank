@@ -1,23 +1,32 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+import { createRouter, createWebHistory } from "vue-router";
+import DashboardView from "../views/DashBoardView.vue"
+import MonthlySpendingView from "../views/MonthlySpendingView.vue";
+import InvestmentView from "../views/InvestmentView.vue";
+import StatisticsView from "../views/StatisticsView.vue";
+import BudgetView from "../views/BudgetView.vue";
+import ProfileView from "../views/ProfileView.vue";
+import FixedExpenseView from "../views/FixedExpenseView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
+    { path: "/", name: "dashboard", component: DashboardView },
     {
-      path: '/',
-      name: 'home',
-      component: HomeView,
+      path: "/monthly-spending",
+      name: "monthly-spending",
+      component: MonthlySpendingView,
     },
+    { path: "/investment", name: "investment", component: InvestmentView },
+    { path: "/statistics", name: "statistics", component: StatisticsView },
+    { path: "/budget", name: "budget", component: BudgetView },
+    { path: "/profile", name: "profile", component: ProfileView },
     {
-      path: '/about',
-      name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/AboutView.vue'),
+      path: "/fixed-expenses",
+      name: "fixed-expenses",
+      component: FixedExpenseView,
     },
+    { path: "/calendar", redirect: "/monthly-spending" },
   ],
-})
+});
 
-export default router
+export default router;
