@@ -1,20 +1,22 @@
 import { createRouter, createWebHistory } from "vue-router";
-import DashboardView from "../views/DashBoardView.vue"
-import MonthlySpendingView from "../views/MonthlySpendingView.vue";
-import InvestmentView from "../views/InvestmentView.vue";
 import StatisticsView from "../views/StatisticsView.vue";
 import BudgetView from "../views/BudgetView.vue";
+import CalendarView from "@/views/CalendarView.vue";
+import DashBoardView from "@/views/DashBoardView.vue";
+import FixedExpensesView from "@/views/FixedExpensesView.vue";
+import InvestmentView from "../views/InvestmentView.vue";
+import LogInOut from "@/views/LogInOut.vue";
+import MonthlyTransactionView from "@/views/MonthlyTransactionView.vue";
 import ProfileView from "../views/ProfileView.vue";
-import FixedExpenseView from "../views/FixedExpenseView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
-    { path: "/", name: "dashboard", component: DashboardView },
+    { path: "/", name: "dashboard", component: DashBoardView },
     {
       path: "/monthly-spending",
       name: "monthly-spending",
-      component: MonthlySpendingView,
+      component: MonthlyTransactionView,
     },
     { path: "/investment", name: "investment", component: InvestmentView },
     { path: "/statistics", name: "statistics", component: StatisticsView },
@@ -23,7 +25,7 @@ const router = createRouter({
     {
       path: "/fixed-expenses",
       name: "fixed-expenses",
-      component: FixedExpenseView,
+      component: FixedExpensesView,
     },
     { path: "/calendar", redirect: "/monthly-spending" },
   ],
