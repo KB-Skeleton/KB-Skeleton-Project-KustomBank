@@ -1,6 +1,6 @@
 ---
 name: "⚠️!BREAKING CHANGE"
-about: Describe this issue template's purpose here.
+about: 커다란 API 변경의 경우
 title: ''
 labels: ''
 assignees: ''
