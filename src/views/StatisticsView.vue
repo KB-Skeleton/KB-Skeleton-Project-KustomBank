@@ -1,18 +1,22 @@
 ﻿<template>
-  <section class="space-y-5">
-    <article class="grid gap-5 lg:grid-cols-2">
-      <div class="kb-panel">
-        <h2 class="mb-3 text-xl font-bold text-kb-charcoal">
-          카테고리별 지출 (원형 그래프)
-        </h2>
-        <div v-if="pieSlices.length" class="space-y-4">
+  <section class="d-grid gap-3">
+    <article class="row g-3">
+      <div class="col-12 col-lg-6 d-flex">
+        <div
+          class="kb-panel h-100 d-flex flex-column justify-content-center w-100"
+        >
+          <h2 class="h4 fw-black kb-text-charcoal mb-3">
+            카테고리별 지출 (원형 그래프)
+          </h2>
           <div
-            class="flex flex-col items-center gap-4 sm:flex-row sm:items-center"
+            v-if="pieSlices.length"
+            class="d-flex flex-column flex-sm-row align-items-center gap-3"
           >
             <div
-              class="relative h-64 w-64 shrink-0"
+              class="position-relative flex-shrink-0"
+              style="width: 17.5rem; height: 17.5rem"
             >
-              <svg viewBox="0 0 120 120" class="h-full w-full">
+              <svg viewBox="0 0 120 120" class="w-100 h-100">
                 <g transform="rotate(-90 60 60)">
                   <circle
                     cx="60"
@@ -37,158 +41,162 @@
                 </g>
               </svg>
               <div
-                class="absolute inset-10 flex flex-col items-center justify-center rounded-full bg-white text-center"
+                class="position-absolute top-50 start-50 translate-middle rounded-circle d-flex flex-column align-items-center justify-content-center bg-white text-center"
+                style="width: 12rem; height: 12rem"
               >
-                <p
-                  class="text-[11px] font-semibold tracking-wide text-slate-500"
-                >
-                  총 지출
-                </p>
-                <p class="text-sm font-black text-kb-charcoal">
+                <p class="mb-0 small fw-semibold text-secondary">총 지출</p>
+                <p class="mb-0 fw-black kb-text-charcoal">
                   {{ formatCurrency(totalCategoryExpense) }}
                 </p>
               </div>
             </div>
-            <ul class="w-full space-y-2">
+            <ul class="list-unstyled w-100 d-grid gap-2 mb-0">
               <li
                 v-for="slice in pieSlices"
                 :key="slice.category"
-                class="rounded-lg bg-kb-gray-100 px-3 py-2 text-sm"
+                class="rounded-3 px-2 py-2"
+                style="background: var(--kb-gray-100)"
               >
-                <div class="mb-1 flex items-center justify-between">
-                  <span class="flex items-center gap-2">
-                    <span
-                      class="h-3 w-3 rounded-full"
-                      :style="{ background: slice.color }"
-                    ></span>
-                    <span class="font-semibold text-kb-charcoal">{{
-                      slice.category
-                    }}</span>
-                  </span>
-                  <span class="font-bold text-kb-brown"
+                <div class="d-flex justify-content-between mb-1">
+                  <span class="small fw-semibold kb-text-charcoal">{{
+                    slice.category
+                  }}</span>
+                  <span class="small fw-bold kb-text-brown"
                     >{{ slice.ratio }}%</span
                   >
                 </div>
-                <div class="mb-1 h-2 overflow-hidden rounded-full bg-white">
+                <div class="progress" style="height: 0.35rem; background: #fff">
                   <div
-                    class="h-full rounded-full"
+                    class="progress-bar"
                     :style="{
                       width: `${slice.ratio}%`,
                       backgroundColor: slice.color,
                     }"
                   ></div>
                 </div>
-                <p class="text-right text-xs font-semibold text-slate-600">
+                <p
+                  class="mb-0 mt-1 fw-semibold text-secondary text-end"
+                  style="font-size: 0.8rem"
+                >
                   {{ formatCurrency(slice.value) }}
                 </p>
               </li>
             </ul>
           </div>
-        </div>
-        <div
-          v-else
-          class="rounded-xl bg-kb-gray-100 px-4 py-8 text-center text-sm font-semibold text-slate-500"
-        >
-          이번 달 지출 데이터가 없습니다.
+          <div
+            v-else
+            class="rounded-3 p-4 text-center small fw-semibold text-secondary"
+            style="background: var(--kb-gray-100)"
+          >
+            이번 달 지출 데이터가 없습니다.
+          </div>
         </div>
       </div>
 
-      <div class="kb-panel">
-        <h2 class="mb-3 text-2xl font-black text-kb-charcoal">
-          지난달 비교 (선 그래프)
-        </h2>
-        <div class="relative w-full">
-          <svg
-            :viewBox="`0 0 ${CHART_WIDTH} ${CHART_HEIGHT}`"
-            class="h-[26rem] w-full rounded-xl bg-kb-gray-100 p-3"
-            @mouseleave="hoveredIndex = null"
-          >
-            <line
-              :x1="0"
-              :y1="CHART_HEIGHT - BOTTOM_PADDING"
-              :x2="CHART_WIDTH"
-              :y2="CHART_HEIGHT - BOTTOM_PADDING"
-              stroke="#cbd5e1"
-              stroke-width="1"
-            />
-            <polyline
-              fill="none"
-              stroke="#222222"
-              stroke-width="9"
-              :points="linePoints"
-            />
-            <line
-              v-if="hoveredPoint"
-              :x1="hoveredPoint.x"
-              :y1="TOP_PADDING"
-              :x2="hoveredPoint.x"
-              :y2="CHART_HEIGHT - BOTTOM_PADDING"
-              stroke="#94a3b8"
-              stroke-dasharray="3 3"
-              stroke-width="1"
-            />
-            <g v-for="(point, index) in pointList" :key="point.month">
-              <circle
-                :cx="point.x"
-                :cy="point.y"
-                r="18"
-                fill="#ffd338"
+      <div class="col-12 col-lg-6">
+        <div class="kb-panel h-100">
+          <h2 class="h4 fw-black kb-text-charcoal mb-3">
+            지난달 비교 (선 그래프)
+          </h2>
+          <div class="position-relative w-100">
+            <svg
+              :viewBox="`0 0 ${CHART_WIDTH} ${CHART_HEIGHT}`"
+              style="
+                height: 20rem;
+                width: 100%;
+                border-radius: 1rem;
+                background: transparent;
+                padding: 0.75rem;
+              "
+              @mouseleave="hoveredIndex = null"
+            >
+              <line
+                :x1="0"
+                :y1="CHART_HEIGHT - BOTTOM_PADDING"
+                :x2="CHART_WIDTH"
+                :y2="CHART_HEIGHT - BOTTOM_PADDING"
+                stroke="#cbd5e1"
+                stroke-width="1"
+              />
+              <polyline
+                fill="none"
                 stroke="#222222"
-                stroke-width="3.5"
+                stroke-width="9"
+                :points="linePoints"
               />
-              <circle
-                :cx="point.x"
-                :cy="point.y"
-                r="32"
-                fill="transparent"
-                class="cursor-pointer"
-                @mouseenter="hoveredIndex = index"
-                @focus="hoveredIndex = index"
+              <line
+                v-if="hoveredPoint"
+                :x1="hoveredPoint.x"
+                :y1="TOP_PADDING"
+                :x2="hoveredPoint.x"
+                :y2="CHART_HEIGHT - BOTTOM_PADDING"
+                stroke="#94a3b8"
+                stroke-dasharray="3 3"
+                stroke-width="1"
               />
-              <text
-                :x="point.x"
-                :y="CHART_HEIGHT - 42"
-                text-anchor="middle"
-                fill="#64748b"
-                font-size="64"
-                font-weight="900"
-              >
-                {{ point.month.slice(5) }}월
-              </text>
-            </g>
-          </svg>
+              <g v-for="(point, index) in pointList" :key="point.month">
+                <circle
+                  :cx="point.x"
+                  :cy="point.y"
+                  r="18"
+                  fill="#ffd338"
+                  stroke="#222222"
+                  stroke-width="3.5"
+                />
+                <circle
+                  :cx="point.x"
+                  :cy="point.y"
+                  r="32"
+                  fill="transparent"
+                  class="cursor-pointer"
+                  @mouseenter="hoveredIndex = index"
+                />
+                <text
+                  :x="point.x"
+                  :y="CHART_HEIGHT - 42"
+                  text-anchor="middle"
+                  fill="#64748b"
+                  font-size="64"
+                  font-weight="900"
+                >
+                  {{ point.month.slice(5) }}월
+                </text>
+              </g>
+            </svg>
 
-          <div
-            v-if="hoveredPoint"
-            class="pointer-events-none absolute z-10 -translate-x-1/2 rounded-lg border border-black/10 bg-white px-3 py-2 text-sm font-bold text-kb-charcoal shadow"
-            :style="{
-              left: `${(hoveredPoint.x / CHART_WIDTH) * 100}%`,
-              top: `${(hoveredPoint.y / CHART_HEIGHT) * 100 - 10}%`,
-            }"
-          >
-            {{ hoveredPoint.month.slice(5) }}월 ·
-            {{ formatCurrency(hoveredPoint.expense) }}
+            <div
+              v-if="hoveredPoint"
+              class="position-absolute translate-middle-x rounded-3 border bg-white px-3 py-2 small fw-bold shadow"
+              style="border-color: rgba(34, 34, 34, 0.15)"
+              :style="{
+                left: `${(hoveredPoint.x / CHART_WIDTH) * 100}%`,
+                top: `${(hoveredPoint.y / CHART_HEIGHT) * 100 - 10}%`,
+              }"
+            >
+              {{ hoveredPoint.month.slice(5) }}월 ·
+              {{ formatCurrency(hoveredPoint.expense) }}
+            </div>
           </div>
         </div>
       </div>
     </article>
 
     <article class="kb-panel">
-      <h2 class="mb-3 text-xl font-bold text-kb-charcoal">지출 인사이트</h2>
-      <ul class="space-y-2 text-sm text-slate-700">
-        <li class="rounded-lg bg-kb-gray-100 px-3 py-2">
+      <h2 class="h4 fw-black kb-text-charcoal mb-3">지출 인사이트</h2>
+      <ul class="list-unstyled d-grid gap-2 mb-0 small">
+        <li class="rounded-3 px-3 py-2" style="background: var(--kb-gray-100)">
           이번 달 최고 지출 카테고리는
           <strong>{{ topCategory }}</strong> 입니다.
         </li>
-        <li class="rounded-lg bg-kb-gray-100 px-3 py-2">
+        <li class="rounded-3 px-3 py-2" style="background: var(--kb-gray-100)">
           지난달 대비 지출은
-          <strong :class="expenseDiff >= 0 ? 'text-red-700' : 'text-sky-700'"
+          <strong :class="expenseDiff >= 0 ? 'text-danger' : 'text-primary'"
             >{{ expenseDiff >= 0 ? "+" : ""
             }}{{ formatCurrency(expenseDiff) }}</strong
           >
           변화했습니다.
         </li>
-        <li class="rounded-lg bg-kb-gray-100 px-3 py-2">
+        <li class="rounded-3 px-3 py-2" style="background: var(--kb-gray-100)">
           예산 대비 사용률은 <strong>{{ budgetUsage }}%</strong> 입니다.
         </li>
       </ul>
@@ -231,7 +239,7 @@ const totalCategoryExpense = computed(() =>
 
 const pieSlices = computed(() => {
   const total = totalCategoryExpense.value || 1;
-  const entries = Object.entries(categoryMap.value)
+  return Object.entries(categoryMap.value)
     .map(([category, value], index) => ({
       category,
       value,
@@ -239,26 +247,18 @@ const pieSlices = computed(() => {
       ratio: Math.round((value / total) * 100),
     }))
     .sort((a, b) => b.value - a.value);
-
-  return entries;
 });
 
 const DONUT_RADIUS = 42;
 const DONUT_STROKE = 30;
 const DONUT_CIRCUMFERENCE = 2 * Math.PI * DONUT_RADIUS;
-
 const donutSlices = computed(() => {
   let cursor = 0;
   return pieSlices.value.map((slice) => {
     const dash = (slice.ratio / 100) * DONUT_CIRCUMFERENCE;
     const offset = cursor;
     cursor += dash;
-    return {
-      ...slice,
-      dash,
-      gap: DONUT_CIRCUMFERENCE - dash,
-      offset,
-    };
+    return { ...slice, dash, gap: DONUT_CIRCUMFERENCE - dash, offset };
   });
 });
 
@@ -278,11 +278,12 @@ const pointList = computed(() => {
   const innerHeight = CHART_HEIGHT - TOP_PADDING - BOTTOM_PADDING;
   const step = trend.value.length > 0 ? innerWidth / trend.value.length : 0;
 
-  return trend.value.map((item, index) => {
-    const x = step * (index + 0.5);
-    const y = TOP_PADDING + (1 - (item.expense - min) / gap) * innerHeight;
-    return { x, y, month: item.month, expense: item.expense };
-  });
+  return trend.value.map((item, index) => ({
+    x: step * (index + 0.5),
+    y: TOP_PADDING + (1 - (item.expense - min) / gap) * innerHeight,
+    month: item.month,
+    expense: item.expense,
+  }));
 });
 
 const linePoints = computed(() =>

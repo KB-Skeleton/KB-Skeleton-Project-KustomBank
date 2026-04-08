@@ -23,6 +23,8 @@ const categories = [
   { id: 101, name: "급여", type: "income" },
   { id: 102, name: "부수입", type: "income" },
   { id: 103, name: "이자/배당", type: "income" },
+  { id: 104, name: "용돈", type: "income" },
+  { id: 105, name: "기타", type: "income" },
 ];
 
 const fixedPlans = [

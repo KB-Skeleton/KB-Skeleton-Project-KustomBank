@@ -1,92 +1,102 @@
 ﻿<template>
-  <section class="space-y-5">
+  <section class="d-grid gap-3">
     <article class="kb-panel">
-      <div class="flex flex-wrap items-center justify-between gap-3">
+      <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
         <div>
-          <p class="kb-card-label">월별 지출</p>
-          <h2 class="text-3xl font-black text-kb-charcoal">{{ monthLabel }}</h2>
+          <p class="kb-card-label mb-0">월별 지출</p>
+          <h2 class="h2 fw-black kb-text-charcoal mb-0">{{ monthLabel }}</h2>
         </div>
-        <div class="inline-flex rounded-xl bg-kb-gray-100 p-1 lg:hidden">
-          <button class="rounded-lg px-3 py-2 text-sm font-bold" :class="mobileMode === 'calendar' ? 'bg-white text-kb-charcoal shadow' : 'text-slate-600'" @click="mobileMode = 'calendar'">캘린더</button>
-          <button class="rounded-lg px-3 py-2 text-sm font-bold" :class="mobileMode === 'list' ? 'bg-white text-kb-charcoal shadow' : 'text-slate-600'" @click="mobileMode = 'list'">목록</button>
+        <div class="btn-group d-lg-none" role="group">
+          <button class="btn btn-sm" :class="mobileMode === 'calendar' ? 'btn-dark' : 'btn-outline-secondary'" @click="mobileMode = 'calendar'">캘린더</button>
+          <button class="btn btn-sm" :class="mobileMode === 'list' ? 'btn-dark' : 'btn-outline-secondary'" @click="mobileMode = 'list'">목록</button>
         </div>
       </div>
     </article>
 
-    <div class="grid gap-5 lg:grid-cols-[1.4fr_1fr]">
-      <article class="kb-panel" :class="mobileMode === 'list' ? 'hidden lg:block' : ''">
-        <div class="mb-3 grid grid-cols-7 text-center text-xs font-semibold uppercase tracking-wide text-slate-500">
-          <span v-for="weekday in weekdays" :key="weekday">{{ weekday }}</span>
-        </div>
-
-        <div class="grid grid-cols-7 gap-2">
-          <button
-            v-for="cell in calendarCells"
-            :key="cell.key"
-            class="min-h-28 rounded-xl border p-2 text-left transition"
-            :class="[
-              cell.current ? 'border-black/10 bg-white hover:border-kb-brown/40' : 'border-transparent bg-transparent',
-              selectedDate === cell.date && cell.current ? 'ring-2 ring-kb-yellow' : ''
-            ]"
-            :disabled="!cell.current"
-            @click="selectedDate = cell.date"
-          >
-            <p class="text-sm font-black text-kb-charcoal">{{ cell.day }}</p>
-            <div v-if="cell.current" class="mt-2 space-y-1 text-xs">
-              <p class="font-semibold text-sky-700">수입 {{ dailyTotals[cell.date]?.income ? shortCurrency(dailyTotals[cell.date].income) : '-' }}</p>
-              <p class="font-semibold text-red-700">지출 {{ dailyTotals[cell.date]?.expense ? shortCurrency(dailyTotals[cell.date].expense) : '-' }}</p>
-            </div>
-          </button>
-        </div>
-      </article>
-
-      <article class="kb-panel" :class="mobileMode === 'calendar' ? 'hidden lg:block' : ''">
-        <div class="mb-3 flex items-center justify-between">
-          <h3 class="text-xl font-black text-kb-charcoal">{{ selectedDate }} 지출/수입 내역</h3>
-          <span class="rounded-full bg-kb-yellow px-3 py-1 text-xs font-bold text-kb-charcoal">{{ selectedTransactions.length }}건</span>
-        </div>
-
-        <div class="space-y-3">
-          <button
-            v-for="item in selectedTransactions"
-            :key="item.id"
-            class="w-full rounded-xl border border-black/10 bg-white p-4 text-left hover:border-kb-brown/50"
-            @click="openDetail(item)"
-          >
-            <div class="flex items-start justify-between gap-3">
-              <div>
-                <p class="text-lg font-bold text-kb-charcoal">{{ item.description }}</p>
-                <p class="text-sm text-slate-500">{{ item.categoryName }} · {{ item.date }}</p>
-              </div>
-              <p class="text-base font-black" :class="item.type === 'expense' ? 'text-red-700' : 'text-sky-700'">
-                {{ item.type === 'expense' ? '-' : '+' }}{{ formatCurrency(item.amount) }}
-              </p>
-            </div>
-          </button>
-
-          <div v-if="!selectedTransactions.length" class="rounded-xl bg-kb-gray-100 p-4 text-sm font-semibold text-slate-500">
-            선택한 날짜의 내역이 없습니다.
+    <div class="row g-3">
+      <div class="col-12 col-lg-8" :class="mobileMode === 'list' ? 'd-none d-lg-block' : ''">
+        <article class="kb-panel">
+          <div class="kb-month-weekdays">
+            <span v-for="weekday in weekdays" :key="weekday">{{ weekday }}</span>
           </div>
-        </div>
-      </article>
+
+          <div class="kb-month-grid">
+            <button
+              v-for="cell in calendarCells"
+              :key="cell.key"
+              class="kb-month-cell"
+              :class="[
+                cell.current ? 'is-current' : 'is-empty',
+                selectedDate === cell.date && cell.current ? 'is-selected' : '',
+                isToday(cell.date) && cell.current ? 'is-today' : ''
+              ]"
+              :disabled="!cell.current"
+              @click="selectedDate = cell.date"
+            >
+              <div class="kb-month-cell-head">
+                <span class="kb-month-day">{{ cell.day }}</span>
+                <span v-if="cell.current && hasSpending(cell.date)" class="kb-month-dot"></span>
+              </div>
+              <div v-if="cell.current" class="kb-month-meta">
+                <p v-if="hasAmount(cell.date, 'income')" class="income">
+                  + {{ getDayAmount(cell.date, "income") }}
+                </p>
+                <p v-if="hasAmount(cell.date, 'expense')" class="expense">
+                  - {{ getDayAmount(cell.date, "expense") }}
+                </p>
+              </div>
+            </button>
+          </div>
+        </article>
+      </div>
+
+      <div class="col-12 col-lg-4" :class="mobileMode === 'calendar' ? 'd-none d-lg-block' : ''">
+        <article class="kb-panel">
+          <div class="d-flex align-items-center justify-content-between mb-3">
+            <h3 class="h5 fw-black mb-0 kb-text-charcoal">{{ selectedDate }} 내역</h3>
+            <span class="kb-pill">{{ selectedTransactions.length }}건</span>
+          </div>
+          <div class="d-grid gap-2">
+            <button
+              v-for="item in selectedTransactions"
+              :key="item.id"
+              class="w-100 rounded-3 border text-start p-3 bg-white"
+              style="border-color: rgba(34,34,34,.15)"
+              @click="openDetail(item)"
+            >
+              <div class="d-flex justify-content-between align-items-start gap-2">
+                <div>
+                  <p class="mb-0 fw-bold kb-text-charcoal">{{ item.description }}</p>
+                  <p class="mb-0 small text-secondary">{{ item.categoryName }} · {{ item.date }}</p>
+                </div>
+                <p class="mb-0 fw-black" :class="item.type === 'expense' ? 'text-danger' : 'text-primary'">{{ item.type === 'expense' ? '-' : '+' }}{{ formatCurrency(item.amount) }}</p>
+              </div>
+            </button>
+
+            <div v-if="!selectedTransactions.length" class="rounded-3 p-3 small fw-semibold text-secondary" style="background: var(--kb-gray-100)">
+              선택한 날짜의 내역이 없습니다.
+            </div>
+          </div>
+        </article>
+      </div>
     </div>
 
-    <div v-if="showDetail && activeTransaction" class="fixed inset-0 z-40 flex items-end justify-center bg-black/40 p-3 sm:items-center" @click.self="closeDetail">
-      <div class="w-full max-w-xl rounded-2xl bg-white p-5 shadow-2xl">
-        <div class="mb-4 flex items-center justify-between">
-          <h4 class="text-2xl font-black text-kb-charcoal">지출 내역 상세</h4>
+    <div v-if="showDetail && activeTransaction" class="kb-modal-overlay" @click.self="closeDetail">
+      <div class="kb-modal-card" style="max-width: 860px">
+        <div class="d-flex align-items-center justify-content-between mb-3">
+          <h4 class="h4 fw-black mb-0 kb-text-charcoal">지출 내역 상세</h4>
           <button class="kb-btn-light" @click="closeDetail">닫기</button>
         </div>
 
         <template v-if="editMode">
-          <div class="space-y-3">
+          <div class="d-grid gap-2">
             <input v-model="editForm.description" class="kb-input" placeholder="설명" />
             <input v-model.number="editForm.amount" type="number" min="0" class="kb-input" placeholder="금액" />
             <input v-model="editForm.date" type="date" class="kb-input" />
             <select v-model.number="editForm.categoryId" class="kb-input">
               <option v-for="category in categoriesByType" :key="category.id" :value="category.id">{{ category.name }}</option>
             </select>
-            <div class="flex gap-2">
+            <div class="d-flex gap-2">
               <button class="kb-btn-dark" @click="saveEdit">저장</button>
               <button class="kb-btn-light" @click="editMode = false">취소</button>
             </div>
@@ -94,17 +104,17 @@
         </template>
 
         <template v-else>
-          <div class="space-y-2 text-sm">
-            <p><strong>설명:</strong> {{ activeTransaction.description }}</p>
-            <p><strong>유형:</strong> {{ activeTransaction.type === 'expense' ? '지출' : '수입' }}</p>
-            <p><strong>카테고리:</strong> {{ activeTransaction.categoryName }}</p>
-            <p><strong>금액:</strong> {{ formatCurrency(activeTransaction.amount) }}</p>
-            <p><strong>날짜:</strong> {{ activeTransaction.date }}</p>
-            <p><strong>추천 종목:</strong> {{ stockTip }}</p>
+          <div class="d-grid gap-1 small">
+            <p class="mb-0"><strong>설명:</strong> {{ activeTransaction.description }}</p>
+            <p class="mb-0"><strong>유형:</strong> {{ activeTransaction.type === 'expense' ? '지출' : '수입' }}</p>
+            <p class="mb-0"><strong>카테고리:</strong> {{ activeTransaction.categoryName }}</p>
+            <p class="mb-0"><strong>금액:</strong> {{ formatCurrency(activeTransaction.amount) }}</p>
+            <p class="mb-0"><strong>날짜:</strong> {{ activeTransaction.date }}</p>
+            <p class="mb-0"><strong>추천 종목:</strong> {{ stockTip }}</p>
           </div>
-          <div class="mt-4 flex gap-2">
+          <div class="d-flex gap-2 mt-3">
             <button class="kb-btn-light" @click="beginEdit">편집</button>
-            <button class="rounded-lg bg-red-600 px-4 py-2 text-sm font-bold text-white" @click="removeActive">삭제</button>
+            <button class="btn btn-danger btn-sm fw-bold" @click="removeActive">삭제</button>
           </div>
         </template>
       </div>
@@ -117,14 +127,7 @@ import { computed, reactive, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import { useFinanceStore } from "../stores/finance";
 
-const {
-  state,
-  formatCurrency,
-  getDailyTotals,
-  getTransactionsByDate,
-  updateTransaction,
-  deleteTransaction,
-} = useFinanceStore();
+const { state, formatCurrency, getDailyTotals, getTransactionsByDate, updateTransaction, deleteTransaction } = useFinanceStore();
 
 const now = new Date();
 const year = now.getFullYear();
@@ -145,9 +148,7 @@ const route = useRoute();
 
 const calendarCells = computed(() => {
   const cells = [];
-  for (let i = 0; i < leadingBlank; i += 1) {
-    cells.push({ key: `blank-${i}`, day: "", date: "", current: false });
-  }
+  for (let i = 0; i < leadingBlank; i += 1) cells.push({ key: `blank-${i}`, day: "", date: "", current: false });
   for (let day = 1; day <= lastDate; day += 1) {
     const date = `${monthKey}-${String(day).padStart(2, "0")}`;
     cells.push({ key: date, day, date, current: true });
@@ -160,34 +161,34 @@ const selectedTransactions = computed(() => getTransactionsByDate(selectedDate.v
 watch(
   () => route.query.date,
   (date) => {
-    if (typeof date === "string" && date.length === 10) {
-      selectedDate.value = date;
-    }
+    if (typeof date === "string" && date.length === 10) selectedDate.value = date;
   },
   { immediate: true },
 );
 
-const shortCurrency = (amount) => {
-  if (amount >= 10000) {
-    return `${Math.round(amount / 10000)}만`;
-  }
-  return `${Math.round(amount)}`;
+const shortCurrency = (amount) => (amount >= 10000 ? `${Math.round(amount / 10000)}만` : `${Math.round(amount)}`);
+
+const getDayAmount = (date, type) => {
+  const value = dailyTotals.value[date]?.[type] || 0;
+  return shortCurrency(value);
 };
+
+const hasAmount = (date, type) => (dailyTotals.value[date]?.[type] || 0) > 0;
+
+const hasSpending = (date) => {
+  const day = dailyTotals.value[date];
+  return Boolean((day?.income || 0) + (day?.expense || 0));
+};
+
+const isToday = (date) => date === today;
 
 const showDetail = ref(false);
 const activeTransaction = ref(null);
 const editMode = ref(false);
 
-const editForm = reactive({
-  description: "",
-  amount: 0,
-  date: today,
-  categoryId: 1,
-});
+const editForm = reactive({ description: "", amount: 0, date: today, categoryId: 1 });
 
-const categoriesByType = computed(() =>
-  state.categories.filter((item) => item.type === (activeTransaction.value?.type || "expense")),
-);
+const categoriesByType = computed(() => state.categories.filter((item) => item.type === (activeTransaction.value?.type || "expense")));
 
 const stockTip = computed(() => {
   const expense = activeTransaction.value?.amount || 0;
@@ -225,9 +226,7 @@ const saveEdit = () => {
     date: editForm.date,
     categoryId: Number(editForm.categoryId),
   });
-  activeTransaction.value = getTransactionsByDate(selectedDate.value).find(
-    (item) => item.id === activeTransaction.value.id,
-  );
+  activeTransaction.value = getTransactionsByDate(selectedDate.value).find((item) => item.id === activeTransaction.value.id);
   editMode.value = false;
 };
 

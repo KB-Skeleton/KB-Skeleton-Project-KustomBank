@@ -1,74 +1,95 @@
 ﻿<template>
-  <div class="min-h-screen kb-bg text-slate-900">
-    <header class="sticky top-0 z-30 border-b border-black/10 bg-kb-yellow/95 backdrop-blur">
-      <div class="mx-auto flex w-full max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
-        <div class="flex items-center gap-3">
-          <div class="kb-logo-mark">
-            <span>KB</span>
-          </div>
+  <div class="kb-bg">
+    <header class="kb-header py-3">
+      <div class="container-xxl d-flex align-items-center justify-content-between">
+        <div class="d-flex align-items-center gap-3">
+          <div class="kb-logo-mark">KB</div>
           <div>
-            <p class="text-xs font-semibold uppercase tracking-[0.2em] text-kb-brown">KB Smart Budget</p>
-            <h1 class="text-2xl font-black text-kb-charcoal">KB 머니플로우</h1>
+            <p class="mb-0 small fw-semibold text-uppercase" style="letter-spacing: .18em; color: var(--kb-brown)">
+              KB Smart Budget
+            </p>
+            <h1 class="mb-0 h3 fw-black kb-text-charcoal">KB 머니플로우</h1>
           </div>
         </div>
-        <div class="rounded-full bg-kb-charcoal px-4 py-2 text-sm font-bold text-kb-yellow">홍길동 님</div>
+        <RouterLink to="/profile" class="rounded-pill px-3 py-2 text-decoration-none fw-bold" style="background: var(--kb-charcoal); color: var(--kb-yellow)">
+          홍길동 님
+        </RouterLink>
       </div>
     </header>
 
-    <div class="mx-auto flex w-full max-w-7xl flex-col gap-5 px-4 py-5 sm:px-6 lg:flex-row lg:px-8">
-      <aside class="lg:w-64 lg:shrink-0">
-        <nav class="flex gap-2 overflow-x-auto rounded-2xl border border-black/10 bg-white p-2 shadow-sm lg:flex-col lg:overflow-visible">
-          <RouterLink
-            v-for="item in menu"
-            :key="item.to"
-            :to="item.to"
-            class="kb-nav-item"
-            :class="{ 'kb-nav-item-active': route.path === item.to }"
-          >
-            <span class="text-lg">{{ item.icon }}</span>
-            <span class="text-base font-semibold">{{ item.label }}</span>
-          </RouterLink>
-        </nav>
-      </aside>
+    <div class="container-xxl py-3">
+      <div class="row g-3">
+        <aside class="col-12 col-lg-3 col-xl-2">
+          <nav class="kb-nav-wrap p-2 d-flex d-lg-block gap-2 overflow-auto">
+            <RouterLink
+              v-for="item in menu"
+              :key="item.to"
+              :to="item.to"
+              class="kb-nav-item text-nowrap"
+              :class="{ 'kb-nav-item-active': route.path === item.to }"
+            >
+              <span>{{ item.icon }}</span>
+              <span>{{ item.label }}</span>
+            </RouterLink>
+          </nav>
+        </aside>
 
-      <main class="flex-1 pb-24 lg:pb-10">
-        <RouterView />
-      </main>
+        <main class="col-12 col-lg-9 col-xl-10 pb-5">
+          <RouterView />
+        </main>
+      </div>
     </div>
 
-    <button class="kb-fab" @click="openAddModal">
-      + 지출/수입 추가
-    </button>
+    <button class="kb-fab" @click="openAddModal">+ 지출/수입 추가</button>
 
-    <div v-if="showAddModal" class="fixed inset-0 z-40 flex items-end justify-center bg-black/35 p-3 sm:items-center" @click.self="closeAddModal">
-      <div class="w-full max-w-lg rounded-2xl border border-black/10 bg-white p-5 shadow-2xl">
-        <div class="mb-4 flex items-center justify-between">
-          <h2 class="text-2xl font-black text-kb-charcoal">지출/수입 등록</h2>
+    <div v-if="showAddModal" class="kb-modal-overlay" @click.self="closeAddModal">
+      <div class="kb-modal-card">
+        <div class="d-flex align-items-center justify-content-between mb-3">
+          <h2 class="h3 mb-0 fw-black kb-text-charcoal">지출/수입 등록</h2>
           <button class="kb-btn-light" @click="closeAddModal">닫기</button>
         </div>
 
-        <div class="space-y-3">
-          <div class="grid grid-cols-2 gap-2">
-            <button class="rounded-xl px-3 py-2 text-sm font-bold" :class="addForm.type === 'expense' ? 'bg-red-600 text-white' : 'bg-kb-gray-100 text-slate-700'" @click="addForm.type = 'expense'">지출</button>
-            <button class="rounded-xl px-3 py-2 text-sm font-bold" :class="addForm.type === 'income' ? 'bg-sky-600 text-white' : 'bg-kb-gray-100 text-slate-700'" @click="addForm.type = 'income'">수입</button>
+        <div class="d-grid gap-3">
+          <div class="row g-2">
+            <div class="col-6">
+              <button
+                class="w-100 rounded-3 py-2 fw-bold border-0"
+                :class="addForm.type === 'expense' ? 'text-white bg-danger' : 'bg-light text-secondary'"
+                @click="addForm.type = 'expense'"
+              >
+                지출
+              </button>
+            </div>
+            <div class="col-6">
+              <button
+                class="w-100 rounded-3 py-2 fw-bold border-0"
+                :class="addForm.type === 'income' ? 'text-white bg-primary' : 'bg-light text-secondary'"
+                @click="addForm.type = 'income'"
+              >
+                수입
+              </button>
+            </div>
           </div>
 
           <input v-model.number="addForm.amount" type="number" min="0" class="kb-input" placeholder="금액" />
           <input v-model="addForm.date" type="date" class="kb-input" />
+
           <select v-model.number="addForm.categoryId" class="kb-input">
             <option v-for="item in activeCategories" :key="item.id" :value="item.id">{{ item.name }}</option>
           </select>
+
           <button
             v-if="addForm.type === 'expense'"
-            class="w-full rounded-xl border px-3 py-2 text-sm font-bold transition"
-            :class="addForm.isFixed ? 'border-[rgb(96,88,76)] bg-[rgb(96,88,76)] text-white' : 'border-[rgb(96,88,76)] bg-[rgba(96,88,76,0.14)] text-[rgb(96,88,76)]'"
+            class="w-100"
+            :class="addForm.isFixed ? 'kb-btn-brown' : 'kb-btn-brown-soft'"
             @click="addForm.isFixed = !addForm.isFixed"
           >
             {{ addForm.isFixed ? "고정지출로 등록됨" : "고정지출로 등록" }}
           </button>
+
           <textarea v-model="addForm.description" rows="3" class="kb-input" placeholder="설명"></textarea>
 
-          <button class="w-full rounded-xl bg-[rgb(96,88,76)] py-3 text-sm font-bold text-white" @click="submitAdd">등록하기</button>
+          <button class="kb-btn-brown w-100" @click="submitAdd">등록하기</button>
         </div>
       </div>
     </div>
@@ -90,7 +111,6 @@ const menu = [
   { to: "/investment", label: "투자", icon: "◍" },
   { to: "/statistics", label: "통계", icon: "◔" },
   { to: "/budget", label: "예산", icon: "◎" },
-  { to: "/profile", label: "프로필", icon: "◌" },
 ];
 
 const showAddModal = ref(false);
@@ -121,8 +141,7 @@ watch(
 
 const openAddModal = () => {
   showAddModal.value = true;
-  const firstCategory = activeCategories.value[0];
-  addForm.categoryId = firstCategory?.id || 1;
+  addForm.categoryId = activeCategories.value[0]?.id || 1;
 };
 
 const closeAddModal = () => {
