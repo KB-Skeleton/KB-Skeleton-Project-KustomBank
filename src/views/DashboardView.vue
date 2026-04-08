@@ -1,19 +1,29 @@
 ﻿<template>
   <section class="space-y-6">
     <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-      <article class="kb-card kb-card-accent-blue">
+      <article
+        class="kb-card kb-card-accent-blue"
+        @click="router.push('/monthly-spending')"
+      >
         <p class="kb-card-label">월 수입</p>
         <p class="kb-card-value text-sky-700">
           {{ formatCurrency(summary.income) }}
         </p>
       </article>
-      <article class="kb-card kb-card-accent-red">
+      <article
+        class="kb-card kb-card-accent-red"
+        @click="router.push('/monthly-spending')"
+      >
         <p class="kb-card-label">월 지출</p>
         <p class="kb-card-value text-red-700">
           {{ formatCurrency(summary.expense) }}
         </p>
       </article>
-      <article class="kb-card kb-card-accent-yellow">
+
+      <article
+        class="kb-card kb-card-accent-yellow"
+        @click="router.push('/budget')"
+      >
         <p class="kb-card-label">가용 금액</p>
         <p
           class="kb-card-value"
