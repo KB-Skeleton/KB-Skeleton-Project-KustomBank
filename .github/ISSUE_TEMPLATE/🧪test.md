@@ -1,5 +1,5 @@
 ---
-name: Test
+name: "\U0001F9EATest"
 about: 테스트 코드, 리팩토링 테스트 코드 추가
 title: ''
 labels: ''
