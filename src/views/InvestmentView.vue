@@ -1,10 +1,10 @@
 <template>
   <!--불필요한 투자 지출-->
-  <section class="d-grid gap-3">
+  <section class="d-grid gap-3 mb-2">
     <InvestSummary> </InvestSummary>
   </section>
 
-  <article class="row g-3">
+  <article class="row g-3 mt-1">
     <!--인기 종목 리스트-->
     <HotStockList></HotStockList>
 

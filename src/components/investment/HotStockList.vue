@@ -1,5 +1,5 @@
 ﻿<template>
-  <div class="col-12 col-lg-6">
+  <div class="col-12 col-lg-6 invest-font">
     <div class="kb-panel h-100 position-relative">
       <div class="d-flex align-items-center justify-content-between mb-3">
         <h3 class="h4 fw-black kb-text-charcoal mb-0">현재 인기 종목</h3>
@@ -68,3 +68,11 @@ onMounted(() => {
   ensureHotStocks();
 });
 </script>
+
+<style scoped>
+.invest-font {
+  font-family:
+    "Nunito", "Quicksand", "SF Pro Rounded", "Arial Rounded MT Bold",
+    "Pretendard", sans-serif;
+}
+</style>

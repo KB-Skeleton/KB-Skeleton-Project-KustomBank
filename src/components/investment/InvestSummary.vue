@@ -1,16 +1,17 @@
 ﻿<template>
-  <article class="kb-panel">
+  <article class="kb-panel invest-summary">
     <div
       class="d-flex flex-wrap align-items-center justify-content-between gap-2"
     >
       <h2 class="h2 fw-black kb-text-charcoal mb-0">불필요한 지출 요약</h2>
-      <button
-        class="summary-arrow-btn btn btn-sm text-white fw-bold"
-        style="background: rgb(96, 88, 76)"
-        @click=""
-      >
-        <FontAwesomeIcon :icon="faAnglesRight" />
-      </button>
+      <RouterLink to="/beRequired">
+        <button
+          class="summary-arrow-btn btn btn-sm text-white fw-bold"
+          style="background: rgb(96, 88, 76)"
+        >
+          <FontAwesomeIcon :icon="faAnglesRight" />
+        </button>
+      </RouterLink>
     </div>
 
     <div class="row g-3 row-cols-1 row-cols-md-2">
@@ -58,6 +59,16 @@ const berquiredExpenseCount = computed(() => berquiredExpenses.value.length);
 </script>
 
 <style scoped>
+.invest-summary {
+  font-family:
+    "Nunito",
+    "Quicksand",
+    "SF Pro Rounded",
+    "Arial Rounded MT Bold",
+    "Pretendard",
+    sans-serif;
+}
+
 .summary-stat-card {
   background: transparent;
 }

@@ -1,5 +1,5 @@
 <template>
-  <div class="col-12 col-lg-6">
+  <div class="col-12 col-lg-6 invest-font">
     <div class="kb-panel h-100">
       <h3 class="h4 fw-black kb-text-charcoal mb-3">투자 아이디어 & 상식</h3>
       <div class="d-grid gap-2">
@@ -41,3 +41,11 @@ const tips = [
   },
 ];
 </script>
+
+<style scoped>
+.invest-font {
+  font-family:
+    "Nunito", "Quicksand", "SF Pro Rounded", "Arial Rounded MT Bold",
+    "Pretendard", sans-serif;
+}
+</style>
