@@ -3,11 +3,36 @@
     "expense": [
       { "id": "exp_food", "name": "식비", "icon": "🍴", "color": "#FF6384" },
       { "id": "exp_trans", "name": "교통", "icon": "🚌", "color": "#36A2EB" },
-      { "id": "exp_medical", "name": "의료/건강", "icon": "🏥", "color": "#FFCE56" },
-      { "id": "exp_hobby", "name": "취미/여가", "icon": "🎨", "color": "#4BC0C0" },
-      { "id": "exp_edu", "name": "자기계발/교육", "icon": "📚", "color": "#9966FF" },
-      { "id": "exp_shop", "name": "미용/쇼핑", "icon": "🛍️", "color": "#FF9F40" },
-      { "id": "exp_fixed", "name": "구독료/고정비", "icon": "📅", "color": "#C9CBCF" },
+      {
+        "id": "exp_medical",
+        "name": "의료/건강",
+        "icon": "🏥",
+        "color": "#FFCE56"
+      },
+      {
+        "id": "exp_hobby",
+        "name": "취미/여가",
+        "icon": "🎨",
+        "color": "#4BC0C0"
+      },
+      {
+        "id": "exp_edu",
+        "name": "자기계발/교육",
+        "icon": "📚",
+        "color": "#9966FF"
+      },
+      {
+        "id": "exp_shop",
+        "name": "미용/쇼핑",
+        "icon": "🛍️",
+        "color": "#FF9F40"
+      },
+      {
+        "id": "exp_fixed",
+        "name": "구독료/고정비",
+        "icon": "📅",
+        "color": "#C9CBCF"
+      },
       { "id": "exp_etc", "name": "기타", "icon": "🎸", "color": "#000000" }
     ],
     "income": [
@@ -36,7 +61,6 @@
       "amount": 12000,
       "date": "2024-04-08",
       "isFixed": false,
-      "paymentDate": null,
       "description": "점심 돈까스"
     },
     {
@@ -58,6 +82,114 @@
       "amount": 3000000,
       "date": "2024-04-25",
       "description": "4월 급여"
+    },
+    {
+      "id": 4,
+      "userId": "user123",
+      "isExpense": true,
+      "categoryId": "exp_food",
+      "amount": 5900,
+      "date": "2026-04-02",
+      "isFixed": false,
+      "description": "스타벅스 라떼"
+    },
+    {
+      "id": 5,
+      "userId": "user123",
+      "isExpense": true,
+      "categoryId": "exp_trans",
+      "amount": 1400,
+      "date": "2026-04-02",
+      "isFixed": false,
+      "description": "지하철"
+    },
+    {
+      "id": 6,
+      "userId": "user123",
+      "isExpense": true,
+      "categoryId": "exp_shop",
+      "amount": 42300,
+      "date": "2026-04-03",
+      "isFixed": false,
+      "description": "생활용품 쇼핑"
+    },
+    {
+      "id": 7,
+      "userId": "user123",
+      "isExpense": false,
+      "categoryId": "inc_side",
+      "amount": 280000,
+      "date": "2026-04-03",
+      "description": "프리랜서 디자인"
+    },
+    {
+      "id": 8,
+      "userId": "user123",
+      "isExpense": true,
+      "categoryId": "exp_hobby",
+      "amount": 17000,
+      "date": "2026-04-15",
+      "isFixed": true,
+      "description": "넷플릭스"
+    },
+    {
+      "id": 9,
+      "userId": "user123",
+      "isExpense": true,
+      "categoryId": "exp_food",
+      "amount": 11000,
+      "date": "2026-04-07",
+      "isFixed": false,
+      "description": "점심 식사"
+    },
+    {
+      "id": 10,
+      "userId": "user123",
+      "isExpense": true,
+      "categoryId": "exp_trans",
+      "amount": 18200,
+      "date": "2026-04-07",
+      "isFixed": false,
+      "description": "택시"
+    },
+    {
+      "id": 11,
+      "userId": "user123",
+      "isExpense": true,
+      "categoryId": "exp_medical",
+      "amount": 97000,
+      "date": "2026-03-12",
+      "isFixed": false,
+      "description": "치과 치료"
+    },
+    {
+      "id": 12,
+      "userId": "user123",
+      "isExpense": true,
+      "categoryId": "exp_shop",
+      "amount": 156000,
+      "date": "2026-03-25",
+      "isFixed": false,
+      "description": "봄 옷 쇼핑"
+    },
+    {
+      "id": 13,
+      "userId": "user123",
+      "isExpense": false,
+      "categoryId": "inc_salary",
+      "amount": 2140000,
+      "date": "2026-03-01",
+      "description": "3월 월급"
+    },
+    {
+      "id": 14,
+      "userId": "user123",
+      "isExpense": true,
+      "categoryId": "exp_trans",
+      "amount": 80000,
+      "date": "2026-02-11",
+      "isFixed": false,
+      "description": "교통카드 충전"
     }
   ],
   "budgets": [
