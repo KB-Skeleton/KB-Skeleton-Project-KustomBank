@@ -5,9 +5,9 @@
     >
       <h2 class="h2 fw-black kb-text-charcoal mb-0">불필요한 지출 요약</h2>
       <button
-        type="button"
-        class="btn btn-sm fw-bold text-white"
+        class="summary-arrow-btn btn btn-sm text-white fw-bold"
         style="background: rgb(96, 88, 76)"
+        @click=""
       >
         <FontAwesomeIcon :icon="faAnglesRight" />
       </button>
@@ -69,5 +69,10 @@ const berquiredExpenseCount = computed(() => berquiredExpenses.value.length);
 .summary-value {
   font-size: 2.5rem;
   line-height: 1.2;
+}
+
+.summary-arrow-btn {
+  padding: 0.45rem 0.8rem;
+  font-size: 0.8rem;
 }
 </style>
