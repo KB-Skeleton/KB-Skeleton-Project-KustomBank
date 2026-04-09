@@ -1,7 +1,17 @@
-<template>
+﻿<template>
   <div class="col-12 col-lg-6">
-    <div class="kb-panel h-100">
-      <h3 class="h4 fw-black kb-text-charcoal mb-3">현재 인기 종목</h3>
+    <div class="kb-panel h-100 position-relative">
+      <div class="d-flex align-items-center justify-content-between mb-3">
+        <h3 class="h4 fw-black kb-text-charcoal mb-0">현재 인기 종목</h3>
+        <button
+          class="btn btn-sm text-white fw-bold"
+          style="background: rgb(96, 88, 76)"
+          :disabled="isFetching"
+          @click="hotStocksStore.handleFetchStockInfo"
+        >
+          불러오기
+        </button>
+      </div>
       <div class="d-grid gap-2">
         <div
           v-for="stock in hotStocks"
@@ -22,35 +32,39 @@
           </div>
         </div>
       </div>
+
+      <div
+        v-if="isFetching"
+        class="position-absolute top-0 start-0 w-100 h-100 d-flex flex-column align-items-center justify-content-center rounded-3"
+        style="
+          background: rgba(255, 255, 255, 0.8);
+          backdrop-filter: blur(1px);
+          z-index: 10;
+        "
+      >
+        <div class="spinner-border text-dark mb-2" role="status"></div>
+        <p class="mb-0 fw-bold text-dark">인기 종목 불러오는 중...</p>
+      </div>
     </div>
   </div>
 </template>
+
 <script setup>
-const hotStocks = [
-  {
-    name: "삼성전자",
-    change: 2.14,
-    reason: "AI 반도체 수요 기대",
-  },
-  {
-    name: "SK하이닉스",
-    change: 3.27,
-    reason: "HBM 공급 확대 이슈",
-  },
-  {
-    name: "현대차",
-    change: 1.42,
-    reason: "전기차 판매 회복 기대",
-  },
-  {
-    name: "NAVER",
-    change: -0.86,
-    reason: "광고 성장 둔화 우려",
-  },
-  {
-    name: "카카오",
-    change: 0.95,
-    reason: "신규 서비스 모멘텀",
-  },
-];
+import { computed, onMounted } from "vue";
+import { useHotStock } from "../../stores/hotStock.js";
+
+const hotStocksStore = useHotStock();
+
+const hotStocks = computed(() => hotStocksStore.hotStocks);
+const isFetching = computed(() => hotStocksStore.isFetching);
+
+const ensureHotStocks = async () => {
+  if (hotStocksStore.hotStocks.length > 0) return hotStocksStore.hotStocks;
+
+  return hotStocksStore.handleFetchStockInfo();
+};
+
+onMounted(() => {
+  ensureHotStocks();
+});
 </script>
