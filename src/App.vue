@@ -139,13 +139,17 @@
 <script setup>
 import { computed, reactive, ref, watch } from "vue";
 import { RouterLink, RouterView, useRoute } from "vue-router";
-import { useTransactionStore } from "./stores/finance";
+import { useFinanceStore } from "./stores/finance";
 import { useAuthStores } from "./stores/auth";
 
 const route = useRoute();
 
-const transactionStore = useTransactionStore();
-const authStore = useAuthStores();
+const { expenseCategories, incomeCategories, postTransaction } =
+  useFinanceStore();
+
+// const authStore = useAuthStores();
+
+const { state } = useAuthStores();
 
 const menu = [
   { to: "/", label: "대시보드", icon: "▣" },
@@ -169,9 +173,7 @@ const addForm = reactive({
 });
 
 const activeCategories = computed(() =>
-  addForm.type === "expense"
-    ? transactionStore.expenseCategories
-    : transactionStore.incomeCategories,
+  addForm.type === "expense" ? expenseCategories : incomeCategories,
 );
 
 watch(
@@ -203,8 +205,8 @@ const submitAdd = () => {
     return;
   }
 
-  transactionStore.postTransaction({
-    userId: authStore.userId,
+  postTransaction({
+    userId: state.userId,
     type: addForm.type,
     amount: addForm.amount,
     date: addForm.date,

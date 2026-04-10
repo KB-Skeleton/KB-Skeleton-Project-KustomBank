@@ -61,20 +61,16 @@
 
 <script setup>
 import { computed } from "vue";
-import { useTransactionStore } from "@/stores/finance";
+import { useFinanceStore } from "@/stores/finance";
 import { useAuthStores } from "@/stores/auth";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { faAnglesLeft } from "@fortawesome/free-solid-svg-icons";
 
-const transactionStore = useTransactionStore();
-const authStore = useAuthStores();
+const { getBerquiredOutcome, getBerquiredOutcomeAmount } = useFinanceStore();
+const { authState } = useAuthStores();
 
-const beRequiredList = computed(() =>
-  transactionStore.getBerquiredOutcome(authStore.userId),
-);
-const totalAmount = computed(() =>
-  transactionStore.getBerquiredOutcomeAmount(authStore.userId),
-);
+const beRequiredList = computed(() => getBerquiredOutcome(authState.userId));
+const totalAmount = computed(() => getBerquiredOutcomeAmount(authState.userId));
 </script>
 
 <style scoped>

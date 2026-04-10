@@ -22,8 +22,6 @@ export const useHotStock = defineStore("hotStock", {
         const result = await res.json();
         this.hotStocks = (result.stocks || []).slice(0, 5);
 
-        console.log("kr.investing.com Most Active 상위 5개", this.hotStocks);
-
         return this.hotStocks;
       } catch (err) {
         console.log("주식 정보 조회 실패 : ", err);

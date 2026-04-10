@@ -29,7 +29,7 @@
             </p>
           </div>
           <p class="mb-0 small text-secondary">
-            종가 {{ transactionStore.formatCurrency(stock.close) }}
+            종가 {{ formatCurrency(stock.close) }}
           </p>
           <p class="mb-0 small text-secondary">약 {{ stock.count }}주</p>
         </div>
@@ -53,21 +53,24 @@
 
 <script setup>
 import { computed, onMounted } from "vue";
-import { useTransactionStore } from "@/stores/finance";
+import { useFinanceStore } from "@/stores/finance";
 
 import { useHotStock } from "../../stores/hotStock.js";
 import { useAuthStores } from "@/stores/auth.js";
 
-const transactionStore = useTransactionStore();
+const { getBerquiredOutcome, formatCurrency } = useFinanceStore();
+const { authState } = useAuthStores();
+
 const hotStocksStore = useHotStock();
-const authStore = useAuthStores();
 
 const hotStocks = computed(() => hotStocksStore.hotStocks);
 const isFetching = computed(() => hotStocksStore.isFetching);
+
 const totalBerquiredExpenseAmount = computed(() =>
-  transactionStore
-    .getBerquiredOutcome(authStore.userId)
-    .reduce((sum, transaction) => sum + Number(transaction.amount || 0), 0),
+  getBerquiredOutcome(authState.userId).reduce(
+    (sum, transaction) => sum + Number(transaction.amount || 0),
+    0,
+  ),
 );
 
 const affordableHotStocks = computed(() =>
