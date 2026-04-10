@@ -14,22 +14,24 @@
       </div>
       <div class="d-grid gap-2">
         <div
-          v-for="stock in hotStocks"
-          :key="stock.name"
+          v-for="stock in affordableHotStocks"
+          :key="stock.symbol || stock.name"
           class="rounded-3 border p-4 bg-white"
           style="border-color: rgba(34, 34, 34, 0.15)"
         >
-          <div class="d-flex justify-content-between align-items-center">
-            <p class="mb-0 fs-5 fw-bold kb-text-charcoal">
-              {{ stock.name }}
-            </p>
+          <div class="d-flex justify-content-between align-items-center mb-1">
+            <p class="mb-0 fs-5 fw-bold kb-text-charcoal">{{ stock.name }}</p>
             <p
-              class="mb-0 fw-black fs-6"
+              class="mb-0 fw-black fs-5"
               :class="stock.change >= 0 ? 'text-primary' : 'text-danger'"
             >
               {{ stock.change >= 0 ? "+" : "" }}{{ stock.change }}%
             </p>
           </div>
+          <p class="mb-0 small text-secondary">
+            종가 {{ formatCurrency(stock.close) }}
+          </p>
+          <p class="mb-0 small text-secondary">약 {{ stock.count }}주</p>
         </div>
       </div>
 
@@ -51,12 +53,30 @@
 
 <script setup>
 import { computed, onMounted } from "vue";
+import { useFinanceStore } from "@/stores/finance";
+
 import { useHotStock } from "../../stores/hotStock.js";
+const { state, formatCurrency, getBerquiredOutcome } = useFinanceStore();
 
 const hotStocksStore = useHotStock();
 
 const hotStocks = computed(() => hotStocksStore.hotStocks);
 const isFetching = computed(() => hotStocksStore.isFetching);
+const totalBerquiredExpenseAmount = computed(() =>
+  getBerquiredOutcome(state.userId).reduce(
+    (sum, transaction) => sum + Number(transaction.amount || 0),
+    0,
+  ),
+);
+
+const affordableHotStocks = computed(() =>
+  hotStocks.value.map((stock) => {
+    const close = Number(stock.close || 0);
+    const count =
+      close > 0 ? Math.floor(totalBerquiredExpenseAmount.value / close) : 0;
+    return { ...stock, close, count };
+  }),
+);
 
 const ensureHotStocks = async () => {
   if (hotStocksStore.hotStocks.length > 0) return hotStocksStore.hotStocks;
@@ -74,5 +94,31 @@ onMounted(() => {
   font-family:
     "Nunito", "Quicksand", "SF Pro Rounded", "Arial Rounded MT Bold",
     "Pretendard", sans-serif;
+}
+
+.summary-invest-hint {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #444;
+}
+
+.summary-loading {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.95rem;
+  color: #475569;
+}
+
+.summary-stock-list {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.summary-stock-item {
+  border: 1px solid rgba(34, 34, 34, 0.12);
+  border-radius: 0.75rem;
+  padding: 0.65rem 0.85rem;
+  background: rgba(255, 255, 255, 0.6);
 }
 </style>

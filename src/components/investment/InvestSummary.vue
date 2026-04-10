@@ -35,16 +35,30 @@
         </div>
       </div>
     </div>
+
+    <div class="summary-invest-hint mt-3">
+      이 금액을 아끼셨다면 아래의 주식들을 살 수 있었어요
+    </div>
+
+    <div v-if="isStockLoading" class="summary-loading mt-2">
+      <div
+        class="spinner-border spinner-border-sm text-dark"
+        role="status"
+      ></div>
+      <span>종가 데이터 불러오는 중...</span>
+    </div>
   </article>
 </template>
 
 <script setup>
-import { computed } from "vue";
+import { computed, onMounted } from "vue";
 import { useFinanceStore } from "@/stores/finance";
+import { useHotStock } from "@/stores/hotStock";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { faAnglesRight } from "@fortawesome/free-solid-svg-icons";
 
 const { state, formatCurrency, getBerquiredOutcome } = useFinanceStore();
+const hotStockStore = useHotStock();
 
 const berquiredExpenses = computed(() => getBerquiredOutcome(state.userId));
 
@@ -56,17 +70,20 @@ const totalBerquiredExpenseAmount = computed(() =>
 );
 
 const berquiredExpenseCount = computed(() => berquiredExpenses.value.length);
+const isStockLoading = computed(() => hotStockStore.isFetching);
+
+onMounted(() => {
+  if (!hotStockStore.hotStocks.length) {
+    hotStockStore.handleFetchStockInfo();
+  }
+});
 </script>
 
 <style scoped>
 .invest-summary {
   font-family:
-    "Nunito",
-    "Quicksand",
-    "SF Pro Rounded",
-    "Arial Rounded MT Bold",
-    "Pretendard",
-    sans-serif;
+    "Nunito", "Quicksand", "SF Pro Rounded", "Arial Rounded MT Bold",
+    "Pretendard", sans-serif;
 }
 
 .summary-stat-card {
@@ -85,5 +102,31 @@ const berquiredExpenseCount = computed(() => berquiredExpenses.value.length);
 .summary-arrow-btn {
   padding: 0.45rem 0.8rem;
   font-size: 0.8rem;
+}
+
+.summary-invest-hint {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #444;
+}
+
+.summary-loading {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.95rem;
+  color: #475569;
+}
+
+.summary-stock-list {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.summary-stock-item {
+  border: 1px solid rgba(34, 34, 34, 0.12);
+  border-radius: 0.75rem;
+  padding: 0.65rem 0.85rem;
+  background: rgba(255, 255, 255, 0.6);
 }
 </style>
