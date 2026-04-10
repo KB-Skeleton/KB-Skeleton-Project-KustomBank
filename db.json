@@ -13,7 +13,7 @@
       "userId": "user456",
       "email": "user456@example.com",
       "password": "hashed_password",
-      "name": "사용자2",
+      "name": "박준영",
       "phone": "010-2222-3333"
     },
     {
@@ -21,45 +21,43 @@
       "userId": "user789",
       "email": "user789@example.com",
       "password": "hashed_password",
-      "name": "사용자3",
+      "name": "이세형",
       "phone": "010-4444-5555"
     }
   ],
   "transactions": [
     {
-      "isRequired": false,
       "id": 1,
       "userId": "user123",
       "isExpense": true,
       "categoryId": "exp_food",
       "amount": 12000,
-      "date": "2024-04-08",
+      "date": "2026-04-08",
       "isFixed": false,
       "description": "점심 돈까스",
       "isRequired": false
     },
     {
-      "isRequired": false,
       "id": 2,
       "userId": "user123",
       "isExpense": true,
       "categoryId": "exp_fixed",
       "amount": 14900,
-      "date": "2024-04-10",
+      "date": "2026-04-10",
       "isFixed": true,
       "paymentDate": 30,
       "description": "넷플릭스 구독료",
       "isRequired": false
     },
     {
-      "isRequired": false,
       "id": 3,
       "userId": "user123",
       "isExpense": false,
       "categoryId": "inc_salary",
       "amount": 3000000,
-      "date": "2024-04-25",
-      "description": "4월 급여"
+      "date": "2026-04-25",
+      "description": "4월 급여",
+      "isRequired": false
     },
     {
       "id": 4,
