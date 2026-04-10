@@ -27,6 +27,7 @@
   ],
   "transactions": [
     {
+      "isRequired": false,
       "id": 1,
       "userId": "user123",
       "isExpense": true,
@@ -38,6 +39,7 @@
       "isRequired": false
     },
     {
+      "isRequired": false,
       "id": 2,
       "userId": "user123",
       "isExpense": true,
@@ -50,6 +52,7 @@
       "isRequired": false
     },
     {
+      "isRequired": false,
       "id": 3,
       "userId": "user123",
       "isExpense": false,
