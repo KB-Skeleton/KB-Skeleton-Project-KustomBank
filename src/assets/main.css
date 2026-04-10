@@ -19,7 +19,7 @@ body {
 }
 
 .fw-black {
-  font-weight: 900;
+  font-weight: 900 !important;
 }
 
 .kb-bg {
