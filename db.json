@@ -1,55 +1,28 @@
 {
-  "categories": {
-    "expense": [
-      { "id": "exp_food", "name": "식비", "icon": "🍴", "color": "#FF6384" },
-      { "id": "exp_trans", "name": "교통", "icon": "🚌", "color": "#36A2EB" },
-      {
-        "id": "exp_medical",
-        "name": "의료/건강",
-        "icon": "🏥",
-        "color": "#FFCE56"
-      },
-      {
-        "id": "exp_hobby",
-        "name": "취미/여가",
-        "icon": "🎨",
-        "color": "#4BC0C0"
-      },
-      {
-        "id": "exp_edu",
-        "name": "자기계발/교육",
-        "icon": "📚",
-        "color": "#9966FF"
-      },
-      {
-        "id": "exp_shop",
-        "name": "미용/쇼핑",
-        "icon": "🛍️",
-        "color": "#FF9F40"
-      },
-      {
-        "id": "exp_fixed",
-        "name": "구독료/고정비",
-        "icon": "📅",
-        "color": "#C9CBCF"
-      },
-      { "id": "exp_etc", "name": "기타", "icon": "🎸", "color": "#000000" }
-    ],
-    "income": [
-      { "id": "inc_salary", "name": "급여", "icon": "💰" },
-      { "id": "inc_side", "name": "부수입", "icon": "📈" },
-      { "id": "inc_interest", "name": "이자/배당", "icon": "🏦" },
-      { "id": "inc_pocket", "name": "용돈", "icon": "🧧" },
-      { "id": "inc_etc", "name": "기타", "icon": "🏷️" }
-    ]
-  },
   "users": [
     {
-      "id": "user123",
+      "id": 1,
+      "userId": "user123",
       "email": "user@example.com",
       "password": "hashed_password",
-      "name": "사용자이름",
+      "name": "이윤정",
       "phone": "010-1234-5678"
+    },
+    {
+      "id": 2,
+      "userId": "user456",
+      "email": "user456@example.com",
+      "password": "hashed_password",
+      "name": "사용자2",
+      "phone": "010-2222-3333"
+    },
+    {
+      "id": 3,
+      "userId": "user789",
+      "email": "user789@example.com",
+      "password": "hashed_password",
+      "name": "사용자3",
+      "phone": "010-4444-5555"
     }
   ],
   "transactions": [
@@ -61,7 +34,8 @@
       "amount": 12000,
       "date": "2024-04-08",
       "isFixed": false,
-      "description": "점심 돈까스"
+      "description": "점심 돈까스",
+      "isRequired": false
     },
     {
       "id": 2,
@@ -71,8 +45,9 @@
       "amount": 14900,
       "date": "2024-04-10",
       "isFixed": true,
-      "paymentDate": 10,
-      "description": "넷플릭스 구독료"
+      "paymentDate": 30,
+      "description": "넷플릭스 구독료",
+      "isRequired": false
     },
     {
       "id": 3,
@@ -91,7 +66,8 @@
       "amount": 5900,
       "date": "2026-04-02",
       "isFixed": false,
-      "description": "스타벅스 라떼"
+      "description": "스타벅스 라떼",
+      "isRequired": false
     },
     {
       "id": 5,
@@ -101,7 +77,8 @@
       "amount": 1400,
       "date": "2026-04-02",
       "isFixed": false,
-      "description": "지하철"
+      "description": "지하철",
+      "isRequired": true
     },
     {
       "id": 6,
@@ -111,7 +88,8 @@
       "amount": 42300,
       "date": "2026-04-03",
       "isFixed": false,
-      "description": "생활용품 쇼핑"
+      "description": "생활용품 쇼핑",
+      "isRequired": false
     },
     {
       "id": 7,
@@ -130,7 +108,9 @@
       "amount": 17000,
       "date": "2026-04-15",
       "isFixed": true,
-      "description": "넷플릭스"
+      "paymentDate": 10,
+      "description": "넷플릭스",
+      "isRequired": false
     },
     {
       "id": 9,
@@ -140,7 +120,8 @@
       "amount": 11000,
       "date": "2026-04-07",
       "isFixed": false,
-      "description": "점심 식사"
+      "description": "점심 식사",
+      "isRequired": true
     },
     {
       "id": 10,
@@ -150,7 +131,8 @@
       "amount": 18200,
       "date": "2026-04-07",
       "isFixed": false,
-      "description": "택시"
+      "description": "택시",
+      "isRequired": false
     },
     {
       "id": 11,
@@ -160,7 +142,8 @@
       "amount": 97000,
       "date": "2026-03-12",
       "isFixed": false,
-      "description": "치과 치료"
+      "description": "치과 치료",
+      "isRequired": true
     },
     {
       "id": 12,
@@ -170,7 +153,8 @@
       "amount": 156000,
       "date": "2026-03-25",
       "isFixed": false,
-      "description": "봄 옷 쇼핑"
+      "description": "봄 옷 쇼핑",
+      "isRequired": false
     },
     {
       "id": 13,
@@ -189,20 +173,22 @@
       "amount": 80000,
       "date": "2026-02-11",
       "isFixed": false,
-      "description": "교통카드 충전"
+      "description": "교통카드 충전",
+      "isRequired": true
     }
   ],
   "budgets": [
     {
+      "id": 1,
       "userId": "user123",
       "month": "2024-04",
       "categoryBudgets": {
-        "exp_food": 500000,
-        "exp_trans": 120000,
-        "exp_medical": 200000,
-        "exp_hobby": 200000,
-        "exp_edu": 200000,
-        "exp_shop": 200000,
+        "exp_food": 100000,
+        "exp_trans": 100005,
+        "exp_medical": 20000,
+        "exp_hobby": 20006,
+        "exp_edu": 20000,
+        "exp_shop": 200003,
         "exp_etc": 200000
       }
     }
