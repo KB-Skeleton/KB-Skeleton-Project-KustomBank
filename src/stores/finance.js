@@ -1,4 +1,4 @@
-import { computed, reactive } from "vue";
+﻿import { computed, reactive } from "vue";
 
 const EXPENSE_CATEGORY_NAMES = [
   "식비",
@@ -183,12 +183,18 @@ const state = reactive({
 
 const toMonthKey = (dateString) => dateString.slice(0, 7);
 const toDate = (value) => new Date(`${value}T00:00:00`);
+//월 키
+const getCurrentMonthKey = () => {
+  const now = new Date();
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+};
 
 const formatCurrency = (amount) =>
   new Intl.NumberFormat("ko-KR", {
     style: "currency",
     currency: "KRW",
     maximumFractionDigits: 0,
+    updateTransaction,
   }).format(amount || 0);
 
 const getCategoryById = (categoryId) =>
@@ -446,11 +452,30 @@ const updateCategoryBudgetsBulk = (payload) => {
   });
 };
 
+//추가한 부분
+
+const getBerquiredOutcome = (userId) =>
+  sortedTransactions.value.filter(
+    (transaction) =>
+      transaction.userId === userId &&
+      transaction.isRequired === false &&
+      transaction.type === "expense" &&
+      toMonthKey(transaction.date) === getCurrentMonthKey(),
+  );
+
+const getBerquiredOutcomeAmount = (userId) =>
+  getBerquiredOutcome(userId).reduce(
+    (sum, transaction) => sum + Number(transaction.amount || 0),
+    0,
+  );
+
 export function useFinanceStore() {
   return {
     state,
     expenseCategories,
     incomeCategories,
+    INCOME_CATEGORY_NAMES,
+    EXPENSE_CATEGORY_NAMES,
     monthlyBudgetTarget,
     sortedTransactions,
     formatCurrency,
@@ -469,5 +494,7 @@ export function useFinanceStore() {
     getBudgetRows,
     updateCategoryBudget,
     updateCategoryBudgetsBulk,
+    getBerquiredOutcome,
+    getBerquiredOutcomeAmount,
   };
 }
