@@ -17,16 +17,16 @@ import { useFinanceStore } from '../stores/finance';
 
 const budgetStore = useBudgetStores();
 const transactionStore = useFinanceStore();
-const { getActiveBudgetByUserId, sumCategoryBudgets } = budgetStore;
+const { getBudget, sumCategoryBudgets } = budgetStore;
 const { formatCurrency } = transactionStore;
 
 const selectedBudget = ref(null);
 
 // 현재 사용자 예산 1건을 다시 읽어 화면 계산값을 최신으로 유지
 const loadBudgets = async () => {
-  const currentUserId = transactionStore?.authStore?.userId || 'user123';
+  const currentUserId = transactionStore?.authState?.userId || 'user123';
   const [budgetResult] = await Promise.allSettled([
-    getActiveBudgetByUserId(currentUserId),
+    getBudget(currentUserId),
   ]);
   selectedBudget.value =
     budgetResult.status === 'fulfilled' ? budgetResult.value : null;
