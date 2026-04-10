@@ -1,473 +1,290 @@
 import { computed, reactive } from "vue";
+import { useAuthStores } from "./auth";
+import axios from "axios";
+const BASE_URL = "http://localhost:3000/";
 
-const EXPENSE_CATEGORY_NAMES = [
-  "식비",
-  "교통비",
-  "여가/취미",
-  "미용/쇼핑",
-  "의료/건강",
-  "교육/자기계발",
-  "기타",
-];
+export const useTransactionStore = defineStore("transactionList", {
+  state: () => ({
+    transactions: [],
+    fixedExpenseSetting: [],
+    authStore: useAuthStores(),
 
-const INCOME_CATEGORY_NAMES = ["급여", "부수입", "이자/배당"];
+    categories: {
+      expense: [
+        { id: "exp_food", name: "식비", icon: "🍴", color: "#FF6384" },
+        { id: "exp_trans", name: "교통", icon: "🚌", color: "#36A2EB" },
+        { id: "exp_medical", name: "의료/건강", icon: "🏥", color: "#FFCE56" },
+        { id: "exp_hobby", name: "취미/여가", icon: "🎨", color: "#4BC0C0" },
+        { id: "exp_edu", name: "자기계발/교육", icon: "📚", color: "#9966FF" },
+        { id: "exp_shop", name: "미용/쇼핑", icon: "🛍️", color: "#FF9F40" },
+        {
+          id: "exp_fixed",
+          name: "구독료/고정비",
+          icon: "📅",
+          color: "#C9CBCF",
+        },
+        { id: "exp_etc", name: "기타", icon: "🎸", color: "#000000" },
+      ],
+      income: [
+        { id: "inc_salary", name: "급여", icon: "💰" },
+        { id: "inc_side", name: "부수입", icon: "📈" },
+        { id: "inc_interest", name: "이자/배당", icon: "🏦" },
+        { id: "inc_pocket", name: "용돈", icon: "🧧" },
+        { id: "inc_etc", name: "기타", icon: "🏷️" },
+      ],
+    },
+  }),
+  getters: {
+    //공용 매서드 (데이터 포맷팅, 정렬 등)
+    toMonthKey: () => (dateString) => String(dateString || "").slice(0, 7),
+    toDate: () => (value) => new Date(`${value}T00:00:00`),
+    //월 키
+    getCurrentMonthKey() {
+      const now = new Date();
+      return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+    },
 
-const categories = [
-  { id: 1, name: "식비", type: "expense" },
-  { id: 2, name: "교통비", type: "expense" },
-  { id: 3, name: "여가/취미", type: "expense" },
-  { id: 4, name: "미용/쇼핑", type: "expense" },
-  { id: 5, name: "의료/건강", type: "expense" },
-  { id: 6, name: "교육/자기계발", type: "expense" },
-  { id: 7, name: "기타", type: "expense" },
-  { id: 101, name: "급여", type: "income" },
-  { id: 102, name: "부수입", type: "income" },
-  { id: 103, name: "이자/배당", type: "income" },
-];
+    formatCurrency: () => (amount) =>
+      new Intl.NumberFormat("ko-KR", {
+        style: "currency",
+        currency: "KRW",
+        maximumFractionDigits: 0,
+      }).format(amount || 0),
 
-const fixedPlans = [
-  { id: 1, title: "월세", amount: 620000, categoryId: 7, dueDay: 5 },
-  { id: 2, title: "통신비", amount: 85000, categoryId: 7, dueDay: 10 },
-  { id: 3, title: "보험료", amount: 140000, categoryId: 5, dueDay: 12 },
-  { id: 4, title: "OTT", amount: 17000, categoryId: 3, dueDay: 15 },
-];
+    sortedTransactions() {
+      const allCategories = [
+        ...this.categories.expense,
+        ...this.categories.income,
+      ];
 
-const state = reactive({
-  userId: "user01",
-  categories,
-  categoryBudgets: {
-    1: 520000,
-    2: 200000,
-    3: 260000,
-    4: 340000,
-    5: 180000,
-    6: 220000,
-    7: 280000,
+      return [...this.transactions]
+        .sort((a, b) => this.toDate(b.date) - this.toDate(a.date))
+        .map((transaction) => {
+          const category = allCategories.find(
+            (item) => item.id === transaction.categoryId,
+          );
+          return {
+            ...transaction,
+            categoryName: category?.name || "기타",
+            title: transaction.description,
+            category: category?.name || "기타",
+            note: transaction.isFixed ? "고정지출" : "변동지출",
+          };
+        });
+    },
+    getCategoryById: (categoryId) =>
+      state.categories.find((category) => category.id === Number(categoryId)) ||
+      null,
+
+    //불필요한 지출 부분 매서드
+    getBerquiredOutcome() {
+      return (userId) =>
+        this.sortedTransactions.filter(
+          (transaction) =>
+            transaction.userId === userId &&
+            transaction.isRequired === false &&
+            transaction.type === "expense" &&
+            this.toMonthKey(transaction.date) === this.getCurrentMonthKey(),
+        );
+    },
+
+    getBerquiredOutcomeAmount() {
+      return (userId) =>
+        this.getBerquiredOutcome(userId).reduce(
+          (sum, transaction) => sum + Number(transaction.amount || 0),
+          0,
+        );
+    },
   },
-  fixedPlans,
-  transactions: [
-    {
-      id: 1,
-      userId: "user01",
-      amount: 3500000,
-      date: "2026-04-01",
-      categoryId: 101,
-      description: "4월 월급",
-      type: "income",
-      isFixed: false,
-      isRequired: true,
-    },
-    {
-      id: 4,
-      userId: "user01",
-      amount: 5900,
-      date: "2026-04-02",
-      categoryId: 1,
-      description: "스타벅스 라떼",
-      type: "expense",
-      isFixed: false,
-      isRequired: false,
-    },
-    {
-      id: 5,
-      userId: "user01",
-      amount: 1400,
-      date: "2026-04-02",
-      categoryId: 2,
-      description: "지하철",
-      type: "expense",
-      isFixed: false,
-      isRequired: true,
-    },
-    {
-      id: 6,
-      userId: "user01",
-      amount: 42300,
-      date: "2026-04-03",
-      categoryId: 4,
-      description: "생활용품 쇼핑",
-      type: "expense",
-      isFixed: false,
-      isRequired: false,
-    },
-    {
-      id: 7,
-      userId: "user01",
-      amount: 280000,
-      date: "2026-04-03",
-      categoryId: 102,
-      description: "프리랜서 디자인",
-      type: "income",
-      isFixed: false,
-      isRequired: true,
-    },
-    {
-      id: 8,
-      userId: "user01",
-      amount: 17000,
-      date: "2026-04-15",
-      categoryId: 3,
-      description: "넷플릭스",
-      type: "expense",
-      isFixed: true,
-      isRequired: false,
-    },
-    {
-      id: 9,
-      userId: "user01",
-      amount: 11000,
-      date: "2026-04-07",
-      categoryId: 1,
-      description: "점심 식사",
-      type: "expense",
-      isFixed: false,
-      isRequired: true,
-    },
-    {
-      id: 10,
-      userId: "user01",
-      amount: 18200,
-      date: "2026-04-07",
-      categoryId: 2,
-      description: "택시",
-      type: "expense",
-      isFixed: false,
-      isRequired: false,
-    },
-    {
-      id: 11,
-      userId: "user01",
-      amount: 97000,
-      date: "2026-03-12",
-      categoryId: 5,
-      description: "치과 치료",
-      type: "expense",
-      isFixed: false,
-      isRequired: true,
-    },
-    {
-      id: 12,
-      userId: "user01",
-      amount: 156000,
-      date: "2026-03-25",
-      categoryId: 4,
-      description: "봄 옷 쇼핑",
-      type: "expense",
-      isFixed: false,
-      isRequired: false,
-    },
-    {
-      id: 13,
-      userId: "user01",
-      amount: 2140000,
-      date: "2026-03-01",
-      categoryId: 101,
-      description: "3월 월급",
-      type: "income",
-      isFixed: false,
-      isRequired: true,
-    },
-    {
-      id: 14,
-      userId: "user01",
-      amount: 80000,
-      date: "2026-02-11",
-      categoryId: 2,
-      description: "교통카드 충전",
-      type: "expense",
-      isFixed: false,
-      isRequired: true,
-    },
-  ],
-});
 
-const toMonthKey = (dateString) => dateString.slice(0, 7);
-const toDate = (value) => new Date(`${value}T00:00:00`);
+  actions: {
+    //Transaction CRUD-------------------------------------------
+    //Create - post
+    async postTransaction(transaction) {
+      try {
+        let res = await axios.post(BASE_URL + "transactions", transaction);
 
-const formatCurrency = (amount) =>
-  new Intl.NumberFormat("ko-KR", {
-    style: "currency",
-    currency: "KRW",
-    maximumFractionDigits: 0,
-  }).format(amount || 0);
-
-const getCategoryById = (categoryId) =>
-  state.categories.find((category) => category.id === Number(categoryId)) ||
-  null;
-
-const normalizeTransaction = (transaction) => {
-  const category = getCategoryById(transaction.categoryId);
-  return {
-    ...transaction,
-    categoryName: category?.name || "기타",
-    title: transaction.description,
-    category: category?.name || "기타",
-    note: transaction.isFixed ? "고정지출" : "변동지출",
-  };
-};
-
-const sortedTransactions = computed(() =>
-  [...state.transactions]
-    .sort((a, b) => toDate(b.date) - toDate(a.date))
-    .map(normalizeTransaction),
-);
-
-const monthlyBudgetTarget = computed(() =>
-  EXPENSE_CATEGORY_NAMES.reduce((sum, name) => {
-    const category = state.categories.find((item) => item.name === name);
-    return sum + Number(state.categoryBudgets[category?.id] || 0);
-  }, 0),
-);
-
-const getMonthlySummary = (monthKey) => {
-  const monthItems = state.transactions.filter(
-    (transaction) => toMonthKey(transaction.date) === monthKey,
-  );
-
-  const income = monthItems
-    .filter((item) => item.type === "income")
-    .reduce((sum, item) => sum + item.amount, 0);
-
-  const expense = monthItems
-    .filter((item) => item.type === "expense")
-    .reduce((sum, item) => sum + item.amount, 0);
-
-  return {
-    income,
-    expense,
-    balance: income - expense,
-    count: monthItems.length,
-  };
-};
-
-const getMonthlyExpensesByCategory = (monthKey) => {
-  const totals = {};
-
-  state.transactions
-    .filter(
-      (transaction) =>
-        toMonthKey(transaction.date) === monthKey &&
-        transaction.type === "expense",
-    )
-    .forEach((transaction) => {
-      const categoryName =
-        getCategoryById(transaction.categoryId)?.name || "기타";
-      totals[categoryName] = (totals[categoryName] || 0) + transaction.amount;
-    });
-
-  return totals;
-};
-
-const getDailyTotals = (monthKey) => {
-  const totals = {};
-
-  state.transactions
-    .filter((transaction) => toMonthKey(transaction.date) === monthKey)
-    .forEach((transaction) => {
-      if (!totals[transaction.date]) {
-        totals[transaction.date] = { income: 0, expense: 0 };
+        if (res.status === 201) {
+          this.transactions.push(transaction);
+          return;
+        } else {
+          console.log("거래 내역 추가 실패");
+        }
+      } catch (e) {
+        console.log("거래 내역 추가 실패 : ", e);
       }
-      totals[transaction.date][transaction.type] += transaction.amount;
-    });
+    },
 
-  return totals;
-};
+    //Read - get
+    async getTransaction() {
+      try {
+        let userId = this.authStore.userId;
+        let res = await axios.get(BASE_URL + `transactions?userId=${userId}`);
 
-const getTransactionsByDate = (dateString) =>
-  sortedTransactions.value.filter(
-    (transaction) => transaction.date === dateString,
-  );
+        if (res.status === 200) {
+          this.transactions = res.data;
+          return;
+        } else {
+          console.log("거래 조회 실패");
+        }
+      } catch (e) {
+        console.log("거래 조회 실패 : ", e);
+      }
+    },
 
-const getTransactionsByMonth = (monthKey) =>
-  sortedTransactions.value.filter(
-    (transaction) => toMonthKey(transaction.date) === monthKey,
-  );
+    //Update - put
+    async putTransaction(updatedtransaction) {
+      try {
+        let res = await axios.put(
+          BASE_URL + `transactions/${updatedtransaction.id}`,
+          updatedtransaction,
+        );
 
-const getFixedExpenseSummary = (monthKey) => {
-  const totalFixed = state.fixedPlans.reduce(
-    (sum, item) => sum + item.amount,
-    0,
-  );
-  const spentFixed = state.transactions
-    .filter(
-      (item) =>
-        item.type === "expense" &&
-        item.isFixed &&
-        toMonthKey(item.date) === monthKey,
-    )
-    .reduce((sum, item) => sum + item.amount, 0);
+        if (res.status === 200) {
+          const index = this.transactions.findIndex(
+            (item) => item.id === updatedtransaction.id,
+          );
+          if (index === -1) {
+            return false;
+          }
 
-  return {
-    totalFixed,
-    spentFixed,
-    availableFixed: totalFixed - spentFixed,
-    usage: totalFixed ? Math.round((spentFixed / totalFixed) * 100) : 0,
-  };
-};
+          this.transactions[index] = {
+            ...this.transactions[index],
+            ...updatedtransaction,
+            amount: Number(
+              updatedtransaction.amount ?? this.transactions[index].amount,
+            ),
+            categoryId: Number(
+              updatedtransaction.categoryId ??
+                this.transactions[index].categoryId,
+            ),
+          };
+          return true;
+        } else {
+          console.log("거래 정보 수정 실패");
+        }
+      } catch (e) {
+        console.log("거래 정보 수정 실패 : ", e);
+      }
+    },
 
-const getFixedTransactionsByMonth = (monthKey) =>
-  sortedTransactions.value.filter(
-    (item) =>
-      item.isFixed &&
-      item.type === "expense" &&
-      toMonthKey(item.date) === monthKey,
-  );
+    //Delete - delete
+    async deleteTransaction(id) {
+      try {
+        let res = await axios.delete(BASE_URL + `transactions/${id}`);
 
-const addTransaction = ({
-  type,
-  amount,
-  date,
-  categoryId,
-  description,
-  userId,
-  isFixed = false,
-}) => {
-  const nextId =
-    state.transactions.reduce((max, item) => Math.max(max, item.id), 0) + 1;
+        if (res.status === 200) {
+          const index = this.transactions.findIndex((item) => item.id === id);
+          if (index === -1) {
+            return false;
+          }
+          this.transactions.splice(index, 1);
+          return;
+        } else {
+          console.log("거래 정보 삭제 실패");
+        }
+      } catch (e) {
+        console.log("거래 정보 삭제 : ", e);
+      }
+    },
 
-  const normalizedAmount = Number(amount);
-  const normalizedCategoryId = Number(categoryId);
-  const normalizedIsFixed = Boolean(isFixed);
+    //FixedExpense CRUD------------------------------------------------
+    //Create - post
+    async postFixed(fixedData) {
+      try {
+        let res = await axios.post(
+          BASE_URL + "fixed_expense_settings",
+          fixedData,
+        );
 
-  state.transactions.push({
-    id: nextId,
-    userId: userId || state.userId,
-    type,
-    amount: normalizedAmount,
-    date,
-    categoryId: normalizedCategoryId,
-    description,
-    isFixed: normalizedIsFixed,
-    isRequired: false,
-  });
+        if (res.status === 201) {
+          this.fixedExpenseSetting.push(fixedData);
+          return;
+        } else {
+          console.log("고정지출 정보 추가 실패");
+        }
+      } catch (e) {
+        console.log("고정지출 정보 추가 실패 : ", e);
+      }
+    },
 
-  if (type === "expense" && normalizedIsFixed) {
-    const nextPlanId =
-      state.fixedPlans.reduce((max, item) => Math.max(max, item.id), 0) + 1;
-    const dueDay = Number(date.slice(-2));
+    //Read - get
+    async getFixed() {
+      try {
+        let userId = this.authStore.userId;
+        let res = await axios.get(
+          BASE_URL + `fixed_expense_settings?userId=${userId}`,
+        );
 
-    const duplicate = state.fixedPlans.find(
-      (plan) =>
-        plan.title === description &&
-        plan.amount === normalizedAmount &&
-        plan.categoryId === normalizedCategoryId,
-    );
+        if (res.status === 200) {
+          this.fixedExpenseSetting = res.data;
+          return;
+        } else {
+          console.log("고정지출 조회 실패");
+        }
+      } catch (e) {
+        console.log("고정지출 조회 실패 : ", e);
+      }
+    },
 
-    if (!duplicate) {
-      state.fixedPlans.push({
-        id: nextPlanId,
-        title: description,
-        amount: normalizedAmount,
-        categoryId: normalizedCategoryId,
-        dueDay,
-      });
-    }
-  }
-};
+    // Update - put (fixed_expense_settings)
+    async putFixed(updatedFixedData) {
+      try {
+        const res = await axios.put(
+          `${BASE_URL}/fixed_expense_settings/${updatedFixedData.id}`,
+          updatedFixedData,
+        );
 
-const updateTransaction = (id, payload) => {
-  const index = state.transactions.findIndex(
-    (transaction) => transaction.id === id,
-  );
-  if (index === -1) {
-    return false;
-  }
+        if (res.status === 200 || res.status === 204) {
+          const index = this.fixedExpenseSettings.findIndex(
+            (item) => item.id === updatedFixedData.id,
+          );
+          if (index === -1) return false;
 
-  state.transactions[index] = {
-    ...state.transactions[index],
-    ...payload,
-    amount: Number(payload.amount ?? state.transactions[index].amount),
-    categoryId: Number(
-      payload.categoryId ?? state.transactions[index].categoryId,
-    ),
-  };
-  return true;
-};
+          this.fixedExpenseSettings[index] = {
+            ...this.fixedExpenseSettings[index],
+            ...updatedFixedData,
+            amount: Number(
+              updatedFixedData.amount ??
+                this.fixedExpenseSettings[index].amount,
+            ),
+            paymentDate: Number(
+              updatedFixedData.paymentDate ??
+                this.fixedExpenseSettings[index].paymentDate,
+            ),
+          };
 
-const deleteTransaction = (id) => {
-  const index = state.transactions.findIndex(
-    (transaction) => transaction.id === id,
-  );
-  if (index === -1) {
-    return false;
-  }
-  state.transactions.splice(index, 1);
-  return true;
-};
+          return true;
+        } else {
+          console.log("고정지출 설정 수정 실패");
+          return false;
+        }
+      } catch (e) {
+        console.log("고정지출 설정 수정 실패:", e);
+        return false;
+      }
+    },
 
-const buildRecentMonthKeys = (currentMonth) => {
-  const [year, month] = currentMonth.split("-").map(Number);
-  return Array.from({ length: 6 }).map((_, idx) => {
-    const date = new Date(year, month - 1 - (5 - idx), 1);
-    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
-  });
-};
+    //Delete - delete
+    async deleteFixed(id) {
+      try {
+        let res = await axios.delete(BASE_URL + `fixed_expense_settings/${id}`);
 
-const getMonthlyExpenseTrend = (currentMonth) =>
-  buildRecentMonthKeys(currentMonth).map((month) => ({
-    month,
-    expense: getMonthlySummary(month).expense,
-  }));
-
-const expenseCategories = computed(() =>
-  state.categories.filter((category) => category.type === "expense"),
-);
-const incomeCategories = computed(() =>
-  state.categories.filter((category) => category.type === "income"),
-);
-
-const getBudgetRows = (monthKey) => {
-  const monthlyCategorySpend = getMonthlyExpensesByCategory(monthKey);
-
-  return EXPENSE_CATEGORY_NAMES.map((name) => {
-    const category = state.categories.find((item) => item.name === name);
-    const budget = Number(state.categoryBudgets[category?.id] || 0);
-    const spent = Number(monthlyCategorySpend[name] || 0);
-    const usage = budget ? Math.round((spent / budget) * 100) : 0;
-
-    return {
-      categoryId: category?.id,
-      category: name,
-      budget,
-      spent,
-      usage,
-      remain: budget - spent,
-    };
-  });
-};
-
-const updateCategoryBudget = (categoryId, amount) => {
-  state.categoryBudgets[categoryId] = Number(amount) || 0;
-};
-
-const updateCategoryBudgetsBulk = (payload) => {
-  Object.entries(payload).forEach(([key, value]) => {
-    state.categoryBudgets[key] = Number(value) || 0;
-  });
-};
-
-export function useFinanceStore() {
-  return {
-    state,
-    expenseCategories,
-    incomeCategories,
-    monthlyBudgetTarget,
-    sortedTransactions,
-    formatCurrency,
-    getCategoryById,
-    getMonthlySummary,
-    getMonthlyExpensesByCategory,
-    getDailyTotals,
-    getTransactionsByDate,
-    getTransactionsByMonth,
-    getFixedExpenseSummary,
-    getFixedTransactionsByMonth,
-    addTransaction,
-    updateTransaction,
-    deleteTransaction,
-    getMonthlyExpenseTrend,
-    getBudgetRows,
-    updateCategoryBudget,
-    updateCategoryBudgetsBulk,
-  };
-}
+        if (res.status === 200) {
+          const index = this.fixedExpenseSetting.findIndex(
+            (item) => item.id === id,
+          );
+          if (index === -1) {
+            return false;
+          }
+          this.fixedExpenseSetting.splice(index, 1);
+          return;
+        } else {
+          console.log("고정지출 정보 삭제 실패");
+        }
+      } catch (e) {
+        console.log("고정지출 정보 삭제 : ", e);
+      }
+    },
+  },
+});
