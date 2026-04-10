@@ -60,7 +60,7 @@ const emit = defineEmits(['update:modelValue', 'saved']);
 const finance = useBudgetStores();
 const transactionStore = useFinanceStore();
 const {
-  getActiveBudgetByUserId,
+  getBudget,
   updateBudgetByUserId,
 } = finance;
 
@@ -79,7 +79,7 @@ const closeModal = () => {
 // 입력한 카테고리별 금액을 userId 기준 budgets 1건에 PUT 반영
 const saveBulkBudgets = async () => {
   try {
-    const currentUserId = transactionStore?.authStore?.userId || 'user123';
+    const currentUserId = transactionStore?.authState?.userId || 'user123';
     await updateBudgetByUserId(currentUserId, bulkForm);
     // 저장 완료를 부모에 알리고, 상위 화면에서 총예산 재조회 트리거
     emit('saved');
@@ -94,7 +94,7 @@ const saveBulkBudgets = async () => {
 const loadFormData = async () => {
   // 카테고리 목록과 예산 데이터를 동시에 조회
   const [budgetResult, categoriesResult] = await Promise.allSettled([
-    getActiveBudgetByUserId(transactionStore?.authStore?.userId || 'user123'),
+    getBudget(transactionStore?.authState?.userId || 'user123'),
     Promise.resolve({
       expense: Array.isArray(transactionStore?.categories?.expense)
         ? transactionStore.categories.expense
