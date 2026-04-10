@@ -217,7 +217,7 @@ export const useFinanceStore = defineStore("transactionList", () => {
   //Read - get
   const getFixed = async () => {
     try {
-      const userId = authStore.userId;
+      const userId = authState.userId;
       const query = userId ? `?userId=${userId}` : "";
       const res = await axios.get(BASE_URL + `fixed_expense_settings${query}`);
 
@@ -292,6 +292,51 @@ export const useFinanceStore = defineStore("transactionList", () => {
     }
   };
 
+  const getMonthlySummary = (monthKey) => {
+    const monthItems = transactions.value.filter(
+      (transaction) => toMonthKey(transaction.date) === monthKey,
+    );
+
+    let income = 0;
+    let expense = 0;
+
+    monthItems.forEach((tx) => {
+      const isExpense = tx.isExpense === true;
+      const amount = Number(tx.amount || 0);
+      if (isExpense) expense += amount;
+      else income += amount;
+    });
+
+    return {
+      income,
+      expense,
+      balance: income - expense,
+      count: monthItems.length,
+    };
+  };
+
+  const monthlyBudgetTarget = computed(() => {
+    const expenseIds = (categories?.expense || []).map((item) => item.id);
+    const sourceBudgets =
+      typeof state !== "undefined" && state?.categoryBudgets
+        ? state.categoryBudgets
+        : {};
+
+    const budgetSum = expenseIds.reduce(
+      (sum, id) => sum + Number(sourceBudgets[id] || 0),
+      0,
+    );
+
+    if (budgetSum > 0) {
+      return budgetSum;
+    }
+
+    return fixedExpenseSetting.value.reduce(
+      (sum, item) => sum + Number(item.amount || 0),
+      0,
+    );
+  });
+
   return {
     transactions,
     fixedExpenseSetting,
@@ -314,5 +359,7 @@ export const useFinanceStore = defineStore("transactionList", () => {
     getFixed,
     putFixed,
     deleteFixed,
+    getMonthlySummary,
+    monthlyBudgetTarget,
   };
 });
