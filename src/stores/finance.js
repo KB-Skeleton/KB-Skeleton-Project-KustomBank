@@ -8,7 +8,7 @@ const BASE_URL = "http://localhost:3000/";
 export const useFinanceStore = defineStore("transactionList", () => {
   const transactions = ref([]);
   const fixedExpenseSetting = ref([]);
-  const authStore = useAuthStores();
+  const { authState } = useAuthStores();
 
   const categories = reactive({
     expense: [
@@ -80,7 +80,7 @@ export const useFinanceStore = defineStore("transactionList", () => {
 
   //불필요한 지출 부분 매서드
   const getBerquiredOutcome = (userId) => {
-    const targetUserId = userId || authStore.userId;
+    const targetUserId = userId || authState.userId;
     return sortedTransactions.value.filter((transaction) => {
       const isExpense =
         transaction.type === "expense" || transaction.isExpense === true;
@@ -120,7 +120,7 @@ export const useFinanceStore = defineStore("transactionList", () => {
   //Read - get
   const getTransaction = async () => {
     try {
-      const userId = authStore.userId;
+      const userId = authState.userId;
       const query = userId ? `?userId=${userId}` : "";
       const res = await axios.get(BASE_URL + `transactions${query}`);
 
@@ -295,7 +295,6 @@ export const useFinanceStore = defineStore("transactionList", () => {
   return {
     transactions,
     fixedExpenseSetting,
-    authStore,
     categories,
     toMonthKey,
     toDate,

@@ -4,7 +4,7 @@ import { defineStore } from "pinia";
 export const useAuthStores = defineStore("authStore", () => {
   const authState = reactive({
     id: "",
-    userId: "",
+    userId: "user123",
     email: "",
     password: "",
     name: "",
