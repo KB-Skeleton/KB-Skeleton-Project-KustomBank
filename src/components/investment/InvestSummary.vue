@@ -21,7 +21,7 @@
         >
           <p class="small fw-bold text-secondary mb-1">불필요 지출 총액</p>
           <p class="summary-value fw-black mb-0 text-danger">
-            {{ formatCurrency(totalBerquiredExpenseAmount) }}
+            {{ financeStore.formatCurrency(totalBerquiredExpenseAmount) }}
           </p>
         </div>
       </div>
@@ -52,15 +52,19 @@
 
 <script setup>
 import { computed, onMounted } from "vue";
-import { useFinanceStore } from "@/stores/finance";
+import { useTransactionStore } from "@/stores/finance";
 import { useHotStock } from "@/stores/hotStock";
+import { useAuthStores } from "@/stores/auth";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { faAnglesRight } from "@fortawesome/free-solid-svg-icons";
 
-const { state, formatCurrency, getBerquiredOutcome } = useFinanceStore();
+const financeStore = useTransactionStore();
+const authStore = useAuthStores();
 const hotStockStore = useHotStock();
 
-const berquiredExpenses = computed(() => getBerquiredOutcome(state.userId));
+const berquiredExpenses = computed(() =>
+  financeStore.getBerquiredOutcome(authStore.userId),
+);
 
 const totalBerquiredExpenseAmount = computed(() =>
   berquiredExpenses.value.reduce(
@@ -69,13 +73,18 @@ const totalBerquiredExpenseAmount = computed(() =>
   ),
 );
 
-const berquiredExpenseCount = computed(() => berquiredExpenses.value.length);
+const berquiredExpenseCount = computed(() => {
+  console.log(financeStore.transactions);
+  return berquiredExpenses.value.length;
+});
 const isStockLoading = computed(() => hotStockStore.isFetching);
 
 onMounted(() => {
   if (!hotStockStore.hotStocks.length) {
     hotStockStore.handleFetchStockInfo();
   }
+
+  financeStore.getTransaction();
 });
 </script>
 

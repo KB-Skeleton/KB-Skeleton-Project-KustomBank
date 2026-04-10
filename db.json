@@ -1,21 +1,81 @@
 {
   "categories": {
     "expense": [
-      { "id": "exp_food", "name": "식비", "icon": "🍴", "color": "#FF6384" },
-      { "id": "exp_trans", "name": "교통", "icon": "🚌", "color": "#36A2EB" },
-      { "id": "exp_medical", "name": "의료/건강", "icon": "🏥", "color": "#FFCE56" },
-      { "id": "exp_hobby", "name": "취미/여가", "icon": "🎨", "color": "#4BC0C0" },
-      { "id": "exp_edu", "name": "자기계발/교육", "icon": "📚", "color": "#9966FF" },
-      { "id": "exp_shop", "name": "미용/쇼핑", "icon": "🛍️", "color": "#FF9F40" },
-      { "id": "exp_fixed", "name": "구독료/고정비", "icon": "📅", "color": "#C9CBCF" },
-      { "id": "exp_etc", "name": "기타", "icon": "🎸", "color": "#000000" }
+      {
+        "id": "exp_food",
+        "name": "식비",
+        "icon": "🍴",
+        "color": "#FF6384"
+      },
+      {
+        "id": "exp_trans",
+        "name": "교통",
+        "icon": "🚌",
+        "color": "#36A2EB"
+      },
+      {
+        "id": "exp_medical",
+        "name": "의료/건강",
+        "icon": "🏥",
+        "color": "#FFCE56"
+      },
+      {
+        "id": "exp_hobby",
+        "name": "취미/여가",
+        "icon": "🎨",
+        "color": "#4BC0C0"
+      },
+      {
+        "id": "exp_edu",
+        "name": "자기계발/교육",
+        "icon": "📚",
+        "color": "#9966FF"
+      },
+      {
+        "id": "exp_shop",
+        "name": "미용/쇼핑",
+        "icon": "🛍️",
+        "color": "#FF9F40"
+      },
+      {
+        "id": "exp_fixed",
+        "name": "구독료/고정비",
+        "icon": "📅",
+        "color": "#C9CBCF"
+      },
+      {
+        "id": "exp_etc",
+        "name": "기타",
+        "icon": "🎸",
+        "color": "#000000"
+      }
     ],
     "income": [
-      { "id": "inc_salary", "name": "급여", "icon": "💰" },
-      { "id": "inc_side", "name": "부수입", "icon": "📈" },
-      { "id": "inc_interest", "name": "이자/배당", "icon": "🏦" },
-      { "id": "inc_pocket", "name": "용돈", "icon": "🧧" },
-      { "id": "inc_etc", "name": "기타", "icon": "🏷️" }
+      {
+        "id": "inc_salary",
+        "name": "급여",
+        "icon": "💰"
+      },
+      {
+        "id": "inc_side",
+        "name": "부수입",
+        "icon": "📈"
+      },
+      {
+        "id": "inc_interest",
+        "name": "이자/배당",
+        "icon": "🏦"
+      },
+      {
+        "id": "inc_pocket",
+        "name": "용돈",
+        "icon": "🧧"
+      },
+      {
+        "id": "inc_etc",
+        "name": "기타",
+        "icon": "🏷️"
+      }
     ]
   },
   "users": [
@@ -29,6 +89,7 @@
   ],
   "transactions": [
     {
+      "isRequired": false,
       "id": 1,
       "userId": "user123",
       "isExpense": true,
@@ -40,6 +101,7 @@
       "description": "점심 돈까스"
     },
     {
+      "isRequired": false,
       "id": 2,
       "userId": "user123",
       "isExpense": true,
@@ -51,6 +113,7 @@
       "description": "넷플릭스 구독료"
     },
     {
+      "isRequired": false,
       "id": 3,
       "userId": "user123",
       "isExpense": false,
@@ -58,6 +121,90 @@
       "amount": 3000000,
       "date": "2024-04-25",
       "description": "4월 급여"
+    },
+    {
+      "id": 4,
+      "userId": "user123",
+      "isExpense": true,
+      "categoryId": "exp_trans",
+      "amount": 1450,
+      "date": "2026-04-02",
+      "isFixed": false,
+      "paymentDate": null,
+      "description": "지하철 이용",
+      "isRequired": true
+    },
+    {
+      "id": 5,
+      "userId": "user123",
+      "isExpense": true,
+      "categoryId": "exp_hobby",
+      "amount": 32000,
+      "date": "2026-04-03",
+      "isFixed": false,
+      "paymentDate": null,
+      "description": "영화 관람",
+      "isRequired": false
+    },
+    {
+      "id": 6,
+      "userId": "user123",
+      "isExpense": false,
+      "categoryId": "inc_side",
+      "amount": 120000,
+      "date": "2026-04-04",
+      "isFixed": false,
+      "paymentDate": null,
+      "description": "주말 알바 수익",
+      "isRequired": false
+    },
+    {
+      "id": 7,
+      "userId": "user123",
+      "isExpense": true,
+      "categoryId": "exp_shop",
+      "amount": 54000,
+      "date": "2026-04-05",
+      "isFixed": false,
+      "paymentDate": null,
+      "description": "의류 구매",
+      "isRequired": false
+    },
+    {
+      "id": 8,
+      "userId": "user123",
+      "isExpense": true,
+      "categoryId": "exp_food",
+      "amount": 9800,
+      "date": "2026-04-06",
+      "isFixed": false,
+      "paymentDate": null,
+      "description": "카페 음료",
+      "isRequired": false
+    },
+    {
+      "id": 9,
+      "userId": "user123",
+      "isExpense": true,
+      "categoryId": "exp_medical",
+      "amount": 21000,
+      "date": "2026-04-07",
+      "isFixed": false,
+      "paymentDate": null,
+      "description": "약국 구매",
+      "isRequired": true
+    },
+    {
+      "id": 10,
+      "userId": "user123",
+      "isExpense": true,
+      "categoryId": "exp_etc",
+      "amount": 17000,
+      "date": "2026-04-08",
+      "isFixed": false,
+      "paymentDate": null,
+      "description": "기타 생활용품",
+      "isRequired": false
     }
   ],
   "budgets": [

@@ -18,7 +18,7 @@
             </button>
           </RouterLink>
           <p class="mb-0 fw-black text-danger">
-            총 {{ formatCurrency(totalAmount) }}
+            총 {{ transactionStore.formatCurrency(totalAmount) }}
           </p>
         </div>
       </div>
@@ -42,7 +42,7 @@
               </p>
             </div>
             <p class="mb-0 fw-black text-danger">
-              {{ formatCurrency(item.amount) }}
+              {{ transactionStore.formatCurrency(item.amount) }}
             </p>
           </div>
         </div>
@@ -61,19 +61,20 @@
 
 <script setup>
 import { computed } from "vue";
-import { useFinanceStore } from "@/stores/finance";
+import { useTransactionStore } from "@/stores/finance";
+import { useAuthStores } from "@/stores/auth";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { faAnglesLeft } from "@fortawesome/free-solid-svg-icons";
 
-const {
-  state,
-  formatCurrency,
-  getBerquiredOutcome,
-  getBerquiredOutcomeAmount,
-} = useFinanceStore();
+const transactionStore = useTransactionStore();
+const authStore = useAuthStores();
 
-const beRequiredList = computed(() => getBerquiredOutcome(state.userId));
-const totalAmount = computed(() => getBerquiredOutcomeAmount(state.userId));
+const beRequiredList = computed(() =>
+  transactionStore.getBerquiredOutcome(authStore.userId),
+);
+const totalAmount = computed(() =>
+  transactionStore.getBerquiredOutcomeAmount(authStore.userId),
+);
 </script>
 
 <style scoped>

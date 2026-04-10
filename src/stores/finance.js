@@ -1,6 +1,8 @@
 import { computed, reactive } from "vue";
 import { useAuthStores } from "./auth";
 import axios from "axios";
+import { defineStore } from "pinia";
+
 const BASE_URL = "http://localhost:3000/";
 
 export const useTransactionStore = defineStore("transactionList", {
@@ -44,13 +46,6 @@ export const useTransactionStore = defineStore("transactionList", {
       return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
     },
 
-    formatCurrency: () => (amount) =>
-      new Intl.NumberFormat("ko-KR", {
-        style: "currency",
-        currency: "KRW",
-        maximumFractionDigits: 0,
-      }).format(amount || 0),
-
     sortedTransactions() {
       const allCategories = [
         ...this.categories.expense,
@@ -76,21 +71,23 @@ export const useTransactionStore = defineStore("transactionList", {
       state.categories.find((category) => category.id === Number(categoryId)) ||
       null,
 
+    expenseCategories: (state) => state.categories.expense,
+    incomeCategories: (state) => state.categories.income,
+
     //불필요한 지출 부분 매서드
     getBerquiredOutcome() {
-      return (userId) =>
-        this.sortedTransactions.filter(
+      return () =>
+        this.transactions.filter(
           (transaction) =>
-            transaction.userId === userId &&
             transaction.isRequired === false &&
-            transaction.type === "expense" &&
-            this.toMonthKey(transaction.date) === this.getCurrentMonthKey(),
+            transaction.isExpense === true &&
+            this.toMonthKey(transaction.date) === this.getCurrentMonthKey,
         );
     },
 
     getBerquiredOutcomeAmount() {
-      return (userId) =>
-        this.getBerquiredOutcome(userId).reduce(
+      return () =>
+        this.getBerquiredOutcome().reduce(
           (sum, transaction) => sum + Number(transaction.amount || 0),
           0,
         );
@@ -119,7 +116,10 @@ export const useTransactionStore = defineStore("transactionList", {
     async getTransaction() {
       try {
         let userId = this.authStore.userId;
+        console.log("get 시작");
         let res = await axios.get(BASE_URL + `transactions?userId=${userId}`);
+
+        console.log(res.status + "\n" + res.data);
 
         if (res.status === 200) {
           this.transactions = res.data;
@@ -285,6 +285,14 @@ export const useTransactionStore = defineStore("transactionList", {
       } catch (e) {
         console.log("고정지출 정보 삭제 : ", e);
       }
+    },
+
+    formatCurrency(amount) {
+      return new Intl.NumberFormat("ko-KR", {
+        style: "currency",
+        currency: "KRW",
+        maximumFractionDigits: 0,
+      }).format(amount || 0);
     },
   },
 });
