@@ -36,11 +36,27 @@
           :key="row.category"
           class="comparison-row"
         >
-          <span class="fw-semibold kb-text-charcoal">{{ row.category }}</span>
-          <span class="text-secondary">{{ formatCurrency(row.previous) }}</span>
-          <span class="text-secondary">{{ formatCurrency(row.current) }}</span>
+          <span class="comparison-cell cell-category fw-semibold kb-text-charcoal">
+            {{ row.category }}
+          </span>
           <span
-            :class="row.diff >= 0 ? 'text-danger fw-bold' : 'text-primary fw-bold'"
+            class="comparison-cell cell-previous text-secondary"
+            :data-label="`${previousMonthLabel}월`"
+          >
+            {{ formatCurrency(row.previous) }}
+          </span>
+          <span
+            class="comparison-cell cell-current text-secondary"
+            :data-label="`${currentMonthLabel}월`"
+          >
+            {{ formatCurrency(row.current) }}
+          </span>
+          <span
+            :class="[
+              'comparison-cell cell-diff',
+              row.diff >= 0 ? 'text-danger fw-bold' : 'text-primary fw-bold',
+            ]"
+            data-label="변화"
           >
             {{ row.diff >= 0 ? '+' : '' }}{{ formatCurrency(row.diff) }}
           </span>
@@ -164,6 +180,13 @@ const closeModal = () => {
 }
 
 @media (max-width: 575.98px) {
+  .comparison-modal {
+    width: min(90vw, 560px);
+    max-height: 80vh;
+    overflow-y: auto;
+    padding: 1rem;
+  }
+
   .comparison-head,
   .comparison-row {
     grid-template-columns: 1fr;
@@ -180,6 +203,31 @@ const closeModal = () => {
     padding: 0.65rem;
     margin-bottom: 0.5rem;
     background: #fff;
+  }
+
+  .comparison-cell {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.6rem;
+    font-size: 0.88rem;
+  }
+
+  .cell-category {
+    display: block;
+    font-size: 0.92rem;
+    margin-bottom: 0.2rem;
+    padding-bottom: 0.35rem;
+    border-bottom: 1px dashed rgba(34, 34, 34, 0.12);
+  }
+
+  .cell-previous::before,
+  .cell-current::before,
+  .cell-diff::before {
+    content: attr(data-label);
+    font-size: 0.78rem;
+    color: #6b7280;
+    font-weight: 700;
   }
 }
 </style>
