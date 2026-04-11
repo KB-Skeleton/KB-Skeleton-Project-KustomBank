@@ -122,7 +122,6 @@ const menu = [
     font-size: 0.75rem;
   }
 
-  /* 부트스트랩의 'me-2'(우측 마진) 속성을 덮어쓰고, 아래쪽 마진으로 변경 */
   .kb-nav-item span:first-child {
     margin-right: 0 !important;
     margin-bottom: 4px;
