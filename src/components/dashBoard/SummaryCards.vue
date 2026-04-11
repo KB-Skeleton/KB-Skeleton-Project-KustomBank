@@ -116,18 +116,11 @@ const fixedSummary = computed(() => {
     (sum, item) => sum + Number(item.amount || 0),
     0,
   );
-  console.log(fixedExpenseSetting);
-  console.log(totalFixed);
 
   return {
     spentFixed,
     totalFixed,
     usage: totalFixed > 0 ? Math.round((spentFixed / totalFixed) * 100) : 0,
   };
-});
-
-onMounted(() => {
-  getTransaction();
-  getFixed();
 });
 </script>

@@ -23,9 +23,9 @@
 <script setup>
 import { useFinanceStore } from "@/stores/finance";
 import ProgressBar from "../common/ProgressBar.vue";
-import { computed, onMounted } from "vue";
+import { computed } from "vue";
 
-const { formatCurrency, getMonthlySummary, getTransaction } = useFinanceStore();
+const { formatCurrency, getMonthlySummary } = useFinanceStore();
 
 const currentMonth = new Date().toISOString().slice(0, 7);
 const monthLabel = currentMonth.replace("-", "년 ") + "월";
@@ -37,8 +37,4 @@ const monthlyBudgetTarget = 1000000;
 const budgetUsage = computed(() =>
   Math.round((summary.value.expense / monthlyBudgetTarget) * 100 || 0),
 );
-
-onMounted(() => {
-  getTransaction();
-});
 </script>

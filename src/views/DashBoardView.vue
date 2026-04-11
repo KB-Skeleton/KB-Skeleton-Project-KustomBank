@@ -13,7 +13,7 @@
       <div class="col-12 col-xl-6">
         <article
           class="kb-panel kb-clickable"
-          @click="router.push('/statistics')"
+          @click="router.push('/monthly-spending')"
         >
           <ExpenseDonutChart></ExpenseDonutChart>
         </article>
@@ -30,10 +30,19 @@
 </template>
 <script setup>
 import { useRouter } from "vue-router";
+import { onMounted } from "vue";
 import BudgetProgress from "@/components/dashBoard/BudgetProgress.vue";
 import SummaryCards from "@/components/dashBoard/SummaryCards.vue";
 import ExpenseDonutChart from "@/components/dashBoard/ExpenseDonutChart.vue";
 import RecentTransactions from "@/components/dashBoard/RecentTransactions.vue";
 
+import { useFinanceStore } from "@/stores/finance";
+const { getTransaction, getFixed } = useFinanceStore();
+
 const router = useRouter();
+
+onMounted(() => {
+  getTransaction();
+  getFixed();
+});
 </script>

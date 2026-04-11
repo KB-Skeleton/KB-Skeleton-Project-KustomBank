@@ -228,7 +228,6 @@ export const useFinanceStore = defineStore("transactionList", () => {
       const res = await axios.get(BASE_URL + `fixed_expense_settings${query}`);
 
       if (res.status === 200) {
-        console.log(res.data);
         fixedExpenseSetting.value = res.data;
         return true;
       }
@@ -325,6 +324,26 @@ export const useFinanceStore = defineStore("transactionList", () => {
     };
   };
 
+  //월별 카테고리별 지출 메서드
+  const getMonthlyExpensesByCategory = (monthKey) => {
+    const totals = {};
+
+    transactions.value
+      .filter((transaction) => {
+        return (
+          toMonthKey(transaction.date) === monthKey &&
+          transaction.isExpense === true
+        );
+      })
+      .forEach((transaction) => {
+        const categoryName =
+          getCategoryById(transaction.categoryId)?.name || "기타";
+        totals[categoryName] = (totals[categoryName] || 0) + transaction.amount;
+      });
+
+    return totals;
+  };
+
   //예산 임시 매서드 예산 연동 후 삭제 예정
   const monthlyBudgetTarget = computed(() => {
     const expenseIds = (categories?.expense || []).map((item) => item.id);
@@ -372,5 +391,6 @@ export const useFinanceStore = defineStore("transactionList", () => {
     deleteFixed,
     getMonthlySummary,
     monthlyBudgetTarget,
+    getMonthlyExpensesByCategory,
   };
 });
