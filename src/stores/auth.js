@@ -15,7 +15,6 @@ const createInitialAuthState = () => ({
   name: "",
   phone: "",
 });
-<<<<<<< HEAD
 
 const normalizeUser = (user) => ({
   id: user?.id ?? "",
@@ -25,8 +24,6 @@ const normalizeUser = (user) => ({
   name: user?.name ?? "",
   phone: user?.phone ?? "",
 });
-=======
->>>>>>> origin/develop
 
 export const useAuthStores = defineStore("authStore", () => {
   const authState = reactive(createInitialAuthState());
@@ -36,16 +33,7 @@ export const useAuthStores = defineStore("authStore", () => {
   const isAuthenticated = computed(() => Boolean(accessToken.value));
 
   const setUser = (user) => {
-<<<<<<< HEAD
     Object.assign(authState, normalizeUser(user));
-=======
-    authState.id = user?.id ?? "";
-    authState.userId = user?.userId ?? "";
-    authState.email = user?.email ?? "";
-    authState.password = user?.password ?? "";
-    authState.name = user?.name ?? "";
-    authState.phone = user?.phone ?? "";
->>>>>>> origin/develop
   };
 
   const clearAuthState = () => {
