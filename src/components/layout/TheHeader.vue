@@ -59,7 +59,13 @@ const router = useRouter();
 const authStore = useAuthStores();
 
 const buttonLabel = computed(() =>
+<<<<<<< HEAD
   authStore.authState.name ? `${authStore.authState.name} \uB2D8` : "내 프로필",
+=======
+  authStore.authState.name
+    ? `${authStore.authState.name} \uB2D8`
+    : "My Profile",
+>>>>>>> origin/develop
 );
 
 const goToProfile = () => {
