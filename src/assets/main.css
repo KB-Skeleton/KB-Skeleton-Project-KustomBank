@@ -361,7 +361,98 @@ body {
   color: #dc3545;
 }
 
-.kb-calendar-cell {
-  aspect-ratio: 1 / 1;
-  min-height: 0;
+.kb-mobile-dots {
+  display: none;
+  gap: 3px;
+}
+.kb-mobile-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 999px;
+  display: inline-block;
+}
+.kb-mobile-dot.dot-income {
+  background: #0ea5e9;
+}
+.kb-mobile-dot.dot-expense {
+  background: #dc2626;
+}
+
+@media (max-width: 767px) {
+  .kb-month-meta p {
+    display: none;
+  }
+  .kb-mobile-dots {
+    display: flex;
+  }
+  .kb-month-day {
+    font-size: 0.7rem;
+  }
+  .kb-month-cell {
+    border-radius: 0.4rem;
+    padding: 0.25rem;
+  }
+
+  .kb-month-grid {
+    gap: 0.25rem;
+  }
+  .kb-toggle-btn {
+    padding: 0.2rem 0.5rem;
+    font-size: 0.6rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .kb-month-meta p {
+    display: block;
+    font-size: clamp(0.6rem, 1.2vw, 1rem);
+  }
+  .kb-month-day {
+    font-size: clamp(0.9rem, 1.8vw, 1.3rem);
+  }
+}
+
+@media (min-width: 1024px) {
+  .kb-month-meta p {
+    font-size: clamp(0.9rem, 1vw, 1.2rem);
+  }
+  .kb-month-day {
+    font-size: clamp(1rem, 1.5vw, 1.5rem);
+  }
+}
+
+.kb-disabled {
+  opacity: 40%;
+  pointer-events: none;
+}
+
+.kb-transaction-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border: 1px solid rgba(34, 34, 34, 0.1);
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.98);
+  box-shadow: 0 8px 18px rgba(34, 34, 34, 0.06);
+  transition: transform 0.2s ease;
+  margin-bottom: 0.75rem;
+}
+
+.kb-transaction-info .title {
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+  color: var(--kb-charcoal);
+}
+
+.kb-transaction-info .category {
+  font-size: 0.85rem;
+  color: #6c757d;
+  margin-bottom: 0;
+}
+
+.kb-transaction-amount {
+  font-weight: 800;
+  font-size: 1.1rem;
+  text-align: right;
 }
