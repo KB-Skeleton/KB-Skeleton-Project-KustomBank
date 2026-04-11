@@ -167,9 +167,13 @@ onMounted(async () => {
 <style scoped>
 .category-layout {
   display: grid;
-  grid-template-columns: 17.5rem 1fr;
+  grid-template-columns: minmax(14rem, 17.5rem) minmax(0, 1fr);
   align-items: center;
   gap: 1rem;
+}
+
+.category-layout > * {
+  min-width: 0;
 }
 
 .donut-wrap {
@@ -198,6 +202,13 @@ onMounted(async () => {
   justify-content: center;
   flex-direction: column;
   text-align: center;
+}
+
+/* 중간 폭에서 오른쪽 카드 영역이 과도하게 좁아지는 구간을 미리 방지 */
+@media (max-width: 1199.98px) {
+  .category-layout {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 991.98px) {
