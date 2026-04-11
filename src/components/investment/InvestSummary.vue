@@ -27,8 +27,12 @@
       </div>
 
       <div class="col">
-        <div class="summary-stat-card rounded-3 p-4 text-end">
-          <p class="small fw-bold text-secondary mb-1">불필요 지출 건수</p>
+        <div
+          class="summary-stat-card summary-stat-count rounded-3 p-4 text-end"
+        >
+          <p class="summary-label small fw-bold text-secondary mb-1">
+            불필요 지출 건수
+          </p>
           <p class="summary-value fw-black mb-0 kb-text-charcoal">
             {{ berquiredExpenseCount }}건
           </p>
@@ -107,6 +111,10 @@ onMounted(() => {
   line-height: 1.2;
 }
 
+.summary-label {
+  min-height: 1.25rem;
+}
+
 .summary-arrow-btn {
   padding: 0.45rem 0.8rem;
   font-size: 0.8rem;
@@ -136,5 +144,28 @@ onMounted(() => {
   border-radius: 0.75rem;
   padding: 0.65rem 0.85rem;
   background: rgba(255, 255, 255, 0.6);
+}
+
+@media (max-width: 768px) {
+  .invest-summary .row {
+    --bs-gutter-y: 0.5rem;
+  }
+
+  .summary-stat-card {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0.1rem !important;
+  }
+
+  .summary-stat-count {
+    text-align: left !important;
+  }
+
+  .summary-value {
+    line-height: 1.1;
+    min-height: 1.2em;
+  }
 }
 </style>
