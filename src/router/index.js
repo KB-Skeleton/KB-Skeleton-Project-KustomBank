@@ -9,11 +9,14 @@ import LogInOut from "@/views/LogInOut.vue";
 import MonthlyTransactionView from "@/views/MonthlyTransactionView.vue";
 import ProfileView from "../views/ProfileView.vue";
 import BeRequiredView from "@/views/BeRequiredView.vue";
+import { useAuthStores } from "@/stores/auth";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
-    { path: "/", name: "dashboard", component: DashBoardView },
+    { path: "/", redirect: "/dashboard" },
+    { path: "/login", name: "login", component: LogInOut, meta: { public: true } }, // 로그인 페이지 추가 #1
+    { path: "/dashboard", name: "dashboard", component: DashBoardView },
     {
       path: "/monthly-spending",
       name: "monthly-spending",
@@ -30,7 +33,29 @@ const router = createRouter({
       component: FixedExpensesView,
     },
     { path: "/calendar", redirect: "/monthly-spending" },
+    { path: "/:pathMatch(.*)*", redirect: "/dashboard" },
   ],
+});
+
+router.beforeEach((to) => {
+  const authStore = useAuthStores();
+  authStore.restoreAuth();
+
+  const isPublicRoute = to.meta.public === true;
+  if (!authStore.isAuthenticated && !isPublicRoute) {
+    const redirect =
+      to.fullPath && to.fullPath !== "/dashboard" ? { redirect: to.fullPath } : {};
+
+    return { name: "login", query: redirect };
+  }
+
+  if (authStore.isAuthenticated && to.name === "login") {
+    const target =
+      typeof to.query.redirect === "string" ? to.query.redirect : "/dashboard";
+    return target;
+  }
+
+  return true;
 });
 
 export default router;
