@@ -151,6 +151,7 @@ const handleReset = () => {
   border: none;
   background: transparent;
   padding: 10px 0;
+  font-size: 1rem;
   font-weight: 700;
   color: #666;
   border-radius: 10px;

@@ -99,7 +99,15 @@ const deleteTransaction = async (id) => {
 .responsive-layout {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 0.3rem;
+}
+
+.filter-section {
+  order: 1;
+}
+
+.list-section {
+  order: 2;
 }
 
 @media (min-width: 992px) {
@@ -111,8 +119,13 @@ const deleteTransaction = async (id) => {
   }
 
   .filter-section {
+    order: 2;
     position: sticky;
     top: 20px;
+  }
+
+  .list-section {
+    order: 1;
   }
 }
 </style>
