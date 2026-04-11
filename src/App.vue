@@ -1,24 +1,36 @@
 <template>
   <div class="kb-bg">
-    <TheHeader />
+    <template v-if="isLoginPage">
+      <main class="container-xxl py-4">
+        <RouterView />
+      </main>
+    </template>
 
-    <div class="container-xxl py-3">
-      <div class="row g-3">
-        <TheSideBar />
+    <template v-else>
+      <TheHeader />
 
-        <main class="col-12 col-lg-9 col-xl-10 custom-main">
-          <RouterView />
-        </main>
+      <div class="container-xxl py-3">
+        <div class="row g-3">
+          <TheSideBar />
+
+          <main class="col-12 col-lg-9 col-xl-10 custom-main">
+            <RouterView />
+          </main>
+        </div>
       </div>
-    </div>
+    </template>
   </div>
 </template>
 
 <script setup>
-import { RouterView } from "vue-router";
+import { computed } from "vue";
+import { RouterView, useRoute } from "vue-router";
 
 import TheHeader from "./components/layout/TheHeader.vue";
 import TheSideBar from "./components/layout/TheSideBar.vue";
+
+const route = useRoute();
+const isLoginPage = computed(() => route.path === "/login");
 </script>
 
 <style>
