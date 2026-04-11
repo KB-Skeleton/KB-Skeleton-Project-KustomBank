@@ -1,55 +1,60 @@
-import { computed, reactive, ref } from "vue";
-import { defineStore } from "pinia";
-import axios from "axios";
-import { useAuthStores } from "./auth";
+import { computed, reactive, ref } from 'vue';
+import { defineStore } from 'pinia';
+import axios from 'axios';
+import { useAuthStores } from './auth';
 
-const BASE_URL = "http://localhost:3000/";
+const BASE_URL = 'http://localhost:3000/';
 
-export const useFinanceStore = defineStore("transactionList", () => {
+export const useFinanceStore = defineStore('transactionList', () => {
   const transactions = ref([]);
   const fixedExpenseSetting = ref([]);
   const { authState } = useAuthStores();
 
+  const state = reactive({
+    currentMonth: new Date().toISOString().slice(0, 7),
+    viewMode: 'calendar',
+    selectedDate: new Date().toISOString().slice(0, 10),
+  });
   const categories = reactive({
     expense: [
-      { id: "exp_food", name: "식비", icon: "🍴", color: "#FF6384" },
-      { id: "exp_trans", name: "교통", icon: "🚌", color: "#36A2EB" },
-      { id: "exp_medical", name: "의료/건강", icon: "🏥", color: "#FFCE56" },
-      { id: "exp_hobby", name: "취미/여가", icon: "🎨", color: "#4BC0C0" },
-      { id: "exp_edu", name: "자기계발/교육", icon: "📚", color: "#9966FF" },
-      { id: "exp_shop", name: "미용/쇼핑", icon: "🛍️", color: "#FF9F40" },
+      { id: 'exp_food', name: '식비', icon: '🍴', color: '#FF6384' },
+      { id: 'exp_trans', name: '교통', icon: '🚌', color: '#36A2EB' },
+      { id: 'exp_medical', name: '의료/건강', icon: '🏥', color: '#FFCE56' },
+      { id: 'exp_hobby', name: '취미/여가', icon: '🎨', color: '#4BC0C0' },
+      { id: 'exp_edu', name: '자기계발/교육', icon: '📚', color: '#9966FF' },
+      { id: 'exp_shop', name: '미용/쇼핑', icon: '🛍️', color: '#FF9F40' },
       {
-        id: "exp_fixed",
-        name: "구독료/고정비",
-        icon: "📅",
-        color: "#C9CBCF",
+        id: 'exp_fixed',
+        name: '구독료/고정비',
+        icon: '📅',
+        color: '#C9CBCF',
       },
-      { id: "exp_etc", name: "기타", icon: "🎸", color: "#000000" },
+      { id: 'exp_etc', name: '기타', icon: '🎸', color: '#000000' },
     ],
     income: [
-      { id: "inc_salary", name: "급여", icon: "💰" },
-      { id: "inc_side", name: "부수입", icon: "📈" },
-      { id: "inc_interest", name: "이자/배당", icon: "🏦" },
-      { id: "inc_pocket", name: "용돈", icon: "🧧" },
-      { id: "inc_etc", name: "기타", icon: "🏷️" },
+      { id: 'inc_salary', name: '급여', icon: '💰' },
+      { id: 'inc_side', name: '부수입', icon: '📈' },
+      { id: 'inc_interest', name: '이자/배당', icon: '🏦' },
+      { id: 'inc_pocket', name: '용돈', icon: '🧧' },
+      { id: 'inc_etc', name: '기타', icon: '🏷️' },
     ],
   });
 
   //공용 매서드 (데이터 포맷팅, 정렬 등)
-  const toMonthKey = (dateString) => String(dateString || "").slice(0, 7);
+  const toMonthKey = (dateString) => String(dateString || '').slice(0, 7);
   const toDate = (value) => new Date(`${value}T00:00:00`);
 
   //월 키
   const getCurrentMonthKey = computed(() => {
     const now = new Date();
-    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
   });
 
   //원화 형태 포맷팅 매서드
   const formatCurrency = (amount) =>
-    new Intl.NumberFormat("ko-KR", {
-      style: "currency",
-      currency: "KRW",
+    new Intl.NumberFormat('ko-KR', {
+      style: 'currency',
+      currency: 'KRW',
       maximumFractionDigits: 0,
     }).format(Number(amount || 0));
 
@@ -64,10 +69,10 @@ export const useFinanceStore = defineStore("transactionList", () => {
         );
         return {
           ...transaction,
-          categoryName: category?.name || "기타",
+          categoryName: category?.name || '기타',
           title: transaction.description,
-          category: category?.name || "기타",
-          note: transaction.isFixed ? "고정지출" : "변동지출",
+          category: category?.name || '기타',
+          note: transaction.isFixed ? '고정지출' : '변동지출',
         };
       });
   });
@@ -88,7 +93,7 @@ export const useFinanceStore = defineStore("transactionList", () => {
     const targetUserId = userId || authState.userId;
     return sortedTransactions.value.filter((transaction) => {
       const isExpense =
-        transaction.type === "expense" || transaction.isExpense === true;
+        transaction.type === 'expense' || transaction.isExpense === true;
       return (
         transaction.userId === targetUserId &&
         (transaction.isRequired ?? false) === false &&
@@ -103,21 +108,31 @@ export const useFinanceStore = defineStore("transactionList", () => {
       (sum, transaction) => sum + Number(transaction.amount || 0),
       0,
     );
-  //---------------------------------------------------------------------------
+
+  const setCurrentMonth = (monthKey) => {
+    state.currentMonth = monthKey;
+  };
+  const setSelectedDate = (date) => {
+    state.selectedDate = date;
+  };
+  const setViewMode = (mode) => {
+    state.viewMode = mode;
+  };
+
   //Transaction CRUD-------------------------------------------
   //Create - post
   const postTransaction = async (transaction) => {
     try {
-      const res = await axios.post(BASE_URL + "transactions", transaction);
+      const res = await axios.post(BASE_URL + 'transactions', transaction);
 
       if (res.status === 201) {
         transactions.value.push(res.data ?? transaction);
         return true;
       }
-      console.log("거래 내역 추가 실패");
+      console.log('거래 내역 추가 실패');
       return false;
     } catch (e) {
-      console.log("거래 내역 추가 실패 : ", e);
+      console.log('거래 내역 추가 실패 : ', e);
       return false;
     }
   };
@@ -126,19 +141,39 @@ export const useFinanceStore = defineStore("transactionList", () => {
   const getTransaction = async () => {
     try {
       const userId = authState.userId;
-      const query = userId ? `?userId=${userId}` : "";
+      const query = userId ? `?userId=${userId}` : '';
       const res = await axios.get(BASE_URL + `transactions${query}`);
 
       if (res.status === 200) {
         transactions.value = res.data;
         return true;
       }
-      console.log("거래 조회 실패");
+      console.log('거래 조회 실패');
       return false;
     } catch (e) {
-      console.log("거래 조회 실패 : ", e);
+      console.log('거래 조회 실패 : ', e);
       return false;
     }
+  };
+
+  const getTransactionsByDate = (dateString) =>
+    sortedTransactions.value.filter((t) => t.date === dateString);
+
+  const getTransactionsByMonth = (monthKey) => {
+    return sortedTransactions.value.filter(
+      (t) => toMonthKey(t.date) === monthKey,
+    );
+  };
+
+  const getDailyTotals = (monthKey) => {
+    const totals = {};
+    transactions.value
+      .filter((t) => toMonthKey(t.date) === monthKey)
+      .forEach((t) => {
+        if (!totals[t.date]) totals[t.date] = { income: 0, expense: 0 };
+        totals[t.date][t.type] += t.amount;
+      });
+    return totals;
   };
 
   //Update - put
@@ -169,10 +204,10 @@ export const useFinanceStore = defineStore("transactionList", () => {
         };
         return true;
       }
-      console.log("거래 정보 수정 실패");
+      console.log('거래 정보 수정 실패');
       return false;
     } catch (e) {
-      console.log("거래 정보 수정 실패 : ", e);
+      console.log('거래 정보 수정 실패 : ', e);
       return false;
     }
   };
@@ -190,10 +225,10 @@ export const useFinanceStore = defineStore("transactionList", () => {
         transactions.value.splice(index, 1);
         return true;
       }
-      console.log("거래 정보 삭제 실패");
+      console.log('거래 정보 삭제 실패');
       return false;
     } catch (e) {
-      console.log("거래 정보 삭제 : ", e);
+      console.log('거래 정보 삭제 : ', e);
       return false;
     }
   };
@@ -204,7 +239,7 @@ export const useFinanceStore = defineStore("transactionList", () => {
   const postFixed = async (fixedData) => {
     try {
       const res = await axios.post(
-        BASE_URL + "fixed_expense_settings",
+        BASE_URL + 'fixed_expense_settings',
         fixedData,
       );
 
@@ -212,10 +247,10 @@ export const useFinanceStore = defineStore("transactionList", () => {
         fixedExpenseSetting.value.push(res.data ?? fixedData);
         return true;
       }
-      console.log("고정지출 정보 추가 실패");
+      console.log('고정지출 정보 추가 실패');
       return false;
     } catch (e) {
-      console.log("고정지출 정보 추가 실패 : ", e);
+      console.log('고정지출 정보 추가 실패 : ', e);
       return false;
     }
   };
@@ -224,17 +259,17 @@ export const useFinanceStore = defineStore("transactionList", () => {
   const getFixed = async () => {
     try {
       const userId = authState.userId;
-      const query = userId ? `?userId=${userId}` : "";
+      const query = userId ? `?userId=${userId}` : '';
       const res = await axios.get(BASE_URL + `fixed_expense_settings${query}`);
 
       if (res.status === 200) {
         fixedExpenseSetting.value = res.data;
         return true;
       }
-      console.log("고정지출 조회 실패");
+      console.log('고정지출 조회 실패');
       return false;
     } catch (e) {
-      console.log("고정지출 조회 실패 : ", e);
+      console.log('고정지출 조회 실패 : ', e);
       return false;
     }
   };
@@ -267,10 +302,10 @@ export const useFinanceStore = defineStore("transactionList", () => {
 
         return true;
       }
-      console.log("고정지출 설정 수정 실패");
+      console.log('고정지출 설정 수정 실패');
       return false;
     } catch (e) {
-      console.log("고정지출 설정 수정 실패:", e);
+      console.log('고정지출 설정 수정 실패:', e);
       return false;
     }
   };
@@ -290,10 +325,10 @@ export const useFinanceStore = defineStore("transactionList", () => {
         fixedExpenseSetting.value.splice(index, 1);
         return true;
       }
-      console.log("고정지출 정보 삭제 실패");
+      console.log('고정지출 정보 삭제 실패');
       return false;
     } catch (e) {
-      console.log("고정지출 정보 삭제 : ", e);
+      console.log('고정지출 정보 삭제 : ', e);
       return false;
     }
   };
@@ -337,7 +372,7 @@ export const useFinanceStore = defineStore("transactionList", () => {
       })
       .forEach((transaction) => {
         const categoryName =
-          getCategoryById(transaction.categoryId)?.name || "기타";
+          getCategoryById(transaction.categoryId)?.name || '기타';
         totals[categoryName] = (totals[categoryName] || 0) + transaction.amount;
       });
 
@@ -348,7 +383,7 @@ export const useFinanceStore = defineStore("transactionList", () => {
   const monthlyBudgetTarget = computed(() => {
     const expenseIds = (categories?.expense || []).map((item) => item.id);
     const sourceBudgets =
-      typeof state !== "undefined" && state?.categoryBudgets
+      typeof state !== 'undefined' && state?.categoryBudgets
         ? state.categoryBudgets
         : {};
 
@@ -368,6 +403,7 @@ export const useFinanceStore = defineStore("transactionList", () => {
   });
 
   return {
+    state,
     transactions,
     fixedExpenseSetting,
     categories,
@@ -383,12 +419,18 @@ export const useFinanceStore = defineStore("transactionList", () => {
     getBerquiredOutcomeAmount,
     postTransaction,
     getTransaction,
+    getTransactionsByDate,
+    getTransactionsByMonth,
+    getDailyTotals,
     putTransaction,
     deleteTransaction,
     postFixed,
     getFixed,
     putFixed,
     deleteFixed,
+    setCurrentMonth,
+    setSelectedDate,
+    setViewMode,
     getMonthlySummary,
     monthlyBudgetTarget,
     getMonthlyExpensesByCategory,
