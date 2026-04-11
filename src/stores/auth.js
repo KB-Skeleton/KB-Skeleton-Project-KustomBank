@@ -16,6 +16,15 @@ const createInitialAuthState = () => ({
   phone: "",
 });
 
+const normalizeUser = (user) => ({
+  id: user?.id ?? "",
+  userId: user?.userId ?? "",
+  email: user?.email ?? "",
+  password: user?.password ?? "",
+  name: user?.name ?? "",
+  phone: user?.phone ?? "",
+});
+
 export const useAuthStores = defineStore("authStore", () => {
   const authState = reactive(createInitialAuthState());
   const accessToken = ref("");
@@ -24,12 +33,7 @@ export const useAuthStores = defineStore("authStore", () => {
   const isAuthenticated = computed(() => Boolean(accessToken.value));
 
   const setUser = (user) => {
-    authState.id = user?.id ?? "";
-    authState.userId = user?.userId ?? "";
-    authState.email = user?.email ?? "";
-    authState.password = user?.password ?? "";
-    authState.name = user?.name ?? "";
-    authState.phone = user?.phone ?? "";
+    Object.assign(authState, normalizeUser(user));
   };
 
   const clearAuthState = () => {
@@ -91,6 +95,66 @@ export const useAuthStores = defineStore("authStore", () => {
     return user;
   };
 
+  const getMyProfile = async () => {
+    if (!authState.userId) return null;
+
+    const response = await axios.get(`${BASE_URL}/users`, {
+      params: { userId: authState.userId },
+    });
+    const user = response.data?.[0] ?? null;
+    if (!user) return null;
+
+    setUser(user);
+    if (accessToken.value) {
+      persistAuth(accessToken.value, normalizeUser(user));
+    }
+    return user;
+  };
+
+  const updateMyProfile = async (payload) => {
+    const hasId = Boolean(authState.id);
+    const targetId = authState.id;
+    const safePayload = {
+      name: payload?.name ?? "",
+      email: payload?.email ?? "",
+      phone: payload?.phone ?? "",
+    };
+
+    let user = null;
+
+    if (hasId) {
+      const response = await axios.patch(
+        `${BASE_URL}/users/${encodeURIComponent(targetId)}`,
+        safePayload,
+      );
+      user = response.data ?? null;
+    } else if (authState.userId) {
+      const lookupResponse = await axios.get(`${BASE_URL}/users`, {
+        params: { userId: authState.userId },
+      });
+      const found = lookupResponse.data?.[0];
+      if (!found?.id) return null;
+
+      const updateResponse = await axios.patch(
+        `${BASE_URL}/users/${encodeURIComponent(found.id)}`,
+        safePayload,
+      );
+      user = updateResponse.data ?? null;
+    }
+
+    if (!user) return null;
+
+    const merged = {
+      ...normalizeUser(authState),
+      ...normalizeUser(user),
+    };
+    setUser(merged);
+    if (accessToken.value) {
+      persistAuth(accessToken.value, merged);
+    }
+    return merged;
+  };
+
   const logout = () => {
     clearAuthState();
     localStorage.removeItem(ACCESS_TOKEN_KEY);
@@ -104,6 +168,8 @@ export const useAuthStores = defineStore("authStore", () => {
     restoreAuth,
     authenticateUser,
     login,
+    getMyProfile,
+    updateMyProfile,
     logout,
   };
 });
