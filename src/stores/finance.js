@@ -38,12 +38,14 @@ export const useFinanceStore = defineStore("transactionList", () => {
   //공용 매서드 (데이터 포맷팅, 정렬 등)
   const toMonthKey = (dateString) => String(dateString || "").slice(0, 7);
   const toDate = (value) => new Date(`${value}T00:00:00`);
+
   //월 키
   const getCurrentMonthKey = computed(() => {
     const now = new Date();
     return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
   });
 
+  //원화 형태 포맷팅 매서드
   const formatCurrency = (amount) =>
     new Intl.NumberFormat("ko-KR", {
       style: "currency",
@@ -70,15 +72,18 @@ export const useFinanceStore = defineStore("transactionList", () => {
       });
   });
 
+  //카테고리 ID 반환
   const getCategoryById = (categoryId) => {
     const allCategories = [...categories.expense, ...categories.income];
     return allCategories.find((category) => category.id === categoryId) || null;
   };
 
+  //지출 카테고리 반환
   const expenseCategories = computed(() => categories.expense);
+  //수입 카테고리 반환
   const incomeCategories = computed(() => categories.income);
 
-  //불필요한 지출 부분 매서드
+  //불필요한 지출 부분 매서드---------------------------------------------------------
   const getBerquiredOutcome = (userId) => {
     const targetUserId = userId || authState.userId;
     return sortedTransactions.value.filter((transaction) => {
@@ -98,7 +103,7 @@ export const useFinanceStore = defineStore("transactionList", () => {
       (sum, transaction) => sum + Number(transaction.amount || 0),
       0,
     );
-
+  //---------------------------------------------------------------------------
   //Transaction CRUD-------------------------------------------
   //Create - post
   const postTransaction = async (transaction) => {
@@ -192,6 +197,7 @@ export const useFinanceStore = defineStore("transactionList", () => {
       return false;
     }
   };
+  //--------------------------------------------------------------------------
 
   //FixedExpense CRUD------------------------------------------------
   //Create - post
@@ -217,7 +223,7 @@ export const useFinanceStore = defineStore("transactionList", () => {
   //Read - get
   const getFixed = async () => {
     try {
-      const userId = authStore.userId;
+      const userId = authState.userId;
       const query = userId ? `?userId=${userId}` : "";
       const res = await axios.get(BASE_URL + `fixed_expense_settings${query}`);
 
@@ -292,6 +298,75 @@ export const useFinanceStore = defineStore("transactionList", () => {
     }
   };
 
+  //----------------------------------------------------------------------------
+
+  //월별 총 소비 수익 합계
+  const getMonthlySummary = (monthKey) => {
+    const monthItems = transactions.value.filter(
+      (transaction) => toMonthKey(transaction.date) === monthKey,
+    );
+
+    let income = 0;
+    let expense = 0;
+
+    monthItems.forEach((tx) => {
+      const isExpense = tx.isExpense === true;
+      const amount = Number(tx.amount || 0);
+      if (isExpense) expense += amount;
+      else income += amount;
+    });
+
+    return {
+      income,
+      expense,
+      balance: income - expense,
+      count: monthItems.length,
+    };
+  };
+
+  //월별 카테고리별 지출 메서드
+  const getMonthlyExpensesByCategory = (monthKey) => {
+    const totals = {};
+
+    transactions.value
+      .filter((transaction) => {
+        return (
+          toMonthKey(transaction.date) === monthKey &&
+          transaction.isExpense === true
+        );
+      })
+      .forEach((transaction) => {
+        const categoryName =
+          getCategoryById(transaction.categoryId)?.name || "기타";
+        totals[categoryName] = (totals[categoryName] || 0) + transaction.amount;
+      });
+
+    return totals;
+  };
+
+  //예산 임시 매서드 예산 연동 후 삭제 예정
+  const monthlyBudgetTarget = computed(() => {
+    const expenseIds = (categories?.expense || []).map((item) => item.id);
+    const sourceBudgets =
+      typeof state !== "undefined" && state?.categoryBudgets
+        ? state.categoryBudgets
+        : {};
+
+    const budgetSum = expenseIds.reduce(
+      (sum, id) => sum + Number(sourceBudgets[id] || 0),
+      0,
+    );
+
+    if (budgetSum > 0) {
+      return budgetSum;
+    }
+
+    return fixedExpenseSetting.value.reduce(
+      (sum, item) => sum + Number(item.amount || 0),
+      0,
+    );
+  });
+
   return {
     transactions,
     fixedExpenseSetting,
@@ -314,5 +389,8 @@ export const useFinanceStore = defineStore("transactionList", () => {
     getFixed,
     putFixed,
     deleteFixed,
+    getMonthlySummary,
+    monthlyBudgetTarget,
+    getMonthlyExpensesByCategory,
   };
 });
