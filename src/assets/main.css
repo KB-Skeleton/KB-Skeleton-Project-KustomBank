@@ -9,17 +9,17 @@
 body {
   margin: 0;
   font-family:
-    "Pretendard",
+    'Pretendard',
     -apple-system,
     BlinkMacSystemFont,
-    "Segoe UI",
+    'Segoe UI',
     Roboto,
     sans-serif;
   color: #212529;
 }
 
 .fw-black {
-  font-weight: 900;
+  font-weight: 900 !important;
 }
 
 .kb-bg {
@@ -180,7 +180,6 @@ body {
   font-size: 0.85rem;
   padding: 0.45rem 0.85rem;
 }
-
 .kb-btn-light {
   border: 1px solid rgba(34, 34, 34, 0.2);
   border-radius: 0.7rem;
@@ -190,7 +189,6 @@ body {
   font-size: 0.85rem;
   padding: 0.45rem 0.85rem;
 }
-
 .kb-btn-brown {
   border: 1px solid rgb(96, 88, 76);
   border-radius: 0.7rem;
@@ -200,7 +198,6 @@ body {
   font-size: 0.9rem;
   padding: 0.55rem 0.95rem;
 }
-
 .kb-btn-brown-soft {
   border: 1px solid rgb(96, 88, 76);
   border-radius: 0.7rem;
@@ -218,13 +215,34 @@ body {
   color: #fff;
   font-weight: 700;
   font-size: 0.85rem;
-  padding: 0.45rem 0.85rem; /* 다른 버튼과 동일하게 */
+  padding: 0.45rem 0.85rem;
 }
-
 .kb-btn-danger:hover {
   background: #bb2d3b;
   border-color: #b02a37;
   transform: translateY(-1px);
+}
+
+.kb-toggle-wrapper {
+  display: inline-flex;
+  background-color: var(--kb-gray-100);
+  border-radius: 0.75rem;
+  padding: 0.25rem;
+}
+.kb-toggle-btn {
+  border: none;
+  background: transparent;
+  padding: 0.4rem 1.2rem;
+  border-radius: 0.55rem;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: #6c757d;
+  transition: all 0.2s ease-in-out;
+}
+.kb-toggle-btn.is-active {
+  background-color: var(--kb-charcoal);
+  color: var(--kb-yellow);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
 }
 
 .kb-input {
@@ -235,7 +253,6 @@ body {
   font-size: 0.95rem;
   background: #fff;
 }
-
 .kb-input:focus {
   outline: 2px solid rgba(255, 211, 56, 0.55);
   outline-offset: 1px;
@@ -269,7 +286,6 @@ body {
   background: rgba(0, 0, 0, 0.35);
   padding: 1rem;
 }
-
 .kb-modal-card {
   width: min(100%, 760px);
   border-radius: 1rem;
@@ -283,18 +299,16 @@ body {
   grid-template-columns: repeat(7, minmax(0, 1fr));
   gap: 0.5rem;
   margin-bottom: 0.5rem;
-  font-size: 0.75rem;
+  font-size: 1rem;
   font-weight: 700;
   text-align: center;
   color: #6c757d;
 }
-
 .kb-month-grid {
   display: grid;
   grid-template-columns: repeat(7, minmax(0, 1fr));
   gap: 0.5rem;
 }
-
 .kb-month-cell {
   border: 1px solid rgba(34, 34, 34, 0.14);
   border-radius: 0.9rem;
@@ -304,64 +318,154 @@ body {
   text-align: left;
   transition: 0.2s ease;
   cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
 }
-
 .kb-month-cell.is-empty {
   border: 0;
   background: transparent;
   cursor: default;
 }
-
 .kb-month-cell.is-current:hover {
   transform: translateY(-1px);
   border-color: rgba(122, 92, 63, 0.45);
 }
-
 .kb-month-cell.is-selected {
   border: 2px solid var(--kb-charcoal);
   box-shadow: 0 0 0 2px rgba(255, 211, 56, 0.45) inset;
 }
-
 .kb-month-cell.is-today {
   background: linear-gradient(180deg, rgba(255, 211, 56, 0.16), #fff);
 }
-
 .kb-month-cell-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 0.35rem;
 }
-
-.kb-month-day {
-  font-size: 0.92rem;
-  font-weight: 800;
-  color: var(--kb-charcoal);
-}
-
 .kb-month-dot {
-  width: 0.45rem;
-  height: 0.45rem;
+  width: clamp(0.25rem, 0.8vw, 0.45rem);
+  height: clamp(0.25rem, 0.8vw, 0.45rem);
   border-radius: 999px;
   background: var(--kb-brown);
 }
 
-.kb-month-meta p {
-  margin: 0;
+.kb-month-day {
   font-size: 0.7rem;
-  font-weight: 700;
-  line-height: 1.2;
+  font-weight: 800;
+  color: var(--kb-charcoal);
 }
 
+.kb-month-meta {
+  margin-top: auto;
+  text-align: left;
+}
+.kb-month-meta p {
+  margin: 0;
+  font-weight: 600;
+  line-height: 1.5;
+}
 .kb-month-meta .income {
   color: #0d6efd;
 }
-
 .kb-month-meta .expense {
   color: #dc3545;
 }
 
-.kb-calendar-cell {
-  aspect-ratio: 1 / 1;
-  min-height: 0;
+.kb-mobile-dots {
+  display: none;
+  gap: 3px;
+}
+.kb-mobile-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 999px;
+  display: inline-block;
+}
+.kb-mobile-dot.dot-income {
+  background: #0ea5e9;
+}
+.kb-mobile-dot.dot-expense {
+  background: #dc2626;
+}
+
+@media (max-width: 767px) {
+  .kb-month-meta p {
+    display: none;
+  }
+  .kb-mobile-dots {
+    display: flex;
+  }
+  .kb-month-day {
+    font-size: 0.7rem;
+  }
+  .kb-month-cell {
+    border-radius: 0.4rem;
+    padding: 0.25rem;
+  }
+
+  .kb-month-grid {
+    gap: 0.25rem;
+  }
+  .kb-toggle-btn {
+    padding: 0.2rem 0.5rem;
+    font-size: 0.6rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .kb-month-meta p {
+    display: block;
+    font-size: clamp(0.6rem, 1.2vw, 1rem);
+  }
+  .kb-month-day {
+    font-size: clamp(0.9rem, 1.8vw, 1.3rem);
+  }
+}
+
+@media (min-width: 1024px) {
+  .kb-month-meta p {
+    font-size: clamp(0.9rem, 1vw, 1.2rem);
+  }
+  .kb-month-day {
+    font-size: clamp(1rem, 1.5vw, 1.5rem);
+  }
+}
+
+.kb-disabled {
+  opacity: 40%;
+  pointer-events: none;
+}
+
+.kb-transaction-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border: 1px solid rgba(34, 34, 34, 0.1);
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.98);
+  box-shadow: 0 8px 18px rgba(34, 34, 34, 0.06);
+  transition: transform 0.2s ease;
+  margin-bottom: 0.75rem;
+}
+
+.kb-transaction-info .title {
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+  color: var(--kb-charcoal);
+}
+
+.kb-transaction-info .category {
+  font-size: 0.85rem;
+  color: #6c757d;
+  margin-bottom: 0;
+}
+
+.kb-transaction-amount {
+  font-weight: 800;
+  font-size: 1.1rem;
+  text-align: right;
 }
