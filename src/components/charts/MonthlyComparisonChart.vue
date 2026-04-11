@@ -76,25 +76,28 @@ onMounted(async () => {
 
 <style scoped>
 .chart-wrap {
+  flex: 1;
   min-height: 22rem;
   background: var(--kb-gray-100);
   padding: 1rem;
+  display: flex;
 }
 
 .bars-wrap {
-  height: 100%;
-  min-height: 20rem;
+  flex: 1;
+  min-height: 0;
   display: grid;
   grid-template-columns: repeat(6, minmax(0, 1fr));
   gap: 0.75rem;
 }
 
 .bar-item {
+  height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-end;
-  min-height: 16rem;
+  min-height: 0;
 }
 
 .bar-value {
@@ -108,7 +111,7 @@ onMounted(async () => {
   width: 100%;
   max-width: 2.8rem;
   border-radius: 0.75rem;
-  background: linear-gradient(180deg, #ffd338 0%, #b99562 100%);
+  background: #ffd338;
   transition: height 0.25s ease;
 }
 
