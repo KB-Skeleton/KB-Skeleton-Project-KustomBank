@@ -3,7 +3,7 @@
     <div class="d-flex justify-content-between align-items-center">
       <div class="fw-bold text-secondary">월별 지출</div>
 
-      <div class="kb-toggle-wrapper">
+      <div class="kb-toggle-wrapper mb-1">
         <button
           class="kb-toggle-btn"
           :class="{ 'is-active': financeStore.state.viewMode === 'calendar' }"
