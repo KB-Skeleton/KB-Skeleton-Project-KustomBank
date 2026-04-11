@@ -1,23 +1,28 @@
 ﻿<template>
-  <section class="be-required-view d-grid gap-3">
-    <article class="kb-panel">
-      <div
-        class="be-required-header d-flex flex-wrap align-items-end justify-content-between gap-2 mb-3"
-      >
-        <div class="be-required-title-block">
+  <BaseCard isPanel>
+    <article>
+      <div class="d-flex align-items-center justify-content-between mb-4">
+        <div>
           <p class="kb-card-label mb-0">이번 달</p>
-          <h2 class="h2 fw-black kb-text-charcoal mb-0">불필요한 지출 목록</h2>
+          <h2 class="kb-text-charcoal fw-black h2-style mb-0">
+            불필요한 지출 목록
+          </h2>
         </div>
-        <RouterLink to="/investment" class="be-required-back">
+
+        <RouterLink to="/investment">
           <button
-            class="summary-arrow-btn btn btn-sm text-white fw-bold"
-            style="background: rgb(96, 88, 76)"
+            class="kb-btn-brown d-flex align-items-center justify-content-center p-2"
+            style="width: 32px; height: 32px"
           >
             <FontAwesomeIcon :icon="faAnglesLeft" />
           </button>
         </RouterLink>
-        <p class="be-required-total mb-0 fw-black text-danger">
-          총 {{ formatCurrency(totalAmount) }}
+      </div>
+
+      <div class="mb-4 pb-3 border-bottom">
+        <p class="small fw-bold text-secondary mb-1">총 지출 합계</p>
+        <p class="kb-card-value text-danger mb-0">
+          {{ formatCurrency(totalAmount) }}
         </p>
       </div>
 
@@ -25,126 +30,86 @@
         <div
           v-for="item in beRequiredList"
           :key="item.id"
-          class="rounded-3 border p-3 bg-white"
-          style="border-color: rgba(34, 34, 34, 0.15)"
+          class="kb-transaction-item w-100"
         >
-          <div class="d-flex justify-content-between align-items-start gap-2">
-            <div>
-              <p
-                class="be-required-item-description mb-0 fw-bold kb-text-charcoal"
-              >
-                {{ item.description }}
-              </p>
-              <p class="mb-0 small text-secondary">
-                {{ item.date }} · {{ item.categoryName }}
-              </p>
-            </div>
-            <p class="mb-0 fw-black text-danger">
-              {{ formatCurrency(item.amount) }}
-            </p>
+          <div class="kb-transaction-info">
+            <p class="title">{{ item.description }}</p>
+            <p class="category">{{ item.date }} · {{ item.categoryName }}</p>
+          </div>
+          <div class="kb-transaction-amount text-danger">
+            {{ formatCurrency(item.amount) }}
           </div>
         </div>
       </div>
 
       <div
         v-else
-        class="rounded-3 p-4 text-center small fw-semibold text-secondary"
-        style="background: var(--kb-gray-100)"
+        class="rounded-4 p-5 text-center small fw-bold text-secondary kb-bg-soft"
       >
-        이번 달 불필요 지출 내역이 없습니다.
+        이번 달 불필요한 지출 내역이 없습니다. 😊
       </div>
     </article>
-  </section>
+  </BaseCard>
 </template>
 
 <script setup>
-import { computed, onMounted } from "vue";
-import { useFinanceStore } from "@/stores/finance";
-import { useAuthStores } from "@/stores/auth";
-import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-import { faAnglesLeft } from "@fortawesome/free-solid-svg-icons";
+import { computed, onMounted } from 'vue';
+import { useFinanceStore } from '@/stores/finance';
+import { useAuthStores } from '@/stores/auth';
 
-const {
-  getBerquiredOutcome,
-  getBerquiredOutcomeAmount,
-  formatCurrency,
-  getTransaction,
-} = useFinanceStore();
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import { faAnglesLeft } from '@fortawesome/free-solid-svg-icons';
+import BaseCard from '@/components/common/BaseCard.vue';
+
+const financeStore = useFinanceStore();
 const { authState } = useAuthStores();
 
-const beRequiredList = computed(() => getBerquiredOutcome(authState.userId));
-const totalAmount = computed(() => getBerquiredOutcomeAmount(authState.userId));
+const formatCurrency = (value) => financeStore.formatCurrency(value);
 
-onMounted(() => {
-  getTransaction();
+const beRequiredList = computed(() =>
+  financeStore.getBerquiredOutcome(authState.userId),
+);
+const totalAmount = computed(() =>
+  financeStore.getBerquiredOutcomeAmount(authState.userId),
+);
+
+onMounted(async () => {
+  await financeStore.getTransaction();
 });
 </script>
 
 <style scoped>
 .be-required-view {
-  font-family:
-    "Nunito", "Quicksand", "SF Pro Rounded", "Arial Rounded MT Bold",
-    "Pretendard", sans-serif;
-  font-size: 1.08rem;
+  width: 100%;
 }
 
-.be-required-view .kb-card-label {
-  font-size: 1rem !important;
+.kb-panel {
+  padding: 1.5rem;
 }
 
-.be-required-view h2 {
-  font-size: 2.4rem;
-  font-family: bold;
+.h2-style {
+  font-size: 1.75rem;
+  letter-spacing: -0.02em;
 }
 
-.be-required-view .summary-arrow-btn {
-  font-size: 0.8rem;
-  padding: 0.5rem 0.9rem;
+.kb-card-value {
+  font-size: 2rem;
+  line-height: 1.1;
+  font-weight: 900;
+  font-family: 'Pretendard', sans-serif;
 }
 
-.be-required-view .text-danger.fw-black {
-  font-size: 1.5rem;
-}
-
-.be-required-view .rounded-3.border.p-3.bg-white p.small {
-  font-size: 0.95rem;
-}
-
-.be-required-header {
-  margin-top: -0.25rem;
-}
-
-.be-required-title-block {
-  transform: translateY(-0.8rem);
-}
-
-.be-required-item-description {
-  font-size: 1.6rem;
-  font-family: bold;
+.kb-transaction-item {
+  margin-bottom: 0.5rem;
+  width: 100%;
 }
 
 @media (max-width: 768px) {
-  .be-required-header {
-    display: grid !important;
-    grid-template-columns: 1fr auto;
-    align-items: center !important;
-    margin-top: 0;
-    gap: 0.55rem 0.75rem !important;
+  .kb-panel {
+    padding: 1.25rem;
   }
-
-  .be-required-title-block {
-    transform: none;
-  }
-
-  .be-required-back {
-    justify-self: end;
-    align-self: center;
-    margin-top: -1.8rem;
-  }
-
-  .be-required-total {
-    grid-column: 1 / -1;
-    margin-top: 0.15rem;
+  .kb-card-value {
+    font-size: 1.75rem;
   }
 }
 </style>
