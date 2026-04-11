@@ -44,6 +44,7 @@ const financeStore = useFinanceStore();
 const monthlyTransactions = computed(() => {
   const totalData = financeStore.getTransactionsByMonth(
     financeStore.state.currentMonth,
+    true,
   );
 
   return totalData.reduce((groups, item) => {

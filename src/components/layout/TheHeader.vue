@@ -1,21 +1,27 @@
 ﻿<template>
   <header class="kb-header py-3">
-    <div class="container-xxl d-flex align-items-center justify-content-between">
+    <div
+      class="container-xxl d-flex align-items-center justify-content-between"
+    >
       <RouterLink
         to="/dashboard"
         class="d-flex align-items-center gap-3 text-decoration-none text-reset"
       >
-        <img src="@/assets/logo.png" alt="KustomBank logo" class="kb-logo-img" />
+        <img
+          src="@/assets/logo.png"
+          alt="KustomBank logo"
+          class="kb-logo-img"
+        />
         <div>
           <p
             class="mb-0 small fw-semibold text-uppercase"
-            style="letter-spacing: .18em; color: var(--kb-brown)"
+            style="letter-spacing: 0.18em; color: var(--kb-brown)"
           >
             KB Smart Budget
           </p>
           <h1
             class="mb-0 h3 fw-black"
-            style="color: var(--kb-charcoal); font-weight: 900;"
+            style="color: var(--kb-charcoal); font-weight: 900"
           >
             <span style="color: var(--kb-brown)">K</span>ustom
             <span style="color: var(--kb-brown)">B</span>ank
@@ -23,13 +29,22 @@
         </div>
       </RouterLink>
 
-      <KbButton
-        variant="dark"
-        customClass="rounded-pill user-btn"
-        @click="goToProfile"
-      >
-        {{ buttonLabel }}
-      </KbButton>
+      <div class="d-flex align-items-center gap-2">
+        <KbButton
+          variant="dark"
+          customClass="rounded-pill user-btn"
+          @click="goToProfile"
+        >
+          {{ buttonLabel }}
+        </KbButton>
+        <KbButton
+          variant="light"
+          customClass="rounded-pill user-btn"
+          @click="handleLogout"
+        >
+          로그아웃
+        </KbButton>
+      </div>
     </div>
   </header>
 </template>
@@ -44,13 +59,16 @@ const router = useRouter();
 const authStore = useAuthStores();
 
 const buttonLabel = computed(() =>
-  authStore.authState.name
-    ? `${authStore.authState.name} \uB2D8`
-    : "My Profile",
+  authStore.authState.name ? `${authStore.authState.name} \uB2D8` : "내 프로필",
 );
 
 const goToProfile = () => {
   router.push("/profile");
+};
+
+const handleLogout = () => {
+  authStore.logout();
+  router.replace("/login");
 };
 </script>
 

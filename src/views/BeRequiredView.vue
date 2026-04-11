@@ -8,19 +8,17 @@
           <p class="kb-card-label mb-0">이번 달</p>
           <h2 class="h2 fw-black kb-text-charcoal mb-0">불필요한 지출 목록</h2>
         </div>
-        <div class="d-flex flex-column align-items-end gap-2">
-          <RouterLink to="/investment">
-            <button
-              class="summary-arrow-btn btn btn-sm text-white fw-bold"
-              style="background: rgb(96, 88, 76)"
-            >
-              <FontAwesomeIcon :icon="faAnglesLeft" />
-            </button>
-          </RouterLink>
-          <p class="mb-0 fw-black text-danger">
-            총 {{ formatCurrency(totalAmount) }}
-          </p>
-        </div>
+        <RouterLink to="/investment" class="be-required-back">
+          <button
+            class="summary-arrow-btn btn btn-sm text-white fw-bold"
+            style="background: rgb(96, 88, 76)"
+          >
+            <FontAwesomeIcon :icon="faAnglesLeft" />
+          </button>
+        </RouterLink>
+        <p class="be-required-total mb-0 fw-black text-danger">
+          총 {{ formatCurrency(totalAmount) }}
+        </p>
       </div>
 
       <div v-if="beRequiredList.length" class="d-grid gap-2">
@@ -123,5 +121,30 @@ onMounted(() => {
 .be-required-item-description {
   font-size: 1.6rem;
   font-family: bold;
+}
+
+@media (max-width: 768px) {
+  .be-required-header {
+    display: grid !important;
+    grid-template-columns: 1fr auto;
+    align-items: center !important;
+    margin-top: 0;
+    gap: 0.55rem 0.75rem !important;
+  }
+
+  .be-required-title-block {
+    transform: none;
+  }
+
+  .be-required-back {
+    justify-self: end;
+    align-self: center;
+    margin-top: -1.8rem;
+  }
+
+  .be-required-total {
+    grid-column: 1 / -1;
+    margin-top: 0.15rem;
+  }
 }
 </style>
