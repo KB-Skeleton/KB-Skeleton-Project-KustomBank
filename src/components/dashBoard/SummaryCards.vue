@@ -67,7 +67,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted } from "vue";
+import { computed } from "vue";
 import { useRouter } from "vue-router";
 import BaseCard from "@/components/common/BaseCard.vue";
 import { useFinanceStore } from "@/stores/finance";
@@ -79,8 +79,6 @@ const {
   fixedExpenseSetting,
   transactions,
   toMonthKey,
-  getTransaction,
-  getFixed,
 } = useFinanceStore();
 
 const currentMonth = new Date().toISOString().slice(0, 7);
