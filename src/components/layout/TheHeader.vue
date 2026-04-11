@@ -1,8 +1,8 @@
-<template>
+﻿<template>
   <header class="kb-header py-3">
     <div class="container-xxl d-flex align-items-center justify-content-between">
       <RouterLink
-        to="/"
+        to="/dashboard"
         class="d-flex align-items-center gap-3 text-decoration-none text-reset"
       >
         <img src="@/assets/logo.png" alt="KustomBank logo" class="kb-logo-img" />
@@ -35,24 +35,19 @@
 </template>
 
 <script setup>
-import { computed, onMounted } from "vue";
+import { computed } from "vue";
 import { RouterLink, useRouter } from "vue-router";
 import KbButton from "@/components/common/BaseButton.vue";
-import { useAuthStore } from "@/stores/auth";
+import { useAuthStores } from "@/stores/auth";
 
 const router = useRouter();
-const authStore = useAuthStore();
+const authStore = useAuthStores();
 
-// 연동 완료되면 시작
-// const buttonLabel = computed(() =>
-//   authStore.user ? `${authStore.user.name} 님` : "Login required",
-// );
-const buttonLabel = computed(() => "My Profile");
-
-
-onMounted(() => {
-  authStore.fetchProfile();
-});
+const buttonLabel = computed(() =>
+  authStore.authState.name
+    ? `${authStore.authState.name} \uB2D8`
+    : "My Profile",
+);
 
 const goToProfile = () => {
   router.push("/profile");
