@@ -38,12 +38,14 @@ export const useFinanceStore = defineStore("transactionList", () => {
   //공용 매서드 (데이터 포맷팅, 정렬 등)
   const toMonthKey = (dateString) => String(dateString || "").slice(0, 7);
   const toDate = (value) => new Date(`${value}T00:00:00`);
+
   //월 키
   const getCurrentMonthKey = computed(() => {
     const now = new Date();
     return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
   });
 
+  //원화 형태 포맷팅 매서드
   const formatCurrency = (amount) =>
     new Intl.NumberFormat("ko-KR", {
       style: "currency",
@@ -70,15 +72,18 @@ export const useFinanceStore = defineStore("transactionList", () => {
       });
   });
 
+  //카테고리 ID 반환
   const getCategoryById = (categoryId) => {
     const allCategories = [...categories.expense, ...categories.income];
     return allCategories.find((category) => category.id === categoryId) || null;
   };
 
+  //지출 카테고리 반환
   const expenseCategories = computed(() => categories.expense);
+  //수입 카테고리 반환
   const incomeCategories = computed(() => categories.income);
 
-  //불필요한 지출 부분 매서드
+  //불필요한 지출 부분 매서드---------------------------------------------------------
   const getBerquiredOutcome = (userId) => {
     const targetUserId = userId || authState.userId;
     return sortedTransactions.value.filter((transaction) => {
@@ -98,7 +103,7 @@ export const useFinanceStore = defineStore("transactionList", () => {
       (sum, transaction) => sum + Number(transaction.amount || 0),
       0,
     );
-
+  //---------------------------------------------------------------------------
   //Transaction CRUD-------------------------------------------
   //Create - post
   const postTransaction = async (transaction) => {
@@ -192,6 +197,7 @@ export const useFinanceStore = defineStore("transactionList", () => {
       return false;
     }
   };
+  //--------------------------------------------------------------------------
 
   //FixedExpense CRUD------------------------------------------------
   //Create - post
@@ -222,6 +228,7 @@ export const useFinanceStore = defineStore("transactionList", () => {
       const res = await axios.get(BASE_URL + `fixed_expense_settings${query}`);
 
       if (res.status === 200) {
+        console.log(res.data);
         fixedExpenseSetting.value = res.data;
         return true;
       }
@@ -292,6 +299,9 @@ export const useFinanceStore = defineStore("transactionList", () => {
     }
   };
 
+  //----------------------------------------------------------------------------
+
+  //월별 총 소비 수익 합계
   const getMonthlySummary = (monthKey) => {
     const monthItems = transactions.value.filter(
       (transaction) => toMonthKey(transaction.date) === monthKey,
@@ -315,6 +325,7 @@ export const useFinanceStore = defineStore("transactionList", () => {
     };
   };
 
+  //예산 임시 매서드 예산 연동 후 삭제 예정
   const monthlyBudgetTarget = computed(() => {
     const expenseIds = (categories?.expense || []).map((item) => item.id);
     const sourceBudgets =
