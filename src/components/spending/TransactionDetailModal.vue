@@ -22,9 +22,7 @@
       </div>
 
       <div class="d-flex justify-content-end gap-2">
-        <button class="kb-btn-light" @click="$emit('edit', transaction)">
-          편집
-        </button>
+        <button class="kb-btn-light" @click="$emit('edit')">편집</button>
         <button class="kb-btn-danger" @click="handleDelete">삭제</button>
       </div>
     </div>

@@ -67,8 +67,12 @@ export const useFinanceStore = defineStore('transactionList', () => {
         const category = allCategories.find(
           (item) => item.id === transaction.categoryId,
         );
+
+        const determineType =
+          transaction.type || (transaction.isExpense ? 'expense' : 'income');
         return {
           ...transaction,
+          type: determineType,
           categoryName: category?.name || '기타',
           title: transaction.description,
           category: category?.name || '기타',
@@ -167,12 +171,23 @@ export const useFinanceStore = defineStore('transactionList', () => {
 
   const getDailyTotals = (monthKey) => {
     const totals = {};
+
     transactions.value
       .filter((t) => toMonthKey(t.date) === monthKey)
       .forEach((t) => {
-        if (!totals[t.date]) totals[t.date] = { income: 0, expense: 0 };
-        totals[t.date][t.type] += t.amount;
+        if (!totals[t.date]) {
+          totals[t.date] = { income: 0, expense: 0 };
+        }
+
+        const isExpense = t.type === 'expense' || t.isExpense === true;
+
+        if (isExpense) {
+          totals[t.date].expense += Number(t.amount || 0);
+        } else {
+          totals[t.date].income += Number(t.amount || 0);
+        }
       });
+
     return totals;
   };
 
