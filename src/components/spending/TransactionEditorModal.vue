@@ -82,6 +82,7 @@ watch(
   (isShown) => {
     if (isShown && props.transaction) {
       editForm.id = props.transaction.id;
+      editForm.userId = props.transaction.userId;
       editForm.description = props.transaction.description;
       editForm.amount = props.transaction.amount;
       editForm.date = props.transaction.date;
