@@ -72,6 +72,13 @@ import { useRouter } from "vue-router";
 import BaseCard from "@/components/common/BaseCard.vue";
 import { useFinanceStore } from "@/stores/finance";
 
+const props = defineProps({
+  monthlyBudgetTarget: {
+    type: Number,
+    required: true,
+  },
+});
+
 const financeStore = useFinanceStore();
 
 const router = useRouter();
@@ -87,11 +94,7 @@ const summary = computed(() => financeStore.getMonthlySummary(currentMonth));
 
 //예산 코딩 완료 시 수정 필요
 const monthlyBudgetTarget = computed(() => {
-  const totalFixed = financeStore.fixedExpenseSetting.reduce(
-    (sum, item) => sum + Number(item.amount || 0),
-    0,
-  );
-  return totalFixed || 0;
+  return props.monthlyBudgetTarget;
 });
 
 const availableAmount = computed(

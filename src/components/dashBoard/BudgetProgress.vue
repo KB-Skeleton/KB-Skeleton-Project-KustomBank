@@ -27,6 +27,13 @@ import { useFinanceStore } from "@/stores/finance";
 import ProgressBar from "../common/ProgressBar.vue";
 import { computed } from "vue";
 
+const props = defineProps({
+  monthlyBudgetTarget: {
+    type: Number,
+    required: true,
+  },
+});
+
 const financeStore = useFinanceStore();
 
 const currentMonth = new Date().toISOString().slice(0, 7);
@@ -34,9 +41,11 @@ const monthLabel = currentMonth.replace("-", "년 ") + "월";
 const summary = computed(() => financeStore.getMonthlySummary(currentMonth));
 
 //예산 설정 개발 끝내고 수정
-const monthlyBudgetTarget = 1000000;
+const monthlyBudgetTarget = computed(() => {
+  return props.monthlyBudgetTarget;
+});
 
 const budgetUsage = computed(() =>
-  Math.round((summary.value.expense / monthlyBudgetTarget) * 100 || 0),
+  Math.round((summary.value.expense / monthlyBudgetTarget.value) * 100 || 0),
 );
 </script>
