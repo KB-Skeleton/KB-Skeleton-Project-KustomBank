@@ -8,7 +8,7 @@
         @click="router.push('/monthly-spending')"
       >
         <p class="kb-card-value text-primary mb-0">
-          {{ financeStore.formatCurrency(summary.income) }}
+          {{ formatCurrency(summary.income) }}
         </p>
         <p class="small fw-semibold text-secondary mb-0 invisible">설정 금액</p>
       </BaseCard>
@@ -22,7 +22,7 @@
         @click="router.push('/monthly-spending')"
       >
         <p class="kb-card-value text-danger mb-0">
-          {{ financeStore.formatCurrency(summary.expense) }}
+          {{ formatCurrency(summary.expense) }}
         </p>
         <p class="small fw-semibold text-secondary mb-0 invisible">설정 금액</p>
       </BaseCard>
@@ -39,10 +39,10 @@
           class="kb-card-value mb-0"
           :class="availableAmount < 0 ? 'text-danger' : 'kb-text-charcoal'"
         >
-          {{ financeStore.formatCurrency(availableAmount) }}
+          {{ formatCurrency(availableAmount) }}
         </p>
         <p class="small fw-semibold text-secondary mb-0">
-          설정 금액 {{ financeStore.formatCurrency(monthlyBudgetTarget) }}
+          설정 금액 {{ formatCurrency(monthlyBudgetTarget) }}
         </p>
       </BaseCard>
     </div>
@@ -55,10 +55,10 @@
         @click="router.push('/fixed-expenses')"
       >
         <p class="kb-card-value kb-text-brown mb-0">
-          {{ financeStore.formatCurrency(fixedSummary.spentFixed) }}
+          {{ formatCurrency(fixedSummary.spentFixed) }}
         </p>
         <p class="small fw-semibold text-secondary mb-0">
-          전체 {{ financeStore.formatCurrency(fixedSummary.totalFixed) }} 중
+          전체 {{ formatCurrency(fixedSummary.totalFixed) }} 중
           {{ fixedSummary.usage }}%
         </p>
       </BaseCard>
@@ -73,31 +73,28 @@ import BaseCard from "@/components/common/BaseCard.vue";
 import { useFinanceStore } from "@/stores/finance";
 
 const router = useRouter();
-const financeStore = useFinanceStore();
+const {
+  formatCurrency,
+  getMonthlySummary,
+  fixedExpenseSetting,
+  transactions,
+  toMonthKey,
+  getTransaction,
+  getFixed,
+} = useFinanceStore();
+
+const currentMonth = new Date().toISOString().slice(0, 7);
 
 const currentMonthKey = computed(() => {
   const now = new Date();
   return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
 });
 
-const summary = computed(() => {
-  let income = 0;
-  let expense = 0;
-
-  financeStore.transactions.forEach((tx) => {
-    if (financeStore.toMonthKey(tx.date) !== currentMonthKey.value) return;
-    const isExpense = tx.type === "expense" || tx.isExpense === true;
-    const amount = Number(tx.amount || 0);
-    if (isExpense) expense += amount;
-    else income += amount;
-  });
-
-  return { income, expense };
-});
+const summary = computed(() => getMonthlySummary(currentMonth));
 
 //예산 코딩 완료 시 수정 필요
 const monthlyBudgetTarget = computed(() => {
-  const totalFixed = financeStore.fixedExpenseSetting.reduce(
+  const totalFixed = fixedExpenseSetting.reduce(
     (sum, item) => sum + Number(item.amount || 0),
     0,
   );
@@ -110,15 +107,17 @@ const availableAmount = computed(
 
 //고정 지출 완료 시 수정 필요
 const fixedSummary = computed(() => {
-  const spentFixed = financeStore.transactions
-    .filter((tx) => financeStore.toMonthKey(tx.date) === currentMonthKey.value)
+  const spentFixed = transactions
+    .filter((tx) => toMonthKey(tx.date) === currentMonthKey.value)
     .filter((tx) => tx.isFixed === true)
     .reduce((sum, tx) => sum + Number(tx.amount || 0), 0);
 
-  const totalFixed = financeStore.fixedExpenseSetting.reduce(
+  const totalFixed = fixedExpenseSetting.reduce(
     (sum, item) => sum + Number(item.amount || 0),
     0,
   );
+  console.log(fixedExpenseSetting);
+  console.log(totalFixed);
 
   return {
     spentFixed,
@@ -127,7 +126,8 @@ const fixedSummary = computed(() => {
   };
 });
 
-onMounted(async () => {
-  await Promise.all([financeStore.getTransaction(), financeStore.getFixed()]);
+onMounted(() => {
+  getTransaction();
+  getFixed();
 });
 </script>
