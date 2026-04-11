@@ -20,18 +20,19 @@
           style="border-color: rgba(34, 34, 34, 0.15)"
         >
           <div class="d-flex justify-content-between align-items-center mb-1">
-            <p class="mb-0 fs-5 fw-bold kb-text-charcoal">{{ stock.name }}</p>
-            <p
-              class="mb-0 fw-black fs-5"
-              :class="stock.change >= 0 ? 'text-primary' : 'text-danger'"
-            >
-              {{ stock.change >= 0 ? "+" : "" }}{{ stock.change }}%
-            </p>
+            <p class="mb-0 fs-4 fw-bold kb-text-charcoal">{{ stock.name }}</p>
+            <div class="text-end">
+              <p class="mb-0 fw-semibold text-secondary">
+                종가 {{ formatCurrency(stock.close) }} · 약 {{ stock.count }}주
+              </p>
+            </div>
           </div>
-          <p class="mb-0 small text-secondary">
-            종가 {{ formatCurrency(stock.close) }}
+          <p
+            class="mb-0 fw-bold"
+            :class="stock.change >= 0 ? 'text-primary' : 'text-danger'"
+          >
+            {{ stock.change >= 0 ? "+" : "" }}{{ stock.change }}%
           </p>
-          <p class="mb-0 small text-secondary">약 {{ stock.count }}주</p>
         </div>
       </div>
 
