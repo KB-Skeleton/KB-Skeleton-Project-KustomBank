@@ -1,36 +1,59 @@
 <template>
   <div class="kb-bg">
-    <template v-if="isLoginPage">
-      <main class="container-xxl py-4">
-        <RouterView />
-      </main>
-    </template>
+    <TheHeader />
 
-    <template v-else>
-      <TheHeader />
+    <div class="container-xxl py-3">
+      <div class="row g-3">
+        <TheSideBar />
 
-      <div class="container-xxl py-3">
-        <div class="row g-3">
-          <TheSideBar />
-
-          <main class="col-12 col-lg-9 col-xl-10 custom-main">
-            <RouterView />
-          </main>
-        </div>
+        <main class="col-12 col-lg-9 col-xl-10 custom-main">
+          <RouterView />
+        </main>
       </div>
-    </template>
+    </div>
+
+    <BaseButton
+      variant="fab"
+      type="button"
+      aria-label="Open transaction modal"
+      @click="openTransactionModal"
+    >
+      <span class="fab-mobile-label">+</span>
+      <span class="fab-desktop-label">+지출/수입 내역 추가</span>
+    </BaseButton>
+
+    <BaseModal
+      :open="isTransactionModalOpen"
+      title="지출/수입 내역 추가"
+      @close="closeTransactionModal"
+    >
+      <TransactionEditor
+        @cancel="closeTransactionModal"
+        @saved="closeTransactionModal"
+      />
+    </BaseModal>
   </div>
 </template>
 
 <script setup>
-import { computed } from "vue";
-import { RouterView, useRoute } from "vue-router";
+import { ref } from "vue";
+import { RouterView } from "vue-router";
 
+import BaseButton from "./components/common/BaseButton.vue";
+import BaseModal from "./components/common/BaseModal.vue";
+import TransactionEditor from "./components/calendar/TransactionEditor.vue";
 import TheHeader from "./components/layout/TheHeader.vue";
 import TheSideBar from "./components/layout/TheSideBar.vue";
 
-const route = useRoute();
-const isLoginPage = computed(() => route.path === "/login");
+const isTransactionModalOpen = ref(false);
+
+const openTransactionModal = () => {
+  isTransactionModalOpen.value = true;
+};
+
+const closeTransactionModal = () => {
+  isTransactionModalOpen.value = false;
+};
 </script>
 
 <style>
@@ -38,9 +61,25 @@ const isLoginPage = computed(() => route.path === "/login");
   padding: 24px 24px 60px 24px;
 }
 
+.fab-mobile-label {
+  display: none;
+}
+
+.fab-desktop-label {
+  display: inline;
+}
+
 @media (max-width: 767.98px) {
   .custom-main {
     padding: 0 16px 80px 16px;
+  }
+
+  .fab-mobile-label {
+    display: inline;
+  }
+
+  .fab-desktop-label {
+    display: none;
   }
 }
 </style>

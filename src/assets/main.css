@@ -272,6 +272,13 @@ body {
   box-shadow: 0 14px 24px rgba(34, 34, 34, 0.32);
 }
 
+@media (max-width: 767.98px) {
+  .kb-fab {
+    right: 1rem;
+    bottom: 5.5rem;
+  }
+}
+
 .kb-clickable {
   cursor: pointer;
 }
