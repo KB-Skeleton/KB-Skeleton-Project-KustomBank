@@ -1,48 +1,56 @@
-<template>
-  <!--대시보드 서머리-->
-  <section class="d-gird gap-3">
+﻿<template>
+  <section class="dashboard-layout d-flex flex-column">
     <SummaryCards />
 
-    <!--예산 소진 바-->
     <article class="kb-panel kb-clickable" @click="router.push('/budget')">
-      <BudgetProgress></BudgetProgress>
+      <BudgetProgress />
     </article>
 
-    <!--소비 도넛 차트-->
-    <div class="row g-3">
+    <div class="row dashboard-chart-row">
       <div class="col-12 col-xl-6">
         <article
-          class="kb-panel kb-clickable"
+          class="kb-panel kb-clickable h-100"
           @click="router.push('/monthly-spending')"
         >
-          <ExpenseDonutChart></ExpenseDonutChart>
+          <ExpenseDonutChart />
+        </article>
+      </div>
+
+      <div class="col-12 col-xl-6">
+        <article class="kb-panel h-100">
+          <RecentTransactions />
         </article>
       </div>
     </div>
-
-    <!--최근 소비 내역-->
-    <div class="col-12 col-xl-6">
-      <article class="kb-panel">
-        <RecentTransactions />
-      </article>
-    </div>
   </section>
 </template>
+
 <script setup>
 import { useRouter } from "vue-router";
-import { onMounted } from "vue";
 import BudgetProgress from "@/components/dashBoard/BudgetProgress.vue";
 import SummaryCards from "@/components/dashBoard/SummaryCards.vue";
 import ExpenseDonutChart from "@/components/dashBoard/ExpenseDonutChart.vue";
 import RecentTransactions from "@/components/dashBoard/RecentTransactions.vue";
-
+import { onMounted } from "vue";
 import { useFinanceStore } from "@/stores/finance";
-const { getTransaction, getFixed } = useFinanceStore();
+
+const financeStore = useFinanceStore();
 
 const router = useRouter();
 
 onMounted(() => {
-  getTransaction();
-  getFixed();
+  financeStore.getFixed();
+  financeStore.getTransaction();
 });
 </script>
+
+<style scoped>
+.dashboard-layout {
+  gap: 1.25rem;
+}
+
+.dashboard-chart-row {
+  --bs-gutter-x: 1.25rem;
+  --bs-gutter-y: 1.25rem;
+}
+</style>

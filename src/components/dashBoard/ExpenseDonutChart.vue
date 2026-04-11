@@ -1,7 +1,7 @@
-<template>
+﻿<template>
   <h3 class="h3 fw-black kb-text-charcoal mb-3">카테고리별 지출</h3>
-  <div class="d-flex flex-column flex-sm-row align-items-center gap-3">
-    <div class="position-relative" style="width: 14rem; height: 14rem">
+  <div class="d-flex flex-column flex-sm-row align-items-center chart-layout">
+    <div class="position-relative donut-shell">
       <svg viewBox="0 0 120 120" class="w-100 h-100">
         <g transform="rotate(-90 60 60)">
           <circle
@@ -27,27 +27,30 @@
         </g>
       </svg>
       <div
-        class="position-absolute top-50 start-50 translate-middle rounded-circle d-flex flex-column align-items-center justify-content-center bg-white"
-        style="width: 7rem; height: 7rem"
+        class="position-absolute top-50 start-50 translate-middle rounded-circle d-flex flex-column align-items-center justify-content-center bg-white donut-inner"
       >
         <p class="small fw-semibold text-secondary mb-0">총 지출</p>
         <p class="fw-black mb-0 kb-text-charcoal">
-          {{ formatCurrency(summary.expense) }}
+          {{ financeStore.formatCurrency(summary.expense) }}
         </p>
       </div>
     </div>
-    <ul class="list-unstyled w-100 d-grid gap-2 mb-0">
+
+    <ul class="list-unstyled w-100 d-grid legend-list mb-0">
       <li
         v-for="slice in pieSlices"
         :key="slice.category"
-        class="rounded-3 px-3 py-2"
-        style="background: var(--kb-gray-100)"
+        class="rounded-3 legend-item"
       >
-        <div class="d-flex justify-content-between mb-1">
-          <p class="mb-0 fw-bold kb-text-charcoal">{{ slice.category }}</p>
-          <p class="mb-0 fw-bold kb-text-brown">{{ slice.ratio }}%</p>
+        <div class="d-flex justify-content-between legend-head">
+          <p class="mb-0 fw-bold kb-text-charcoal legend-label">
+            {{ slice.category }}
+          </p>
+          <p class="mb-0 fw-bold kb-text-brown legend-ratio">
+            {{ slice.ratio }}%
+          </p>
         </div>
-        <div class="progress" style="height: 0.5rem; background: #fff">
+        <div class="progress legend-progress">
           <div
             class="progress-bar"
             :style="{ width: `${slice.ratio}%`, backgroundColor: slice.color }"
@@ -57,12 +60,12 @@
     </ul>
   </div>
 </template>
+
 <script setup>
 import { computed } from "vue";
 import { useFinanceStore } from "@/stores/finance";
 
-const { formatCurrency, getMonthlySummary, getMonthlyExpensesByCategory } =
-  useFinanceStore();
+const financeStore = useFinanceStore();
 
 const pieColors = [
   "#ffd338",
@@ -76,11 +79,10 @@ const pieColors = [
 
 const currentMonth = new Date().toISOString().slice(0, 7);
 
-const summary = computed(() => getMonthlySummary(currentMonth));
+const summary = computed(() => financeStore.getMonthlySummary(currentMonth));
 
 const pieSlices = computed(() => {
-  const data = getMonthlyExpensesByCategory(currentMonth);
-
+  const data = financeStore.getMonthlyExpensesByCategory(currentMonth);
   const total = Object.values(data).reduce((sum, value) => sum + value, 0) || 1;
 
   return Object.entries(data)
@@ -94,8 +96,9 @@ const pieSlices = computed(() => {
 });
 
 const DONUT_RADIUS = 42;
-const DONUT_STROKE = 20;
+const DONUT_STROKE = 24;
 const DONUT_CIRCUMFERENCE = 2 * Math.PI * DONUT_RADIUS;
+
 const donutSlices = computed(() => {
   let cursor = 0;
   return pieSlices.value.map((slice) => {
@@ -106,3 +109,42 @@ const donutSlices = computed(() => {
   });
 });
 </script>
+
+<style scoped>
+.chart-layout {
+  gap: 1rem;
+}
+
+.donut-shell {
+  width: 19rem;
+  height: 19rem;
+}
+
+.donut-inner {
+  width: 6.9rem;
+  height: 6.4rem;
+}
+
+.legend-list {
+  gap: 0.35rem;
+}
+
+.legend-item {
+  background: var(--kb-gray-100);
+  padding: 0.45rem 0.6rem;
+}
+
+.legend-head {
+  margin-bottom: 0.25rem;
+}
+
+.legend-label,
+.legend-ratio {
+  font-size: 0.78rem;
+}
+
+.legend-progress {
+  height: 0.35rem;
+  background: #fff;
+}
+</style>

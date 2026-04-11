@@ -22,7 +22,7 @@
           :class="item.type === 'expense' ? 'text-danger' : 'text-primary'"
         >
           {{ item.type === "expense" ? "-" : "+"
-          }}{{ formatCurrency(item.amount) }}
+          }}{{ financeStore.formatCurrency(item.amount) }}
         </p>
       </div>
     </button>
@@ -32,10 +32,13 @@
 import { useFinanceStore } from "@/stores/finance";
 import { computed } from "vue";
 
-const { sortedTransactions, formatCurrency } = useFinanceStore();
+const financeStore = useFinanceStore();
 
-const recentTransactions = computed(() => sortedTransactions.slice(0, 6));
+const recentTransactions = computed(() => {
+  return financeStore.sortedTransactions.slice(0, 6);
+});
 
+//월별 캘린더 완성 시 수정해야함
 const goMonthlyWithDate = (date) => {
   router.push({ path: "/monthly-spending", query: { date } });
 };

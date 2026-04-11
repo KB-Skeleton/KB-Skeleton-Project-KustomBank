@@ -14,7 +14,9 @@
   <div class="d-flex justify-content-between small fw-semibold mb-1">
     <span class="text-secondary">사용 금액</span>
     <span :class="budgetUsage > 100 ? 'text-danger' : 'kb-text-brown'"
-      >{{ formatCurrency(summary.expense) }} ({{ budgetUsage }}%)</span
+      >{{ financeStore.formatCurrency(summary.expense) }} ({{
+        budgetUsage
+      }}%)</span
     >
   </div>
   <ProgressBar :value="budgetUsage" height="1.1rem" />
@@ -25,11 +27,11 @@ import { useFinanceStore } from "@/stores/finance";
 import ProgressBar from "../common/ProgressBar.vue";
 import { computed } from "vue";
 
-const { formatCurrency, getMonthlySummary } = useFinanceStore();
+const financeStore = useFinanceStore();
 
 const currentMonth = new Date().toISOString().slice(0, 7);
 const monthLabel = currentMonth.replace("-", "년 ") + "월";
-const summary = computed(() => getMonthlySummary(currentMonth));
+const summary = computed(() => financeStore.getMonthlySummary(currentMonth));
 
 //예산 설정 개발 끝내고 수정
 const monthlyBudgetTarget = 1000000;
