@@ -1,4 +1,4 @@
-import { computed, reactive, ref } from 'vue';
+import { computed, nextTick, reactive, ref } from 'vue';
 import { defineStore } from 'pinia';
 import axios from 'axios';
 import { useAuthStores } from './auth';
@@ -14,7 +14,14 @@ export const useFinanceStore = defineStore('transactionList', () => {
     currentMonth: new Date().toISOString().slice(0, 7),
     viewMode: 'calendar',
     selectedDate: new Date().toISOString().slice(0, 10),
+    filter: {
+      type: 'all',
+      category: '',
+      minAmount: 0,
+      maxAmount: 0,
+    },
   });
+
   const categories = reactive({
     expense: [
       { id: 'exp_food', name: '식비', icon: '🍴', color: '#FF6384' },
@@ -109,8 +116,13 @@ export const useFinanceStore = defineStore('transactionList', () => {
       0,
     );
 
-  const setCurrentMonth = (monthKey) => {
+  const setCurrentMonth = async (monthKey) => {
     state.currentMonth = monthKey;
+
+    await nextTick();
+
+    state.filter.maxAmount = currentMonthMaxAmount.value;
+    state.filter.minAmount = 0;
   };
   const setSelectedDate = (date) => {
     state.selectedDate = date;
@@ -118,6 +130,29 @@ export const useFinanceStore = defineStore('transactionList', () => {
   const setViewMode = (mode) => {
     state.viewMode = mode;
   };
+  const setFilter = (newFilter) => {
+    Object.assign(state.filter, newFilter);
+  };
+  const resetFilter = () => {
+    state.filter = {
+      type: 'all',
+      category: '',
+      minAmount: 0,
+      maxAmount: currentMonthMaxAmount.value,
+    };
+  };
+
+  const currentMonthMaxAmount = computed(() => {
+    const monthItems = transactions.value.filter(
+      (t) => toMonthKey(t.date) === state.currentMonth,
+    );
+
+    if (monthItems.length === 0) return 100000;
+
+    const max = Math.max(...monthItems.map((t) => Number(t.amount || 0)));
+
+    return max > 0 ? Math.ceil(max / 10000) * 10000 : 100000;
+  });
 
   //Transaction CRUD-------------------------------------------
   //Create - post
@@ -146,6 +181,8 @@ export const useFinanceStore = defineStore('transactionList', () => {
 
       if (res.status === 200) {
         transactions.value = res.data;
+
+        state.filter.maxAmount = currentMonthMaxAmount.value;
         return true;
       }
       console.log('거래 조회 실패');
@@ -159,10 +196,23 @@ export const useFinanceStore = defineStore('transactionList', () => {
   const getTransactionsByDate = (dateString) =>
     sortedTransactions.value.filter((t) => t.date === dateString);
 
-  const getTransactionsByMonth = (monthKey) => {
-    return sortedTransactions.value.filter(
+  const getTransactionsByMonth = (monthKey, applyFilter = false) => {
+    const base = sortedTransactions.value.filter(
       (t) => toMonthKey(t.date) === monthKey,
     );
+    if (!applyFilter) return base;
+
+    return base.filter((t) => {
+      const typeMathch =
+        state.filter.type === 'all' || t.type === state.filter.type;
+      const categoryMatch =
+        !state.filter.category || t.categoryId === state.filter.category;
+      const minMatch =
+        !state.filter.minAmount || t.amount >= state.filter.minAmount;
+      const maxMatch =
+        !state.filter.maxAmount || t.amount <= state.filter.maxAmount;
+      return typeMathch && categoryMatch && minMatch && maxMatch;
+    });
   };
 
   const getDailyTotals = (monthKey) => {
@@ -431,6 +481,9 @@ export const useFinanceStore = defineStore('transactionList', () => {
     setCurrentMonth,
     setSelectedDate,
     setViewMode,
+    setFilter,
+    resetFilter,
+    currentMonthMaxAmount,
     getMonthlySummary,
     monthlyBudgetTarget,
     getMonthlyExpensesByCategory,
