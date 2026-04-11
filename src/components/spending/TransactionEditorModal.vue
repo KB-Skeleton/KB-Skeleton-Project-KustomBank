@@ -36,7 +36,7 @@
         <div>
           <select v-model="editForm.categoryId" class="kb-input mt-2">
             <option
-              v-for="cat in financeStore.expenseCategories.value"
+              v-for="cat in currentCategories"
               :key="cat.id"
               :value="cat.id"
             >
@@ -68,11 +68,13 @@ const financeStore = useFinanceStore();
 
 const editForm = reactive({
   id: null,
+  userId: null,
   description: '',
   amount: 0,
   date: '',
   categoryId: null,
   type: 'expense',
+  isExpense: true,
 });
 
 watch(
@@ -86,24 +88,35 @@ watch(
       editForm.date = props.transaction.date;
       editForm.categoryId = props.transaction.categoryId;
       editForm.type = props.transaction.type;
+      editForm.isExpense = props.transaction.isExpense;
     }
   },
 );
 
-const handleSave = () => {
+const currentCategories = computed(() => {
+  if (editForm.type === 'income' || editForm.isExpense === false) {
+    return financeStore.incomeCategories;
+  }
+  return financeStore.expenseCategories;
+});
+
+const handleSave = async () => {
   if (!editForm.description || editForm.amount <= 0) {
     alert('내용과 금액을 정확히 입력해 주세요.');
     return;
   }
   if (editForm.date > today.value) {
     alert('미래 날짜는 선택할 수 없습니다.');
+    return;
   }
 
-  const success = financeStore.updateTransaction(editForm.id, { ...editForm });
+  const success = await financeStore.putTransaction({ ...editForm });
 
   if (success) {
     emit('save-success');
     emit('close');
+  } else {
+    alert('수정에 실패했습니다. 다시 시도해 주세요.');
   }
 };
 
