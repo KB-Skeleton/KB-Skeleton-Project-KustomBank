@@ -103,9 +103,9 @@ export const useBudgetStores = defineStore('budgetStore', () => {
   const getBudget = async (userId) => {
     try {
       const normalizedUserId = String(userId || '').trim();
-      const { data } = await axios.get(`${BASE_URL}/budgets`, {
-        params: { userId: normalizedUserId, _t: Date.now() },
-      });
+      const { data } = await axios.get(
+        `${BASE_URL}/budgets?userId=${normalizedUserId}`,
+      );
 
       if (Array.isArray(data) && data.length > 0) {
         return data[data.length - 1];
