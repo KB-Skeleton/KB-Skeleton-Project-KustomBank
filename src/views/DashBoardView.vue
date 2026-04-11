@@ -10,14 +10,17 @@
       <div class="col-12 col-xl-6">
         <article
           class="kb-panel kb-clickable h-100"
-          @click="router.push('/monthly-spending')"
+          @click="router.push('/statistics')"
         >
           <ExpenseDonutChart />
         </article>
       </div>
 
       <div class="col-12 col-xl-6">
-        <article class="kb-panel h-100">
+        <article
+          class="kb-panel h-100"
+          @click="router.push('/monthly-spending')"
+        >
           <RecentTransactions />
         </article>
       </div>
