@@ -12,9 +12,9 @@
     </div>
 
     <!-- trend(데이터) 없으면 렌더링 안되게 -->
-    <div v-if="trend.length" class="chart-wrap rounded-3">
+    <div v-if="visibleTrend.length" class="chart-wrap rounded-3">
       <div class="bars-wrap">
-        <div v-for="item in trend" :key="item.month" class="bar-item">
+        <div v-for="item in visibleTrend" :key="item.month" class="bar-item">
           <p class="bar-value mb-1">{{ formatCurrency(item.expense) }}</p>
           <div
             class="bar-fill"
@@ -38,7 +38,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { useFinanceStore } from '@/stores/finance';
 import { useStatisticsStore } from '@/stores/statistics';
 import CategoryComparisonModal from '@/components/charts/CategoryComparisonModal.vue';
@@ -53,13 +53,28 @@ const { getMonthKeys, ensureStatisticsData, getMonthlyComparisonChartData } =
 const currentMonth = computed(() => getMonthKeys().currentMonthKey);
 // 자세히 보기 모달 열림/닫힘 상태
 const isDetailModalOpen = ref(false);
+// 모바일 뷰포트 여부
+const isMobile = ref(false);
 
 // 최근 6개월 지출 추이/최대값 조회(막대 그래프 데이터)
 const chartData = computed(() =>
   getMonthlyComparisonChartData(currentMonth.value, 6),
 );
 const trend = computed(() => chartData.value.trend || []);
-const maxExpense = computed(() => Number(chartData.value.maxExpense || 1));
+// 모바일에서는 최근 3개만 표시
+const visibleTrend = computed(() =>
+  isMobile.value ? trend.value.slice(-3) : trend.value,
+);
+const maxExpense = computed(() => {
+  if (!visibleTrend.value.length) {
+    return 1;
+  }
+
+  return Math.max(
+    ...visibleTrend.value.map((item) => Number(item.expense || 0)),
+    1,
+  );
+});
 
 // 지출 금액을 퍼센트 높이로 변환
 const toHeightPercent = (expense) => {
@@ -68,9 +83,24 @@ const toHeightPercent = (expense) => {
   return Math.max(8, Math.round((value / max) * 100));
 };
 
+let mobileMediaQuery = null;
+const handleMobileChange = (event) => {
+  isMobile.value = event.matches;
+};
+
 onMounted(async () => {
   // 컴포넌트 마운트 시 거래 데이터 최신화
   await ensureStatisticsData();
+
+  mobileMediaQuery = window.matchMedia('(max-width: 575.98px)');
+  isMobile.value = mobileMediaQuery.matches;
+  mobileMediaQuery.addEventListener('change', handleMobileChange);
+});
+
+onBeforeUnmount(() => {
+  if (mobileMediaQuery) {
+    mobileMediaQuery.removeEventListener('change', handleMobileChange);
+  }
 });
 </script>
 
@@ -143,8 +173,7 @@ onMounted(async () => {
 
   .bars-wrap {
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    row-gap: 1rem;
-    min-height: 24rem;
+    min-height: 14rem;
   }
 
   .bar-fill {
