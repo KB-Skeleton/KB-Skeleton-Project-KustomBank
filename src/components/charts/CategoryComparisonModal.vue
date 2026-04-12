@@ -19,7 +19,7 @@
         <div class="summary-box mb-3">
           지난달 대비 총 지출은
           <strong :class="totalDiff >= 0 ? 'text-danger' : 'text-primary'">
-            {{ totalDiff >= 0 ? '+' : '' }}{{ formatCurrency(totalDiff) }}
+            {{ totalDiff >= 0 ? "+" : "" }}{{ formatCurrency(totalDiff) }}
           </strong>
           입니다.
         </div>
@@ -36,7 +36,9 @@
           :key="row.category"
           class="comparison-row"
         >
-          <span class="comparison-cell cell-category fw-semibold kb-text-charcoal">
+          <span
+            class="comparison-cell cell-category fw-semibold kb-text-charcoal"
+          >
             {{ row.category }}
           </span>
           <span
@@ -58,7 +60,7 @@
             ]"
             data-label="변화"
           >
-            {{ row.diff >= 0 ? '+' : '' }}{{ formatCurrency(row.diff) }}
+            {{ row.diff >= 0 ? "+" : "" }}{{ formatCurrency(row.diff) }}
           </span>
         </div>
       </div>
@@ -70,20 +72,14 @@
       >
         비교할 카테고리 데이터가 없습니다.
       </div>
-
-      <div class="d-flex justify-content-end mt-3">
-        <button type="button" class="kb-btn-light" @click="closeModal">
-          닫기
-        </button>
-      </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { computed, watch } from 'vue';
-import { useFinanceStore } from '@/stores/finance';
-import { useStatisticsStore } from '@/stores/statistics';
+import { computed, watch } from "vue";
+import { useFinanceStore } from "@/stores/finance";
+import { useStatisticsStore } from "@/stores/statistics";
 
 // 부모에서 v-model로 modal 열고 닫는 상태 제어
 const props = defineProps({
@@ -93,7 +89,7 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(['update:modelValue']);
+const emit = defineEmits(["update:modelValue"]);
 
 // finance 스토어 메서드 사용
 const { formatCurrency } = useFinanceStore();
@@ -136,7 +132,7 @@ watch(
 
 // modal 닫기 이벤트 전달
 const closeModal = () => {
-  emit('update:modelValue', false);
+  emit("update:modelValue", false);
 };
 </script>
 
