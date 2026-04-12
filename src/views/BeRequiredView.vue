@@ -1,5 +1,5 @@
 ﻿<template>
-  <BaseCard>
+  <BaseCard isPanel>
     <article>
       <div class="d-flex align-items-center justify-content-between mb-4">
         <div>
