@@ -14,20 +14,20 @@ import { computed, onMounted, ref } from 'vue';
 import CategoryBudgetList from '../components/budget/CategoryBudgetList.vue';
 import { useBudgetStores } from '../stores/budget';
 import { useFinanceStore } from '../stores/finance';
+import { useAuthStores } from '../stores/auth';
 
 const budgetStore = useBudgetStores();
 const transactionStore = useFinanceStore();
+const authStore = useAuthStores();
 const { getBudget, sumCategoryBudgets } = budgetStore;
 const { formatCurrency } = transactionStore;
 
 const selectedBudget = ref(null);
 
-// 현재 사용자 예산 1건을 다시 읽어 화면 계산값을 최신으로 유지
+// 현재 로그인된 사용자의 budget 데이터 불러오기
 const loadBudgets = async () => {
-  const currentUserId = transactionStore?.authState?.userId || 'user123';
-  const [budgetResult] = await Promise.allSettled([
-    getBudget(currentUserId),
-  ]);
+  const currentUserId = authStore.authState.userId;
+  const [budgetResult] = await Promise.allSettled([getBudget(currentUserId)]);
   selectedBudget.value =
     budgetResult.status === 'fulfilled' ? budgetResult.value : null;
 };
@@ -46,5 +46,3 @@ const monthlyBudgetTargetValue = computed(() => {
   return sumCategoryBudgets(selectedBudget.value?.categoryBudgets);
 });
 </script>
-
-

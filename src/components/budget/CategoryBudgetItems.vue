@@ -87,6 +87,7 @@
 import { onMounted, ref, watch } from 'vue';
 import { useBudgetStores } from '@/stores/budget';
 import { useFinanceStore } from '@/stores/finance';
+import { useAuthStores } from '@/stores/auth';
 
 const props = defineProps({
   reloadToken: {
@@ -99,6 +100,7 @@ const emit = defineEmits(['saved']);
 
 const finance = useBudgetStores();
 const transactionStore = useFinanceStore();
+const authStore = useAuthStores();
 const { buildCategoryBudgetRows, patchCategoryBudgetByUserId } = finance;
 const { formatCurrency } = transactionStore;
 
@@ -115,7 +117,7 @@ const isSaving = ref(false);
 
 // 사용자 기준 카테고리별 행 데이터를 조회해 화면에 반영
 const loadBudgetRows = async () => {
-  const currentUserId = transactionStore?.authStore?.userId || 'user123';
+  const currentUserId = authStore.authState.userId;
   const result = await buildCategoryBudgetRows(currentUserId);
   budgetRows.value = Array.isArray(result?.rows) ? result.rows : [];
   categoryBudgets.value = budgetRows.value.reduce((acc, row) => {
@@ -149,7 +151,7 @@ const saveInline = async (categoryId) => {
   try {
     isSaving.value = true;
     // userId 기준 한 개의 카테고리 예산 업데이트
-    const currentUserId = transactionStore?.authStore?.userId || 'user123';
+    const currentUserId = authStore.authState.userId;
     await patchCategoryBudgetByUserId(currentUserId, categoryId, nextAmount);
     categoryBudgets.value = {
       ...categoryBudgets.value,

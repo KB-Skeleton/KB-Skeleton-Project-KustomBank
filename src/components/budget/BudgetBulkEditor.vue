@@ -45,6 +45,7 @@
 import { reactive, ref, watch } from 'vue';
 import { useBudgetStores } from '@/stores/budget';
 import { useFinanceStore } from '@/stores/finance';
+import { useAuthStores } from '@/stores/auth';
 
 // v-model 바인딩용 prop (부모의 showBulkEditModal과 연결)
 const props = defineProps({
@@ -59,6 +60,7 @@ const emit = defineEmits(['update:modelValue', 'saved']);
 
 const finance = useBudgetStores();
 const transactionStore = useFinanceStore();
+const authStore = useAuthStores();
 const {
   getBudget,
   updateBudgetByUserId,
@@ -79,7 +81,7 @@ const closeModal = () => {
 // 입력한 카테고리별 금액을 userId 기준 budgets 1건에 PUT 반영
 const saveBulkBudgets = async () => {
   try {
-    const currentUserId = transactionStore?.authState?.userId || 'user123';
+    const currentUserId = authStore.authState.userId;
     await updateBudgetByUserId(currentUserId, bulkForm);
     // 저장 완료를 부모에 알리고, 상위 화면에서 총예산 재조회 트리거
     emit('saved');
@@ -92,9 +94,10 @@ const saveBulkBudgets = async () => {
 
 // 모달 오픈 시 categories/budgets를 읽어 input 초기값을 구성
 const loadFormData = async () => {
+  const currentUserId = authStore.authState.userId;
   // 카테고리 목록과 예산 데이터를 동시에 조회
   const [budgetResult, categoriesResult] = await Promise.allSettled([
-    getBudget(transactionStore?.authState?.userId || 'user123'),
+    getBudget(currentUserId),
     Promise.resolve({
       expense: Array.isArray(transactionStore?.categories?.expense)
         ? transactionStore.categories.expense
