@@ -26,7 +26,7 @@
         @click="openTransactionModal"
       >
         <span class="fab-mobile-label">+</span>
-        <span class="fab-desktop-label">+지출/수입 내역 추가</span>
+        <span class="fab-desktop-label">+ 입력하기</span>
       </BaseButton>
 
       <BaseModal
@@ -101,6 +101,9 @@ onMounted(() => {
   }
 
   .fab-mobile-label {
+    font-size: 1.8rem;
+    line-height: 1;
+    font-weight: 800;
     display: inline;
   }
 
