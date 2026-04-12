@@ -48,6 +48,9 @@ const props = defineProps({
     type: String,
     default: "article",
   },
+  type: {
+    type: String,
+  },
   // 추가 부트스트랩 클래스
   customClass: {
     type: String,
@@ -60,7 +63,8 @@ defineEmits(["click"]);
 const computedClasses = computed(() => {
   const baseClass = props.isPanel ? "kb-panel" : "kb-card";
   const accentClass = props.accent ? `kb-card-accent-${props.accent}` : "";
-  const clickableClass = "kb-clickable";
+  const clickableClass =
+    props.type === "button" || props.accent === "brown" ? "kb-clickable" : "";
 
   // 모든 클래스를 하나로 합쳐서 반환
   return `${baseClass} ${accentClass} ${clickableClass} ${props.customClass}`.trim();

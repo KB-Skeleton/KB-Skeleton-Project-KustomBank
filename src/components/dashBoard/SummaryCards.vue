@@ -4,6 +4,7 @@
       <BaseCard
         accent="blue"
         label="월 수입"
+        type="button"
         customClass="h-100 d-flex flex-column justify-content-between"
         @click="router.push('/monthly-spending')"
       >
@@ -18,6 +19,7 @@
       <BaseCard
         accent="red"
         label="월 지출"
+        type="button"
         customClass="h-100 d-flex flex-column justify-content-between"
         @click="router.push('/monthly-spending')"
       >
@@ -32,6 +34,7 @@
       <BaseCard
         accent="yellow"
         label="가용 금액"
+        type="button"
         customClass="h-100 d-flex flex-column justify-content-between"
         @click="router.push('/budget')"
       >
