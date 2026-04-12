@@ -38,6 +38,7 @@ aside {
   top: 110px; /* 헤더 높이에 맞춰서 적절히 조절 (예: 80px ~ 100px) */
   height: fit-content; /* 중요: 본인 내용물만큼만 키를 가져야 이동 공간이 생김 */
   z-index: 10;
+  padding-left: 20px;
 }
 .kb-nav-wrap {
   background-color: white;
