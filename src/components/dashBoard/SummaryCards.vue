@@ -66,7 +66,7 @@
         </p>
         <p class="summary-subtext fw-semibold text-secondary mb-0">
           예상 지출액:
-          {{ financeStore.formatCurrency(fixedSummary.totalFixed) }}
+          {{ financeStore.formatCurrency(fixedSummary.settingFixed) }}
         </p>
       </BaseCard>
     </div>
@@ -113,15 +113,15 @@ const fixedSummary = computed(() => {
   const userId = authStore.authState.userId || "";
 
   const spentFixed = financeStore.transactions
-    .filter((tx) => String(tx.userId || "") === String(userId))
     .filter((tx) => financeStore.toMonthKey(tx.date) === currentMonthKey.value)
     .filter((tx) => tx.isExpense === true || tx.type === "expense")
     .filter((tx) => tx.isFixed === true || tx.categoryId === "exp_fixed")
     .reduce((sum, tx) => sum + Number(tx.amount || 0), 0);
 
-  const settingFixed = financeStore.fixedExpenseSetting
-    .filter((item) => String(item.userId || "") === String(userId))
-    .reduce((sum, item) => sum + Number(item.amount || 0), 0);
+  const settingFixed = financeStore.fixedExpenseSetting.reduce(
+    (sum, item) => sum + Number(item.amount || 0),
+    0,
+  );
 
   const totalFixed = spentFixed + settingFixed;
 

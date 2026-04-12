@@ -53,9 +53,11 @@ import TransactionForm from "./components/calendar/TransactionForm.vue";
 import TheHeader from "./components/layout/TheHeader.vue";
 import TheSideBar from "./components/layout/TheSideBar.vue";
 import { useAuthStores } from "./stores/auth";
+import { useFinanceStore } from "./stores/finance";
 
 const route = useRoute();
 const authStore = useAuthStores();
+const financeStore = useFinanceStore();
 const isTransactionModalOpen = ref(false);
 
 const isLoginPage = computed(() => route.path === "/login");
@@ -68,8 +70,9 @@ const closeTransactionModal = () => {
   isTransactionModalOpen.value = false;
 };
 
-onMounted(() => {
+onMounted(async () => {
   authStore.restoreAuth();
+  await financeStore.runDailyFixedExpenseAutoPost();
 });
 </script>
 
