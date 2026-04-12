@@ -100,22 +100,22 @@ export const useFinanceStore = defineStore('transactionList', () => {
   const incomeCategories = computed(() => categories.income);
 
   //불필요한 지출 부분 매서드---------------------------------------------------------
-  const getBerquiredOutcome = (userId) => {
+  const getBerequiredOutcome = (userId) => {
     const targetUserId = userId || authState.userId;
     return sortedTransactions.value.filter((transaction) => {
       const isExpense =
         transaction.type === 'expense' || transaction.isExpense === true;
       return (
         transaction.userId === targetUserId &&
-        (transaction.isRequired ?? false) === false &&
+        (transaction.isRequired ?? false) === true &&
         isExpense &&
         toMonthKey(transaction.date) === getCurrentMonthKey.value
       );
     });
   };
 
-  const getBerquiredOutcomeAmount = (userId) =>
-    getBerquiredOutcome(userId).reduce(
+  const getBerequiredOutcomeAmount = (userId) =>
+    getBerequiredOutcome(userId).reduce(
       (sum, transaction) => sum + Number(transaction.amount || 0),
       0,
     );
@@ -527,8 +527,8 @@ export const useFinanceStore = defineStore('transactionList', () => {
     getCategoryById,
     expenseCategories,
     incomeCategories,
-    getBerquiredOutcome,
-    getBerquiredOutcomeAmount,
+    getBerequiredOutcome,
+    getBerequiredOutcomeAmount,
     postTransaction,
     getTransaction,
     getTransactionsByDate,

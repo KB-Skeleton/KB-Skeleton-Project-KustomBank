@@ -26,9 +26,7 @@
       :class="{ active: form.isFixed }"
       @click="toggleFixedMode"
     >
-      {{
-        form.isFixed ? "일반 지출로 등록하기" : "고정지출로 등록하기"
-      }}
+      {{ form.isFixed ? '일반 지출로 등록하기' : '고정지출로 등록하기' }}
     </button>
 
     <div class="form-group">
@@ -43,20 +41,19 @@
       />
     </div>
 
-
     <div class="form-group">
       <label for="category">카테고리</label>
       <div class="category-button-group">
         <button
-        v-for="category in currentCategories"
-        :key="category.id"
-        type="button"
-        class="category-button"
-        :class="{active:form.categoryId === category.id}"
-        @click="form.categoryId = category.id"
+          v-for="category in currentCategories"
+          :key="category.id"
+          type="button"
+          class="category-button"
+          :class="{ active: form.categoryId === category.id }"
+          @click="form.categoryId = category.id"
         >
-      {{ category.name }}
-      </button>
+          {{ category.name }}
+        </button>
       </div>
     </div>
 
@@ -90,24 +87,49 @@
       />
     </div>
 
+    <div v-if="form.type === 'expense' && !form.isFixed" class="form-group">
+      <label>이 소비, 어떠셨나요?</label>
+      <div class="evaluation-group">
+        <button
+          type="button"
+          class="evaluation-btn"
+          :class="{ 'active-good': form.evaluation === 'good' }"
+          @click="form.evaluation = 'good'"
+        >
+          😊 만족해요
+        </button>
+        <button
+          type="button"
+          class="evaluation-btn"
+          :class="{ 'active-bad': form.evaluation === 'bad' }"
+          @click="form.evaluation = 'bad'"
+        >
+          💸 아까워요
+        </button>
+      </div>
+      <div class="text-secondary text-center mt-1">
+        '아까워요'를 선택하면 불필요한 지출로 분류돼요.
+      </div>
+    </div>
+
     <div class="editor-actions">
       <BaseButton type="button" variant="light" @click="emit('cancel')">
         취소
       </BaseButton>
       <BaseButton type="submit" variant="dark" :loading="isSubmitting">
-        {{ form.isFixed ? "고정지출 저장" : "저장" }}
+        {{ form.isFixed ? '고정지출 저장' : '저장' }}
       </BaseButton>
     </div>
   </form>
 </template>
 
 <script setup>
-import { computed, reactive, ref } from "vue";
-import BaseButton from "@/components/common/BaseButton.vue";
-import { useAuthStores } from "@/stores/auth";
-import { useFinanceStore } from "@/stores/finance";
+import { computed, reactive, ref } from 'vue';
+import BaseButton from '@/components/common/BaseButton.vue';
+import { useAuthStores } from '@/stores/auth';
+import { useFinanceStore } from '@/stores/finance';
 
-const emit = defineEmits(["saved", "cancel"]);
+const emit = defineEmits(['saved', 'cancel']);
 
 const financeStore = useFinanceStore();
 const authStore = useAuthStores();
@@ -118,26 +140,27 @@ const todayDate = Number(today.slice(-2));
 const paymentDays = Array.from({ length: 31 }, (_, index) => index + 1);
 
 const form = reactive({
-  type: "expense",
+  type: 'expense',
   isFixed: false,
   amount: null,
-  categoryId: "",
+  categoryId: '',
   date: today,
   paymentDate: todayDate,
-  description: "",
+  description: '',
+  evaluation: 'good',
 });
 
 const currentCategories = computed(() =>
-  form.type === "expense"
+  form.type === 'expense'
     ? financeStore.expenseCategories
     : financeStore.incomeCategories,
 );
 
 const setType = (type) => {
   form.type = type;
-  form.categoryId = "";
+  form.categoryId = '';
 
-  if (type === "income") {
+  if (type === 'income') {
     form.isFixed = false;
   }
 };
@@ -147,36 +170,36 @@ const toggleFixedMode = () => {
 };
 
 const resetForm = () => {
-  form.type = "expense";
+  form.type = 'expense';
   form.isFixed = false;
   form.amount = null;
-  form.categoryId = "";
+  form.categoryId = '';
   form.date = today;
   form.paymentDate = todayDate;
-  form.description = "";
+  form.description = '';
 };
 
 const validateForm = () => {
   if (!form.amount || form.amount <= 0) {
-    alert("금액을 입력해주세요.");
+    alert('금액을 입력해주세요.');
     return false;
   }
 
   if (!form.categoryId) {
-    alert("카테고리를 선택해주세요.");
+    alert('카테고리를 선택해주세요.');
     return false;
   }
 
   if (form.isFixed) {
     if (!form.paymentDate || form.paymentDate < 1 || form.paymentDate > 31) {
-      alert("매달 결제일을 선택해주세요.");
+      alert('매달 결제일을 선택해주세요.');
       return false;
     }
     return true;
   }
 
   if (!form.date) {
-    alert("날짜를 선택해주세요.");
+    alert('날짜를 선택해주세요.');
     return false;
   }
 
@@ -198,7 +221,7 @@ const handleSubmit = async () => {
       categoryId: form.categoryId,
       amount: Number(form.amount),
       paymentDate: Number(form.paymentDate),
-      cycle: "monthly",
+      cycle: 'monthly',
       description: form.description.trim(),
     };
 
@@ -207,13 +230,13 @@ const handleSubmit = async () => {
     const transactionPayload = {
       userId: authStore.authState.userId,
       type: form.type,
-      isExpense: form.type === "expense",
+      isExpense: form.type === 'expense',
       isFixed: false,
       amount: Number(form.amount),
       categoryId: form.categoryId,
       description: form.description.trim(),
       date: form.date,
-      isRequired: false,
+      isRequired: form.type === 'expense' && form.evaluation === 'bad',
     };
 
     success = await financeStore.postTransaction(transactionPayload);
@@ -223,13 +246,15 @@ const handleSubmit = async () => {
 
   if (!success) {
     alert(
-      form.isFixed ? "고정지출 저장에 실패했습니다." : "거래 저장에 실패했습니다.",
+      form.isFixed
+        ? '고정지출 저장에 실패했습니다.'
+        : '거래 저장에 실패했습니다.',
     );
     return;
   }
 
   resetForm();
-  emit("saved");
+  emit('saved');
 };
 </script>
 
@@ -301,5 +326,34 @@ const handleSubmit = async () => {
   border-color: var(--kb-charcoal);
   background: var(--kb-charcoal);
   color: var(--kb-yellow);
+}
+.evaluation-group {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.evaluation-btn {
+  padding: 10px;
+  border-radius: 12px;
+  border: 1px solid rgba(34, 34, 34, 0.15);
+  background: #f8f9fa;
+  font-weight: 700;
+  transition: all 0.2s;
+  color: #495057;
+}
+
+/* 만족해요 활성화 */
+.active-good {
+  background: #e7f5ff;
+  border-color: #228be6;
+  color: #1c7ed6;
+}
+
+/* 아까워요 활성화 */
+.active-bad {
+  background: #fff5f5;
+  border-color: #fa5252;
+  color: #e03131;
 }
 </style>

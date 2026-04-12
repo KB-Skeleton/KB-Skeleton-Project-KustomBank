@@ -19,7 +19,7 @@
         <div class="text-start">
           <p class="small fw-bold text-secondary mb-1">불필요 지출 총액</p>
           <p class="kb-card-value text-danger mb-0">
-            {{ formatCurrency(totalBerquiredExpenseAmount) }}
+            {{ formatCurrency(totalBerequiredExpenseAmount) }}
           </p>
         </div>
       </div>
@@ -28,7 +28,7 @@
         <div class="text-md-end text-start mt-md-0 mt-3">
           <p class="small fw-bold text-secondary mb-1">지출 건수</p>
           <p class="kb-card-value kb-text-charcoal mb-0">
-            {{ berquiredExpenseCount }}<span class="fs-5 fw-bold">건</span>
+            {{ berequiredExpenseCount }}<span class="fs-5 fw-bold">건</span>
           </p>
         </div>
       </div>
@@ -51,26 +51,28 @@
 </template>
 
 <script setup>
-import { computed, onMounted } from "vue";
-import { useFinanceStore } from "@/stores/finance";
-import { useHotStock } from "@/stores/hotStock";
-import { useAuthStores } from "@/stores/auth";
-import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-import { faAnglesRight } from "@fortawesome/free-solid-svg-icons";
+import { computed, onMounted } from 'vue';
+import { useFinanceStore } from '@/stores/finance';
+import { useHotStock } from '@/stores/hotStock';
+import { useAuthStores } from '@/stores/auth';
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import { faAnglesRight } from '@fortawesome/free-solid-svg-icons';
 
-const { getBerquiredOutcome, formatCurrency, getTransaction } =
+const { getBerequiredOutcome, formatCurrency, getTransaction } =
   useFinanceStore();
 const { authState } = useAuthStores();
 const hotStockStore = useHotStock();
 
-const berquiredExpenses = computed(() => getBerquiredOutcome(authState.userId));
-const totalBerquiredExpenseAmount = computed(() =>
-  berquiredExpenses.value.reduce(
+const berequiredExpenses = computed(() =>
+  getBerequiredOutcome(authState.userId),
+);
+const totalBerequiredExpenseAmount = computed(() =>
+  berequiredExpenses.value.reduce(
     (sum, transaction) => sum + transaction.amount,
     0,
   ),
 );
-const berquiredExpenseCount = computed(() => berquiredExpenses.value.length);
+const berequiredExpenseCount = computed(() => berequiredExpenses.value.length);
 const isStockLoading = computed(() => hotStockStore.isFetching);
 
 onMounted(() => {
@@ -91,7 +93,7 @@ onMounted(() => {
   font-size: 2rem;
   line-height: 1.1;
   font-weight: 900;
-  font-family: "Pretendard", sans-serif;
+  font-family: 'Pretendard', sans-serif;
 }
 
 .summary-invest-hint {
