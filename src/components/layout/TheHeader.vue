@@ -29,7 +29,7 @@
         </div>
       </RouterLink>
 
-      <div class="d-flex align-items-center gap-2">
+      <div v-if="isLoggedIn" class="d-flex align-items-center gap-2">
         <KbButton
           variant="dark"
           customClass="rounded-pill user-btn"
@@ -40,7 +40,7 @@
         <KbButton
           variant="light"
           customClass="rounded-pill user-btn"
-          @click="handleLogout"
+          @click="handleLogout($event)"
         >
           로그아웃
         </KbButton>
@@ -50,25 +50,33 @@
 </template>
 
 <script setup>
-import { computed } from "vue";
-import { RouterLink, useRouter } from "vue-router";
-import KbButton from "@/components/common/BaseButton.vue";
-import { useAuthStores } from "@/stores/auth";
+import { computed } from 'vue';
+import { RouterLink, useRouter } from 'vue-router';
+import KbButton from '@/components/common/BaseButton.vue';
+import { useAuthStores } from '@/stores/auth';
 
 const router = useRouter();
 const authStore = useAuthStores();
 
+const isLoggedIn = computed(() => !!authStore.authState.userId);
+
 const buttonLabel = computed(() =>
-  authStore.authState.name ? `${authStore.authState.name} \uB2D8` : "내 프로필",
+  authStore.authState.name ? `${authStore.authState.name} \uB2D8` : '내 프로필',
 );
 
 const goToProfile = () => {
-  router.push("/profile");
+  router.push('/profile');
 };
 
-const handleLogout = () => {
-  authStore.logout();
-  router.replace("/login");
+const handleLogout = (event) => {
+  if (event?.currentTarget) {
+    event.currentTarget.blur();
+  }
+
+  if (confirm('로그아웃 하시겠습니까?')) {
+    authStore.logout();
+    router.replace('/login');
+  }
 };
 </script>
 

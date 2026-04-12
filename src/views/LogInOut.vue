@@ -22,7 +22,7 @@
             v-model="loginForm.userId"
             type="text"
             class="kb-input w-100"
-            placeholder="user123"
+            placeholder="아이디를 입력하세요"
             required
             autofocus
           />
@@ -37,7 +37,7 @@
             v-model="loginForm.password"
             type="password"
             class="kb-input w-100"
-            placeholder="kb1234"
+            placeholder="비밀번호를 입력하세요"
             required
           />
         </div>
@@ -47,7 +47,7 @@
           class="kb-btn-brown w-100 py-2 fw-bold"
           :disabled="isLoading"
         >
-          {{ isLoading ? "로그인 중..." : "로그인" }}
+          {{ isLoading ? '로그인 중...' : '로그인' }}
         </button>
       </form>
 
@@ -62,37 +62,37 @@
 </template>
 
 <script setup>
-import { onMounted, reactive, ref } from "vue";
-import { useRoute, useRouter } from "vue-router";
-import { useAuthStores } from "@/stores/auth";
+import { onMounted, reactive, ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import { useAuthStores } from '@/stores/auth';
 
 const router = useRouter();
 const route = useRoute();
 const authStore = useAuthStores();
 
 const loginForm = reactive({
-  userId: "",
-  password: "",
+  userId: '',
+  password: '',
 });
 
 const isLoading = ref(false);
-const errorMessage = ref("");
+const errorMessage = ref('');
 
 const getRedirectPath = () => {
-  if (typeof route.query.redirect === "string") {
+  if (typeof route.query.redirect === 'string') {
     return route.query.redirect;
   }
-  return "/dashboard";
+  return '/dashboard';
 };
 
 const handleLogin = async () => {
   if (!loginForm.userId || !loginForm.password) {
-    errorMessage.value = "아이디와 비밀번호를 입력해 주세요.";
+    errorMessage.value = '아이디와 비밀번호를 입력해 주세요.';
     return;
   }
 
   isLoading.value = true;
-  errorMessage.value = "";
+  errorMessage.value = '';
 
   try {
     const user = await authStore.login({
@@ -101,14 +101,14 @@ const handleLogin = async () => {
     });
 
     if (!user) {
-      errorMessage.value = "아이디 또는 비밀번호가 올바르지 않습니다.";
+      errorMessage.value = '아이디 또는 비밀번호가 올바르지 않습니다.';
       return;
     }
 
     router.replace(getRedirectPath());
   } catch (error) {
     errorMessage.value =
-      "로그인 서버에 연결하지 못했습니다. json-server 실행 상태를 확인해 주세요.";
+      '로그인 서버에 연결하지 못했습니다. json-server 실행 상태를 확인해 주세요.';
   } finally {
     isLoading.value = false;
   }
@@ -117,7 +117,7 @@ const handleLogin = async () => {
 onMounted(() => {
   authStore.restoreAuth();
   if (authStore.isAuthenticated) {
-    router.replace("/dashboard");
+    router.replace('/dashboard');
   }
 });
 </script>
