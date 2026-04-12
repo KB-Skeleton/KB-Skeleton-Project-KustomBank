@@ -44,8 +44,8 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref } from "vue";
-import { RouterView, useRoute } from "vue-router";
+import { computed, onMounted, ref } from 'vue';
+import { RouterView, useRoute } from 'vue-router';
 
 import BaseButton from "./components/common/BaseButton.vue";
 import BaseModal from "./components/common/BaseModal.vue";
@@ -60,7 +60,7 @@ const authStore = useAuthStores();
 const financeStore = useFinanceStore();
 const isTransactionModalOpen = ref(false);
 
-const isLoginPage = computed(() => route.path === "/login");
+const isLoginPage = computed(() => route.path === '/login');
 
 const openTransactionModal = () => {
   isTransactionModalOpen.value = true;
@@ -78,7 +78,7 @@ onMounted(async () => {
 
 <style>
 .custom-main {
-  padding: 24px 24px 60px 24px;
+  padding: 0 24px 60px 24px;
 }
 
 .login-main {

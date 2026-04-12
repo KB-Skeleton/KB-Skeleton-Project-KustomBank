@@ -59,15 +59,15 @@ import { useFinanceStore } from '@/stores/finance';
 import { useHotStock } from '../../stores/hotStock.js';
 import { useAuthStores } from '@/stores/auth.js';
 
-const { getBerquiredOutcome, formatCurrency } = useFinanceStore();
+const { getBerequiredOutcome, formatCurrency } = useFinanceStore();
 const { authState } = useAuthStores();
 const hotStocksStore = useHotStock();
 
 const hotStocks = computed(() => hotStocksStore.hotStocks);
 const isFetching = computed(() => hotStocksStore.isFetching);
 
-const totalBerquiredExpenseAmount = computed(() =>
-  getBerquiredOutcome(authState.userId).reduce(
+const totalBerequiredExpenseAmount = computed(() =>
+  getBerequiredOutcome(authState.userId).reduce(
     (sum, transaction) => sum + Number(transaction.amount || 0),
     0,
   ),
@@ -77,7 +77,7 @@ const affordableHotStocks = computed(() =>
   hotStocks.value.map((stock) => {
     const close = Number(stock.close || 0);
     const count =
-      close > 0 ? Math.floor(totalBerquiredExpenseAmount.value / close) : 0;
+      close > 0 ? Math.floor(totalBerequiredExpenseAmount.value / close) : 0;
     return { ...stock, close, count };
   }),
 );
