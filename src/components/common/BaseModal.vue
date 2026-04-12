@@ -2,8 +2,13 @@
   <div v-if="open" class="modal-backdrop" @click="handleBackdropClick">
     <div class="modal-panel" @click.stop>
       <div class="modal-header">
-        <h2>{{ title }}</h2>
-        <button type="button" @click="$emit('close')">X</button>
+        <h2 class="modal-title-text">{{ title }}</h2>
+        <button
+          type="button"
+          class="btn-close"
+          aria-label="닫기"
+          @click="closeModal"
+        ></button>
       </div>
 
       <div class="modal-body">
@@ -21,14 +26,14 @@ const props = defineProps({
   },
   title: {
     type: String,
-    default: "",
+    default: '',
   },
 });
 
-const emit = defineEmits(["close"]);
+const emit = defineEmits(['close']);
 
 const handleBackdropClick = () => {
-  emit("close");
+  emit('close');
 };
 </script>
 
@@ -62,5 +67,13 @@ const handleBackdropClick = () => {
   display: flex;
   flex-direction: column;
   gap: 12px;
+}
+
+.modal-title-text {
+  font-size: 1.45rem;
+  font-weight: 900;
+  color: var(--kb-charcoal, #222);
+  letter-spacing: -0.03em;
+  margin: 0;
 }
 </style>
