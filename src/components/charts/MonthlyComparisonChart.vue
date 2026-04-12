@@ -1,13 +1,13 @@
 ﻿<template>
   <div class="kb-panel h-100 d-flex flex-column w-100">
     <div class="d-flex align-items-center justify-content-between mb-3">
-      <h2 class="h4 fw-black kb-text-charcoal mb-0">지난달 총 지출 비교</h2>
+      <h2 class="h4 fw-black kb-text-charcoal mb-0">월별 지출</h2>
       <button
         type="button"
         class="kb-btn-brown"
         @click="isDetailModalOpen = true"
       >
-        자세히 보기
+        자세히
       </button>
     </div>
 
@@ -38,10 +38,10 @@
 </template>
 
 <script setup>
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
-import { useFinanceStore } from '@/stores/finance';
-import { useStatisticsStore } from '@/stores/statistics';
-import CategoryComparisonModal from '@/components/charts/CategoryComparisonModal.vue';
+import { computed, onBeforeUnmount, onMounted, ref } from "vue";
+import { useFinanceStore } from "@/stores/finance";
+import { useStatisticsStore } from "@/stores/statistics";
+import CategoryComparisonModal from "@/components/charts/CategoryComparisonModal.vue";
 
 // finance 스토어 메서드 사용
 const { formatCurrency } = useFinanceStore();
@@ -92,14 +92,14 @@ onMounted(async () => {
   // 컴포넌트 마운트 시 거래 데이터 최신화
   await ensureStatisticsData();
 
-  mobileMediaQuery = window.matchMedia('(max-width: 575.98px)');
+  mobileMediaQuery = window.matchMedia("(max-width: 575.98px)");
   isMobile.value = mobileMediaQuery.matches;
-  mobileMediaQuery.addEventListener('change', handleMobileChange);
+  mobileMediaQuery.addEventListener("change", handleMobileChange);
 });
 
 onBeforeUnmount(() => {
   if (mobileMediaQuery) {
-    mobileMediaQuery.removeEventListener('change', handleMobileChange);
+    mobileMediaQuery.removeEventListener("change", handleMobileChange);
   }
 });
 </script>
