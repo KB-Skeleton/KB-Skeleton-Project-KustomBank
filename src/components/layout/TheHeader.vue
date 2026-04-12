@@ -35,7 +35,7 @@
           customClass="rounded-pill user-btn text-btn d-none d-md-inline-flex"
           @click="goToProfile"
         >
-          {{ profileButtonTitle }}
+          {{ buttonLabel }}
         </KbButton>
         <KbButton
           variant="light"
@@ -48,11 +48,11 @@
         <KbButton
           variant="dark"
           customClass="rounded-circle user-btn icon-btn d-inline-flex d-md-none"
-          :title="profileButtonTitle"
+          :title="buttonLabel"
           @click="goToProfile"
         >
           <FontAwesomeIcon :icon="faUser" />
-          <span class="visually-hidden">{{ profileButtonTitle }}</span>
+          <span class="visually-hidden">{{ buttonLabel }}</span>
         </KbButton>
         <KbButton
           variant="light"
@@ -78,6 +78,8 @@ import { useAuthStores } from '@/stores/auth';
 
 const router = useRouter();
 const authStore = useAuthStores();
+
+const isLoggedIn = computed(() => !!authStore.authState.userId);
 
 const buttonLabel = computed(() =>
   authStore.authState.name ? `${authStore.authState.name} \uB2D8` : '내 프로필',
