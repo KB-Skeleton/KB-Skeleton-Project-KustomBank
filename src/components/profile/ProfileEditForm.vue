@@ -68,8 +68,8 @@
 </template>
 
 <script setup>
-import { reactive, watch, ref } from "vue";
-import KbButton from "@/components/common/BaseButton.vue";
+import { reactive, watch, ref } from 'vue';
+import KbButton from '@/components/common/BaseButton.vue';
 
 const props = defineProps({
   user: {
@@ -82,20 +82,20 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(["save", "cancel"]);
+const emit = defineEmits(['save', 'cancel']);
 
 const form = reactive({
-  name: "",
-  email: "",
-  phone: "",
+  name: '',
+  email: '',
+  phone: '',
 });
 
-const errorMessage = ref("");
+const errorMessage = ref('');
 
 const syncForm = (user) => {
-  form.name = user?.name ?? "";
-  form.email = user?.email ?? "";
-  form.phone = user?.phone ?? "";
+  form.name = user?.name ?? '';
+  form.email = user?.email ?? '';
+  form.phone = user?.phone ?? '';
 };
 
 watch(
@@ -111,16 +111,18 @@ const submitForm = () => {
   const isValidPhone = /^[0-9-+\s]{7,20}$/.test(form.phone);
 
   if (!form.name || !isValidEmail || !isValidPhone) {
-    errorMessage.value = "올바른 프로필 정보를 입력해 주세요.";
+    errorMessage.value = '올바른 프로필 정보를 입력해 주세요.';
     return;
   }
 
-  errorMessage.value = "";
-  emit("save", {
-    name: form.name,
-    email: form.email,
-    phone: form.phone,
-  });
+  if (confirm('프로필 정보를 수정하시겠습니까?')) {
+    errorMessage.value = '';
+    emit('save', {
+      name: form.name,
+      email: form.email,
+      phone: form.phone,
+    });
+  }
 };
 </script>
 

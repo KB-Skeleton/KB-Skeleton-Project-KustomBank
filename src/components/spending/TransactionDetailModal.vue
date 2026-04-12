@@ -7,7 +7,7 @@
     <div class="kb-modal-card">
       <div class="d-flex align-items-center justify-content-between mb-3">
         <h4 class="fw-black">내역 상세</h4>
-        <button class="kb-btn-light" @click="$emit('close')">닫기</button>
+        <button class="btn-close" @click="$emit('close')"></button>
       </div>
 
       <div class="">
@@ -37,7 +37,7 @@ const props = defineProps({
 const emit = defineEmits(['close', 'edit', 'delete']);
 
 const handleDelete = () => {
-  if (confirm('정말로 삭제하시겠습니까?')) {
+  if (confirm('삭제하시겠습니까?')) {
     emit('delete', props.transaction.id);
     emit('close');
   }

@@ -24,15 +24,21 @@ const route = useRoute();
 const menu = [
   { label: '홈', to: '/', icon: '🏠' },
   { label: '거래 내역', to: '/monthly-spending', icon: '📝' }, // path 일치 확인
-  { label: '고정 지출', to: '/fixed-expenses', icon: '📅' },    // 마이페이지 대신 추가
+  { label: '고정 지출', to: '/fixed-expenses', icon: '📅' }, // 마이페이지 대신 추가
   { label: '예산 설정', to: '/budget', icon: '💰' },
-  { label: '소비 통계', to: '/statistics', icon: '📊' },       // stats -> statistics로 변경
-  { label: '투자 현황', to: '/investment', icon: '📈' },       // 라우터에 있는 투자 페이지 추가
+  { label: '소비 통계', to: '/statistics', icon: '📊' }, // stats -> statistics로 변경
+  { label: '투자 현황', to: '/investment', icon: '📈' }, // 라우터에 있는 투자 페이지 추가
 ];
 </script>
 
 <style scoped>
 /* 사이드바 감싸는 영역 */
+aside {
+  position: sticky;
+  top: 110px; /* 헤더 높이에 맞춰서 적절히 조절 (예: 80px ~ 100px) */
+  height: fit-content; /* 중요: 본인 내용물만큼만 키를 가져야 이동 공간이 생김 */
+  z-index: 10;
+}
 .kb-nav-wrap {
   background-color: white;
   border-radius: 16px;
@@ -80,9 +86,9 @@ const menu = [
     margin-bottom: 0;
     padding: 8px 14px;
     font-size: 0.9rem;
-    
+
     /* 6개가 꽉 차게 나누어 갖도록 설정 */
-    flex: 1; 
+    flex: 1;
     justify-content: center; /* 아이콘과 글자를 가운데로 */
     min-width: fit-content;
   }
@@ -94,30 +100,26 @@ const menu = [
     height: 0 !important;
   }
   .kb-nav-wrap {
-    /* 화면 하단에 고정 */
     position: fixed;
     bottom: 0;
     left: 0;
     width: 100%;
     z-index: 1000;
-    
-    /* 위쪽 모서리만 둥글게, 약간의 그림자 추가 */
+
     border-radius: 10px 10px 0 0;
     box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.05);
     border: none;
     margin: 0;
-    padding: 5px 8px 2px 8px !important; /* 아이폰 하단 바 등을 고려해 여유 공간 확보 */
-    
+    padding: 5px 8px 2px 8px !important;
+
     flex-direction: row;
     overflow-x: auto;
-
   }
 
   .kb-nav-item {
-    /* 아이콘 위, 글자 아래로 수직 배치 */
     flex-direction: column;
     justify-content: center;
-    width: 72px; /* 터치하기 좋은 최소 너비 */
+    width: 72px;
     padding: 6px 4px;
     font-size: 0.75rem;
   }
@@ -125,7 +127,7 @@ const menu = [
   .kb-nav-item span:first-child {
     margin-right: 0 !important;
     margin-bottom: 4px;
-    font-size: 1.2rem; /* 모바일에서는 아이콘을 살짝 더 크게 */
+    font-size: 1.2rem;
   }
 }
 </style>
