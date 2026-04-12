@@ -1,4 +1,4 @@
-import { defineStore } from 'pinia';
+﻿import { defineStore } from 'pinia';
 import axios from 'axios';
 import { useFinanceStore } from './finance';
 import { useAuthStores } from './auth';
@@ -6,6 +6,8 @@ import { useAuthStores } from './auth';
 const BASE_URL = 'http://localhost:3000';
 
 export const useBudgetStores = defineStore('budgetStore', () => {
+  const authStore = useAuthStores();
+
   // 카테고리 예산 합산 (budget 전용)
   const sumCategoryBudgets = (categoryBudgets = {}) => {
     return Object.values(categoryBudgets || {}).reduce((sum, value) => {
@@ -17,9 +19,8 @@ export const useBudgetStores = defineStore('budgetStore', () => {
   // 예산/사용, 사용률 . 남은금액  (budget 전용)
   const buildCategoryBudgetRows = async (userId, monthKey) => {
     const financeStore = useFinanceStore();
-    // finance의 userid를 우선 사용, 없다면 auth id 사용
-    const currentUserId =
-      financeStore?.authState?.userId || useAuthStores()?.authState?.userId;
+    // 로그인된 사용자 id 조회
+    const currentUserId = authStore.authState.userId;
     const normalizedUserId = String(userId || currentUserId).trim();
 
     const expenseCategories = Array.isArray(financeStore?.categories?.expense)

@@ -22,7 +22,7 @@
 <script setup>
 import { computed, onMounted, ref, watch } from 'vue';
 import { useBudgetStores } from '@/stores/budget';
-import { useFinanceStore } from '@/stores/finance';
+import { useAuthStores } from '@/stores/auth';
 import BudgetSummary from './BudgetSummary.vue';
 import BudgetBulkEditor from './BudgetBulkEditor.vue';
 import CategoryBudgetItems from './CategoryBudgetItems.vue';
@@ -44,7 +44,7 @@ const showBulkEditModal = ref(false);
 const totalSpent = ref(0);
 
 const finance = useBudgetStores();
-const transactionStore = useFinanceStore();
+const authStore = useAuthStores();
 const { buildCategoryBudgetRows } = finance;
 
 // 전체 예산 대비 사용률(%) 계산
@@ -58,7 +58,7 @@ const totalUsage = computed(() => {
 
 // 카테고리 내역 행 데이터를 합산해 총 지출 금액 계산
 const loadSummaryUsage = async () => {
-  const currentUserId = transactionStore?.authStore?.userId || 'user123';
+  const currentUserId = authStore.authState.userId;
   const result = await buildCategoryBudgetRows(currentUserId);
   const rows = Array.isArray(result?.rows) ? result.rows : [];
   totalSpent.value = rows.reduce((sum, row) => sum + Number(row.spent || 0), 0);
