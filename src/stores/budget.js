@@ -1,16 +1,23 @@
-﻿import { defineStore } from 'pinia';
-import axios from 'axios';
-import { useFinanceStore } from './finance';
-import { useAuthStores } from './auth';
+﻿import { defineStore } from "pinia";
+import axios from "axios";
+import { useFinanceStore } from "./finance";
+import { useAuthStores } from "./auth";
+import { ref } from "vue";
 
-const BASE_URL = 'http://localhost:3000';
+const BASE_URL = "http://localhost:3000";
 
-export const useBudgetStores = defineStore('budgetStore', () => {
+export const useBudgetStores = defineStore("budgetStore", () => {
   const authStore = useAuthStores();
+  const userBudget = ref();
 
   // 카테고리 예산 합산 (budget 전용)
   const sumCategoryBudgets = (categoryBudgets = {}) => {
-    return Object.values(categoryBudgets || {}).reduce((sum, value) => {
+    const source =
+      Object.keys(categoryBudgets || {}).length > 0
+        ? categoryBudgets
+        : userBudget.value?.categoryBudgets || {};
+
+    return Object.values(source).reduce((sum, value) => {
       const parsed = Number(value || 0);
       return Number.isFinite(parsed) ? sum + parsed : sum;
     }, 0);
@@ -25,7 +32,7 @@ export const useBudgetStores = defineStore('budgetStore', () => {
 
     const expenseCategories = Array.isArray(financeStore?.categories?.expense)
       ? financeStore.categories.expense
-          .filter((category) => category.id !== 'exp_fixed')
+          .filter((category) => category.id !== "exp_fixed")
           .map((category) => ({ id: category.id, name: category.name }))
       : [];
 
@@ -57,11 +64,11 @@ export const useBudgetStores = defineStore('budgetStore', () => {
       .map((item) => financeStore.toMonthKey(item?.date))
       .filter(Boolean)
       .sort((a, b) => b.localeCompare(a));
-    const targetMonthKey = String(monthKey || sortedMonthKeys[0] || '');
+    const targetMonthKey = String(monthKey || sortedMonthKeys[0] || "");
 
     const monthlyExpenses = txList.filter((item) => {
       const isExpense =
-        item?.isExpense === true || String(item?.type || '') === 'expense';
+        item?.isExpense === true || String(item?.type || "") === "expense";
       return (
         isExpense && financeStore.toMonthKey(item?.date) === targetMonthKey
       );
@@ -69,7 +76,7 @@ export const useBudgetStores = defineStore('budgetStore', () => {
 
     const spentByCategory = {};
     monthlyExpenses.forEach((item) => {
-      const categoryId = String(item?.categoryId || '');
+      const categoryId = String(item?.categoryId || "");
       spentByCategory[categoryId] =
         Number(spentByCategory[categoryId] || 0) + Number(item?.amount || 0);
     });
@@ -103,17 +110,29 @@ export const useBudgetStores = defineStore('budgetStore', () => {
   // budget에서의 GET
   const getBudget = async (userId) => {
     try {
-      const normalizedUserId = String(userId || '').trim();
-      const { data } = await axios.get(
+      const normalizedUserId = String(userId || "").trim();
+      if (!normalizedUserId) {
+        userBudget.value = null;
+        return null;
+      }
+
+      const res = await axios.get(
         `${BASE_URL}/budgets?userId=${normalizedUserId}`,
       );
 
-      if (Array.isArray(data) && data.length > 0) {
-        return data[data.length - 1];
+      if (res.status === 200) {
+        userBudget.value = Array.isArray(res.data)
+          ? res.data[res.data.length - 1]
+          : null;
+        return userBudget.value;
+      } else {
+        console.error("예산 조회 실패:");
+        userBudget.value = null;
+        return null;
       }
-      return null;
     } catch (error) {
-      console.error('예산 조회 실패:', error);
+      console.error("예산 조회 실패:", error);
+      userBudget.value = null;
       return null;
     }
   };
@@ -122,12 +141,12 @@ export const useBudgetStores = defineStore('budgetStore', () => {
   const updateBudgetByUserId = async (userId, categoryBudgets) => {
     const budget = await getBudget(userId);
     if (!budget || budget.id === undefined || budget.id === null) {
-      throw new Error('예산 데이터가 없어 PUT 업데이트를 수행할 수 없습니다.');
+      throw new Error("예산 데이터가 없어 PUT 업데이트를 수행할 수 없습니다.");
     }
 
     const payload = {
       ...budget,
-      userId: String(userId || '').trim(),
+      userId: String(userId || "").trim(),
       categoryBudgets: { ...(categoryBudgets || {}) },
     };
     const { data } = await axios.put(
@@ -142,7 +161,7 @@ export const useBudgetStores = defineStore('budgetStore', () => {
     const budget = await getBudget(userId);
     if (!budget || budget.id === undefined || budget.id === null) {
       throw new Error(
-        '예산 데이터가 없어 PATCH 업데이트를 수행할 수 없습니다.',
+        "예산 데이터가 없어 PATCH 업데이트를 수행할 수 없습니다.",
       );
     }
 
@@ -159,6 +178,7 @@ export const useBudgetStores = defineStore('budgetStore', () => {
   };
 
   return {
+    userBudget,
     sumCategoryBudgets,
     buildCategoryBudgetRows,
     // budget의 get, put, patch
