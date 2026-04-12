@@ -119,11 +119,12 @@ export const useFinanceStore = defineStore('transactionList', () => {
       (sum, transaction) => sum + Number(transaction.amount || 0),
       0,
     );
-
   const setCurrentMonth = async (monthKey) => {
     state.currentMonth = monthKey;
 
     await nextTick();
+    await syncFixedExpenses();
+    await getTransaction();
 
     state.filter.maxAmount = currentMonthMaxAmount.value;
     state.filter.minAmount = 0;
@@ -303,10 +304,10 @@ export const useFinanceStore = defineStore('transactionList', () => {
   //Create - post
   const postFixed = async (fixedData) => {
     try {
-      const res = await axios.post(
-        BASE_URL + 'fixed_expense_settings',
-        fixedData,
-      );
+      const res = await axios.post(BASE_URL + 'fixed_expense_settings', {
+        ...fixedData,
+        createdAt: new Date().toISOString(),
+      });
 
       if (res.status === 201) {
         fixedExpenseSetting.value.push(res.data ?? fixedData);
@@ -464,12 +465,54 @@ export const useFinanceStore = defineStore('transactionList', () => {
     return fixedExpenseSetting.value
       .filter((item) => {
         const userMatched =
-          !authState.userId || String(item.userId || "") === String(authState.userId);
-        const fixedCategoryMatched = !item.categoryId || item.categoryId === "exp_fixed";
+          !authState.userId ||
+          String(item.userId || '') === String(authState.userId);
+        const fixedCategoryMatched =
+          !item.categoryId || item.categoryId === 'exp_fixed';
         return userMatched && fixedCategoryMatched;
       })
       .reduce((sum, item) => sum + Number(item.amount || 0), 0);
   });
+
+  const syncFixedExpenses = async () => {
+    const currentMonth = state.currentMonth;
+    const userId = authState.userId;
+
+    if (!userId || fixedExpenseSetting.value.length === 0) return;
+
+    for (const setting of fixedExpenseSetting.value) {
+      const createdMonth = setting.createdAt
+        ? setting.createdAt.slice(0, 7)
+        : '1900-01';
+
+      if (currentMonth < createdMonth) continue;
+
+      const alreadyExists = transactions.value.some((tx) => {
+        return (
+          toMonthKey(tx.date) === currentMonth &&
+          tx.description === setting.description &&
+          Number(tx.amount) === Number(setting.amount) &&
+          (tx.isFixed === true || tx.categoryId === 'exp_fixed')
+        );
+      });
+
+      if (!alreadyExists) {
+        const day = String(setting.paymentDate || 1).padStart(2, '0');
+        const autoTransaction = {
+          userId: userId,
+          date: `${currentMonth}-${day}`,
+          categoryId: setting.categoryId || 'exp_fixed',
+          amount: Number(setting.amount),
+          description: setting.description,
+          isExpense: true,
+          isFixed: true,
+          type: 'expense',
+        };
+
+        await postTransaction(autoTransaction);
+      }
+    }
+  };
 
   return {
     state,
@@ -506,5 +549,6 @@ export const useFinanceStore = defineStore('transactionList', () => {
     getMonthlySummary,
     monthlyBudgetTarget,
     getMonthlyExpensesByCategory,
+    syncFixedExpenses,
   };
 });
