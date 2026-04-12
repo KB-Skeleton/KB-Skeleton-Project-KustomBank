@@ -57,19 +57,29 @@
       </div>
     </div>
     <div class="filter-row">
-      <div class="d-flex justify-content-between align-items-center mb-2">
-        <small class="text-secondary fw-bold">금액 범위</small>
-        <small class="text-secondary">
-          {{ filter.minAmount.toLocaleString() }}원 ~
-          {{
-            filter.maxAmount
-              ? filter.maxAmount.toLocaleString() + '원'
-              : '제한 없음'
-          }}
-        </small>
+      <div class="d-flex align-items-center gap-2 mb-4">
+        <div class="kb-input-wrap">
+          <input
+            type="number"
+            v-model.number="filter.minAmount"
+            @input="checkMinAmount"
+            class="kb-input-sm"
+          />
+          <span class="unit">원</span>
+        </div>
+        <span class="text-secondary">~</span>
+        <div class="kb-input-wrap">
+          <input
+            type="number"
+            v-model.number="filter.maxAmount"
+            @input="checkMaxAmount"
+            class="kb-input-sm"
+          />
+          <span class="unit">원</span>
+        </div>
       </div>
 
-      <div class="kb-range-container">
+      <div class="kb-range-container mb-3">
         <div class="kb-range-track" :style="trackStyle"></div>
 
         <input
@@ -90,6 +100,23 @@
           @input="checkMaxAmount"
         />
       </div>
+
+      <div class="filter-row">
+        <div class="quick-filter-grid">
+          <label
+            v-for="range in quickRanges"
+            :key="range.label"
+            class="quick-item"
+          >
+            <input
+              type="radio"
+              name="quickRange"
+              @change="applyQuickRange(range.min, range.max)"
+            />
+            <span class="quick-text">{{ range.label }}</span>
+          </label>
+        </div>
+      </div>
     </div>
   </BaseCard>
 </template>
@@ -103,6 +130,16 @@ const financeStore = useFinanceStore();
 
 const filter = computed(() => financeStore.state.filter);
 const maxLimit = computed(() => financeStore.currentMonthMaxAmount);
+
+const maxCount = computed(() => Math.max(...histogramData.value, 1));
+
+const isBarInRange = (index) => {
+  const step = maxLimit.value / 28;
+  const barStart = index * step;
+  return (
+    barStart >= filter.value.minAmount && barStart <= filter.value.maxAmount
+  );
+};
 
 const checkMinAmount = () => {
   if (filter.value.minAmount > filter.value.maxAmount) {
@@ -125,6 +162,19 @@ const trackStyle = computed(() => {
   };
 });
 
+const quickRanges = computed(() => [
+  { label: '전체 금액', min: 0, max: maxLimit.value },
+  { label: '5만원 이하', min: 0, max: 50000 },
+  { label: '5만 ~ 15만', min: 50000, max: 150000 },
+  { label: '15만 ~ 30만', min: 150000, max: 300000 },
+  { label: '30만 ~ 50만', min: 300000, max: 500000 },
+  { label: '50만원 이상', min: 500000, max: maxLimit.value },
+]);
+
+const applyQuickRange = (min, max) => {
+  financeStore.setFilter({ minAmount: min, maxAmount: max });
+};
+
 const setType = (type) => {
   financeStore.setFilter({ type, category: '' });
 };
@@ -134,6 +184,7 @@ const handleReset = () => {
   financeStore.setFilter({ maxAmount: maxLimit.value });
 };
 </script>
+
 <style scoped>
 .kb-filter-card {
   padding: 1.5rem;
@@ -223,12 +274,109 @@ input[type='range'] {
 input[type='range']::-webkit-slider-thumb {
   pointer-events: auto;
   appearance: none;
-  width: 22px;
-  height: 22px;
-  background-color: #ffffff;
-  border: 4px solid #ffcc00;
+  width: 18px;
+  height: 18px;
+  background: #fff;
+  border: 3px solid #ffcc00; /* 테두리 노란색 */
   border-radius: 50%;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
   cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+.kb-input-wrap {
+  position: relative;
+  flex: 1;
+}
+.kb-input-sm {
+  width: 100%;
+  border: 1px solid #e1ddd4;
+  border-radius: 8px;
+  padding: 8px 30px 8px 12px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-align: right;
+  outline: none;
+}
+.unit {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.8rem;
+  color: #888;
+}
+
+.kb-histogram-container {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 40px;
+  margin-bottom: -11px;
+  padding: 0 10px;
+}
+.kb-bar {
+  flex: 1;
+  background: #efece6;
+  border-top-left-radius: 2px;
+  border-top-right-radius: 2px;
+  transition: background 0.3s;
+}
+.kb-bar.is-active {
+  background: #ffd338;
+}
+
+.quick-filter-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+.quick-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 8px;
+  transition: background 0.2s;
+}
+.quick-item:hover {
+  background: #f6f4ee;
+}
+.quick-item input[type='radio'] {
+  accent-color: #222;
+  width: 17px;
+  height: 17px;
+}
+.quick-text {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #444;
+}
+
+.kb-range-container {
+  position: relative;
+  width: 100%;
+  height: 20px;
+}
+.kb-range-track {
+  position: absolute;
+  width: 100%;
+  height: 4px;
+  border-radius: 2px;
+  top: 8px;
+}
+input[type='range'] {
+  position: absolute;
+  width: 100%;
+  pointer-events: none;
+  appearance: none;
+  background: none;
+  top: 0;
+}
+
+@media (max-width: 767px) {
+  .quick-filter-grid {
+    display: none;
+  }
 }
 </style>
