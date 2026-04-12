@@ -461,10 +461,14 @@ export const useFinanceStore = defineStore('transactionList', () => {
       return budgetSum;
     }
 
-    return fixedExpenseSetting.value.reduce(
-      (sum, item) => sum + Number(item.amount || 0),
-      0,
-    );
+    return fixedExpenseSetting.value
+      .filter((item) => {
+        const userMatched =
+          !authState.userId || String(item.userId || "") === String(authState.userId);
+        const fixedCategoryMatched = !item.categoryId || item.categoryId === "exp_fixed";
+        return userMatched && fixedCategoryMatched;
+      })
+      .reduce((sum, item) => sum + Number(item.amount || 0), 0);
   });
 
   return {

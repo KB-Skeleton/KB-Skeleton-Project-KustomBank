@@ -39,14 +39,14 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
-import MonthSelector from '@/components/calendar/MonthSelector.vue';
-import CalendarView from './CalendarView.vue';
-import { useFinanceStore } from '@/stores/finance';
-import MonthlyTransactionList from '@/components/spending/MonthlyTransactionList.vue';
-import TransactionDetailModal from '@/components/spending/TransactionDetailModal.vue';
-import TransactionEditorModal from '@/components/spending/TransactionEditorModal.vue';
-import TransactionFilter from '@/components/spending/TransactionFilter.vue';
+import { ref, onMounted } from "vue";
+import MonthSelector from "@/components/calendar/MonthSelector.vue";
+import CalendarView from "./CalendarView.vue";
+import { useFinanceStore } from "@/stores/finance";
+import MonthlyTransactionList from "@/components/spending/MonthlyTransactionList.vue";
+import TransactionDetailModal from "@/components/spending/TransactionDetailModal.vue";
+import TransactionEditorModal from "@/components/spending/TransactionEditorModal.vue";
+import TransactionFilter from "@/components/spending/TransactionFilter.vue";
 
 const financeStore = useFinanceStore();
 const isModalOpen = ref(false);
@@ -88,10 +88,10 @@ const deleteTransaction = async (id) => {
     if (success) {
       closeModal();
     } else {
-      alert('삭제에 실패하였습니다.');
+      alert("삭제에 실패하였습니다.");
     }
   } catch (error) {
-    alert('서버와 통신 중 문제가 발생했습니다.');
+    alert("서버와 통신 중 문제가 발생했습니다.");
   }
 };
 </script>
