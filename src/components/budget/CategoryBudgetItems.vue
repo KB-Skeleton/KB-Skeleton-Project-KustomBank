@@ -25,18 +25,17 @@
           </button>
         </div>
 
-        <div class="kb-item-spent-line mt-1">
+        <div class="kb-item-meta mt-2">
           <p class="mb-0 small fw-semibold text-secondary kb-item-spent">
             {{ formatCurrency(row.spent) }} / {{ formatCurrency(row.budget) }}
           </p>
+          <p
+            class="mb-0 small fw-semibold"
+            :class="row.usage > 100 ? 'text-danger' : 'text-secondary'"
+          >
+            사용 {{ row.usage }}% · 남은 금액 {{ formatCurrency(row.remain) }}
+          </p>
         </div>
-
-        <p
-          class="mb-0 mt-2 small fw-semibold"
-          :class="row.usage > 100 ? 'text-danger' : 'text-secondary'"
-        >
-          사용 {{ row.usage }}% · 남은 금액 {{ formatCurrency(row.remain) }}
-        </p>
 
         <div
           class="progress mt-2"
@@ -204,9 +203,11 @@ watch(
   font-weight: 900;
 }
 
-.kb-item-spent-line {
+.kb-item-meta {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
 }
 
 @media (max-width: 768px) {
@@ -214,8 +215,10 @@ watch(
     align-items: center !important;
   }
 
-  .kb-item-spent-line {
-    justify-content: flex-start;
+  .kb-item-meta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.3rem;
   }
 }
 

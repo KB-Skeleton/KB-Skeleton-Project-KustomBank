@@ -8,7 +8,7 @@
         customClass="h-100 d-flex flex-column justify-content-between"
         @click="router.push('/monthly-spending')"
       >
-        <p class="kb-card-value text-primary mb-0">
+        <p class="kb-card-value summary-main-value text-primary mb-0">
           {{ financeStore.formatCurrency(summary.income) }}
         </p>
         <p class="summary-subtext fw-semibold text-secondary mb-0 invisible">
@@ -25,7 +25,7 @@
         customClass="h-100 d-flex flex-column justify-content-between"
         @click="router.push('/monthly-spending')"
       >
-        <p class="kb-card-value text-danger mb-0">
+        <p class="kb-card-value summary-main-value text-danger mb-0">
           {{ financeStore.formatCurrency(summary.expense) }}
         </p>
         <p class="summary-subtext fw-semibold text-secondary mb-0 invisible">
@@ -43,13 +43,13 @@
         @click="router.push('/budget')"
       >
         <p
-          class="kb-card-value mb-0"
+          class="kb-card-value summary-main-value mb-0"
           :class="availableAmount < 0 ? 'text-danger' : 'kb-text-charcoal'"
         >
           {{ financeStore.formatCurrency(availableAmount) }}
         </p>
         <p class="summary-subtext fw-semibold text-secondary mb-0">
-          설정 금액: {{ financeStore.formatCurrency(monthlyBudgetTarget) }}
+          월 예산: {{ financeStore.formatCurrency(monthlyBudgetTarget) }}
         </p>
       </BaseCard>
     </div>
@@ -61,12 +61,12 @@
         customClass="h-100 d-flex flex-column justify-content-between"
         @click="router.push('/fixed-expenses')"
       >
-        <p class="kb-card-value kb-text-brown mb-0">
+        <p class="kb-card-value summary-main-value kb-text-brown mb-0">
           {{ financeStore.formatCurrency(fixedSummary.spentFixed) }}
         </p>
         <p class="summary-subtext fw-semibold text-secondary mb-0">
-          설정 금액:
-          {{ financeStore.formatCurrency(fixedSummary.settingFixed) }}
+          예상 지출액:
+          {{ financeStore.formatCurrency(fixedSummary.totalFixed) }}
         </p>
       </BaseCard>
     </div>
@@ -135,6 +135,14 @@ const fixedSummary = computed(() => {
 </script>
 
 <style scoped>
+.summary-main-value {
+  margin-top: -0.18rem !important;
+}
+
+.summary-subtext {
+  margin-top: 0.16rem !important;
+}
+
 @media (max-width: 767.98px) {
   .summary-cards {
     --bs-gutter-x: 0.65rem;
@@ -153,13 +161,13 @@ const fixedSummary = computed(() => {
   .summary-cards :deep(.kb-card-value) {
     font-size: 1.28rem;
     line-height: 1.15;
-    margin-top: -0.2rem;
     margin-bottom: 0.15rem !important;
   }
 
   .summary-subtext {
     font-size: 0.72rem !important;
     line-height: 1.2;
+    margin-top: 0.12rem !important;
   }
 }
 </style>
