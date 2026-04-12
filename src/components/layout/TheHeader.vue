@@ -5,24 +5,18 @@
     >
       <RouterLink
         to="/dashboard"
-        class="d-flex align-items-center gap-3 text-decoration-none text-reset"
+        class="brand-link d-flex align-items-center text-decoration-none text-reset"
       >
         <img
           src="@/assets/logo.png"
           alt="KustomBank logo"
           class="kb-logo-img"
         />
-        <div>
-          <p
-            class="mb-0 small fw-semibold text-uppercase"
-            style="letter-spacing: 0.18em; color: var(--kb-brown)"
-          >
+        <div class="brand-text">
+          <p class="brand-subtitle mb-0 small fw-semibold text-uppercase">
             KB Smart Budget
           </p>
-          <h1
-            class="mb-0 h3 fw-black"
-            style="color: var(--kb-charcoal); font-weight: 900"
-          >
+          <h1 class="brand-title mb-0 h3 fw-black">
             <span style="color: var(--kb-brown)">K</span>ustom
             <span style="color: var(--kb-brown)">B</span>ank
           </h1>
@@ -116,6 +110,27 @@ const handleLogout = () => {
   object-fit: contain;
 }
 
+.brand-link {
+  gap: 0.6rem;
+}
+
+.brand-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.brand-subtitle {
+  letter-spacing: 0.18em;
+  color: var(--kb-brown);
+}
+
+.brand-title {
+  color: var(--kb-charcoal);
+  font-weight: 900;
+  line-height: 1;
+}
+
 .user-btn {
   font-size: 1rem !important;
   font-weight: 700 !important;
@@ -144,5 +159,26 @@ a {
 .text-btn {
   padding: 7px 18px !important;
   font-size: 1.05rem !important;
+}
+
+@media (max-width: 767.98px) {
+  .brand-link {
+    gap: 0.45rem;
+  }
+
+  .brand-subtitle {
+    display: block;
+    font-size: 0.52rem;
+    letter-spacing: 0.12em;
+    line-height: 1.1;
+  }
+
+  .brand-title {
+    font-size: 1.5rem;
+  }
+
+  .kb-logo-img {
+    width: 52px;
+  }
 }
 </style>
