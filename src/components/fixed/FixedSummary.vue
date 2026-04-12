@@ -10,7 +10,7 @@
         </h2>
 
         <div class="d-flex flex-wrap gap-2 small fw-semibold">
-          <span class="kb-pill">설정 총액 {{ formatCurrency(summary.totalFixed) }}</span>
+          <span class="kb-pill">이번 달 고정지출 {{ formatCurrency(summary.totalFixed) }}</span>
           <span class="kb-pill">등록 {{ summary.itemCount ?? 0 }}건</span>
         </div>
       </div>

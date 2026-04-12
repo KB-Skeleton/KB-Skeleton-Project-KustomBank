@@ -55,12 +55,9 @@
         @click="router.push('/fixed-expenses')"
       >
         <p class="kb-card-value kb-text-brown mb-0">
-          {{ financeStore.formatCurrency(fixedSummary.spentFixed) }}
+          {{ financeStore.formatCurrency(fixedSummary.totalFixed) }}
         </p>
-        <p class="small fw-semibold text-secondary mb-0">
-          전체 {{ financeStore.formatCurrency(fixedSummary.totalFixed) }} 중
-          {{ fixedSummary.usage }}%
-        </p>
+        <p class="small fw-semibold text-secondary mb-0 invisible">설정 금액</p>
       </BaseCard>
     </div>
   </div>
@@ -71,6 +68,7 @@ import { computed } from "vue";
 import { useRouter } from "vue-router";
 import BaseCard from "@/components/common/BaseCard.vue";
 import { useFinanceStore } from "@/stores/finance";
+import { useAuthStores } from "@/stores/auth";
 
 const props = defineProps({
   monthlyBudgetTarget: {
@@ -80,6 +78,7 @@ const props = defineProps({
 });
 
 const financeStore = useFinanceStore();
+const authStore = useAuthStores();
 
 const router = useRouter();
 
@@ -92,7 +91,6 @@ const currentMonthKey = computed(() => {
 
 const summary = computed(() => financeStore.getMonthlySummary(currentMonth));
 
-//예산 코딩 완료 시 수정 필요
 const monthlyBudgetTarget = computed(() => {
   return props.monthlyBudgetTarget;
 });
@@ -101,22 +99,27 @@ const availableAmount = computed(
   () => monthlyBudgetTarget.value - summary.value.expense,
 );
 
-//고정 지출 완료 시 수정 필요
 const fixedSummary = computed(() => {
+  const userId = authStore.authState.userId || "";
+
   const spentFixed = financeStore.transactions
+    .filter((tx) => String(tx.userId || "") === String(userId))
     .filter((tx) => financeStore.toMonthKey(tx.date) === currentMonthKey.value)
-    .filter((tx) => tx.isFixed === true)
+    .filter((tx) => tx.isExpense === true || tx.type === "expense")
+    .filter((tx) => tx.isFixed === true || tx.categoryId === "exp_fixed")
     .reduce((sum, tx) => sum + Number(tx.amount || 0), 0);
 
-  const totalFixed = financeStore.fixedExpenseSetting.reduce(
-    (sum, item) => sum + Number(item.amount || 0),
-    0,
-  );
+  const settingFixed = financeStore.fixedExpenseSetting
+    .filter((item) => String(item.userId || "") === String(userId))
+    .reduce((sum, item) => sum + Number(item.amount || 0), 0);
+
+  const totalFixed = spentFixed + settingFixed;
 
   return {
     spentFixed,
+    settingFixed,
     totalFixed,
-    usage: totalFixed > 0 ? Math.round((spentFixed / totalFixed) * 100) : 0,
+    usage: settingFixed > 0 ? Math.round((spentFixed / settingFixed) * 100) : 0,
   };
 });
 </script>

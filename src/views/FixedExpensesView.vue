@@ -120,12 +120,33 @@ const resetForm = () => {
   form.categoryId = "exp_fixed";
 };
 
-const fixedItems = computed(() =>
-  (fixedExpenseSetting.value || []).map((item) => ({
+const fixedItems = computed(() => {
+  const settings = (fixedExpenseSetting.value || []).map((item) => ({
     ...item,
+    uid: `setting-${item.id}`,
+    sourceType: "setting",
     categoryName: getCategoryById(item.categoryId)?.name || "기타",
-  })),
-);
+  }));
+
+  const fixedTransactions = (transactions.value || [])
+    .filter((tx) => {
+      const isExpense = tx.isExpense === true || tx.type === "expense";
+      const isFixed = tx.isFixed === true || tx.categoryId === "exp_fixed";
+      return isExpense && isFixed;
+    })
+    .map((tx) => ({
+      ...tx,
+      uid: `transaction-${tx.id}`,
+      sourceType: "transaction",
+      paymentDate: Number(tx.paymentDate || String(tx.date || "").slice(-2) || 1),
+      cycle: tx.cycle || "monthly",
+      categoryName: getCategoryById(tx.categoryId)?.name || "기타",
+    }));
+
+  return [...settings, ...fixedTransactions].sort(
+    (a, b) => Number(a.paymentDate || 0) - Number(b.paymentDate || 0),
+  );
+});
 
 const monthLabel = computed(() => {
   const now = new Date();
@@ -134,10 +155,28 @@ const monthLabel = computed(() => {
 
 const summary = computed(() => {
   const items = fixedItems.value;
-  const totalFixed = items.reduce((sum, item) => sum + Number(item.amount || 0), 0);
+  const currentMonth = new Date().toISOString().slice(0, 7);
+
+  const spentFixed = (transactions.value || [])
+    .filter((tx) => {
+      const userMatched =
+        String(tx.userId || "") === String(authState.value.userId || "");
+      const monthMatched = String(tx.date || "").slice(0, 7) === currentMonth;
+      const fixedMatched = tx.isFixed === true || tx.categoryId === "exp_fixed";
+      const expenseMatched = tx.isExpense === true || tx.type === "expense";
+      return userMatched && monthMatched && fixedMatched && expenseMatched;
+    })
+    .reduce((sum, tx) => sum + Number(tx.amount || 0), 0);
+
+  const settingFixed = (fixedExpenseSetting.value || [])
+    .filter(
+      (item) =>
+        String(item.userId || "") === String(authState.value.userId || ""),
+    )
+    .reduce((sum, item) => sum + Number(item.amount || 0), 0);
 
   return {
-    totalFixed,
+    totalFixed: spentFixed + settingFixed,
     itemCount: items.length,
   };
 });

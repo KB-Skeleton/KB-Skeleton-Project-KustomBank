@@ -17,11 +17,11 @@
     <div v-else class="d-grid gap-2">
       <div
         v-for="item in fixedItems"
-        :key="item.id"
+        :key="item.uid || item.id"
         class="rounded-3 border p-3 bg-white"
         style="border-color: rgba(34, 34, 34, 0.15)"
       >
-        <template v-if="editId === item.id">
+        <template v-if="editId === (item.uid || item.id)">
           <div class="row g-2">
             <div class="col-12 col-lg-4">
               <input
@@ -61,7 +61,7 @@
               </select>
             </div>
           </div>
-          <div class="d-flex gap-2 mt-3">
+          <div class="d-flex justify-content-end gap-2 mt-3">
             <button class="kb-btn-dark" @click="save(item)">저장</button>
             <button class="kb-btn-light" @click="cancel">취소</button>
           </div>
@@ -82,7 +82,7 @@
 
           <div class="d-flex justify-content-end gap-2 mt-3">
             <button class="kb-btn-light" @click="begin(item)">수정</button>
-            <button class="kb-btn-light danger" @click="remove(item.id)">
+            <button class="kb-btn-light danger" @click="remove(item)">
               삭제
             </button>
           </div>
@@ -110,7 +110,8 @@ const store = useFinanceStore();
 const authStore = useAuthStores();
 const { expenseCategories } = storeToRefs(store);
 const { authState } = storeToRefs(authStore);
-const { formatCurrency, putFixed, deleteFixed } = store;
+const { formatCurrency, putFixed, deleteFixed, putTransaction, deleteTransaction } =
+  store;
 
 const editId = ref(null);
 const editForm = reactive({
@@ -121,7 +122,7 @@ const editForm = reactive({
 });
 
 const begin = (item) => {
-  editId.value = item.id;
+  editId.value = item.uid || item.id;
   editForm.title = item.description;
   editForm.amount = Number(item.amount || 0);
   editForm.dueDay = Number(item.paymentDate || 1);
@@ -133,14 +134,32 @@ const cancel = () => {
 };
 
 const save = async (item) => {
-  const ok = await putFixed({
-    ...item,
-    userId: item.userId || authState.value.userId || "user123",
-    description: editForm.title,
-    amount: Number(editForm.amount),
-    paymentDate: Number(editForm.dueDay),
-    categoryId: editForm.categoryId,
-  });
+  const isTransactionSource = item.sourceType === "transaction";
+  const persistedItem = { ...item };
+  delete persistedItem.uid;
+  delete persistedItem.sourceType;
+  delete persistedItem.categoryName;
+
+  const ok = isTransactionSource
+    ? await putTransaction({
+        ...persistedItem,
+        userId: persistedItem.userId || authState.value.userId || "user123",
+        description: editForm.title,
+        amount: Number(editForm.amount),
+        categoryId: editForm.categoryId,
+        isExpense: true,
+        isFixed: true,
+        date: persistedItem.date || new Date().toISOString().slice(0, 10),
+        paymentDate: Number(editForm.dueDay),
+      })
+    : await putFixed({
+        ...persistedItem,
+        userId: persistedItem.userId || authState.value.userId || "user123",
+        description: editForm.title,
+        amount: Number(editForm.amount),
+        paymentDate: Number(editForm.dueDay),
+        categoryId: editForm.categoryId,
+      });
 
   if (ok) {
     cancel();
@@ -148,11 +167,15 @@ const save = async (item) => {
   }
 };
 
-const remove = async (id) => {
+const remove = async (item) => {
   if (!confirm("이 고정지출 설정을 삭제하시겠습니까?")) return;
-  const ok = await deleteFixed(id);
+  const id = item.id;
+  const ok =
+    item.sourceType === "transaction"
+      ? await deleteTransaction(id)
+      : await deleteFixed(id);
   if (ok) {
-    if (editId.value === id) cancel();
+    if (editId.value === (item.uid || item.id)) cancel();
     emit("changed");
   }
 };
