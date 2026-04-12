@@ -1,6 +1,8 @@
 ﻿<template>
   <div class="kb-panel h-100 d-flex flex-column justify-content-center w-100">
-    <h2 class="h4 fw-black kb-text-charcoal mb-3">카테고리별 지출</h2>
+    <h2 class="h3 fw-black kb-text-charcoal mb-3 chart-title">
+      카테고리별 지출
+    </h2>
 
     <div v-if="pieSlices.length" class="category-layout">
       <div class="donut-wrap">
@@ -84,9 +86,9 @@
 </template>
 
 <script setup>
-import { computed, onMounted } from 'vue';
-import { useFinanceStore } from '@/stores/finance';
-import { useStatisticsStore } from '@/stores/statistics';
+import { computed, onMounted } from "vue";
+import { useFinanceStore } from "@/stores/finance";
+import { useStatisticsStore } from "@/stores/statistics";
 
 // finance 스토어 메서드 사용
 const { getMonthlyExpensesByCategory, formatCurrency } = useFinanceStore();
@@ -97,16 +99,18 @@ const { getMonthKeys, ensureStatisticsData } = useStatisticsStore();
 const currentMonthKey = computed(() => getMonthKeys().currentMonthKey);
 
 // 카테고리별 고정 색상 맵
-const categoryColorMap = {
-  식비: '#ffd338',
-  교통: '#222222',
-  '의료/건강': '#7a5c3f',
-  '취미/여가': '#b99562',
-  '자기계발/교육': '#e87a5d',
-  '미용/쇼핑': '#5fa5d9',
-  '구독료/고정비': '#6b7280',
-  기타: '#000000',
-};
+const pieColors = [
+  "#FFD338", // KB 옐로우
+  "#B2C700", // 라임 그린
+  "#59B7AF", // 틸 민트
+  "#0E88AE", // 딥 아쿠아 블루
+  "#D6AA74", // 샌드 브라운
+  "#6F7F99", // 뮤트 스틸 블루
+  "#8F98A6", // 스모키 블루그레이
+  "#6E727B", // 미디엄 슬레이트 그레이
+  "#C2C7CF", // 실버 그레이
+  "#D3D5D8", // 페일 라이트 그레이
+];
 
 // 현재 월 카테고리별 지출 맵 조회
 const categoryMap = computed(() =>
@@ -121,19 +125,18 @@ const totalCategoryExpense = computed(() =>
   ),
 );
 
-// 템플릿 렌더링용(비율/색상 포함) 슬라이스 데이터 가공
 const pieSlices = computed(() => {
-  const entries = Object.entries(categoryMap.value);
-  const total = totalCategoryExpense.value || 1;
+  const data = getMonthlyExpensesByCategory(currentMonthKey.value);
+  const total = Object.values(data).reduce((sum, value) => sum + value, 0) || 1;
 
-  return entries
-    .map(([category, value]) => ({
-      category,
-      value: Number(value || 0),
-      color: categoryColorMap[category] || '#222222',
-      ratio: Math.round((Number(value || 0) / total) * 100),
-    }))
-    .sort((a, b) => b.value - a.value);
+  const sortedEntries = Object.entries(data).sort((a, b) => b[1] - a[1]);
+
+  return sortedEntries.map(([category, value], index) => ({
+    category,
+    value,
+    color: pieColors[index % pieColors.length],
+    ratio: Math.round((value / total) * 100),
+  }));
 });
 
 const DONUT_RADIUS = 42;
@@ -143,18 +146,11 @@ const DONUT_CIRCUMFERENCE = 2 * Math.PI * DONUT_RADIUS;
 // 비율을 SVG 원형 차트의 dash/gap 값으로 변환
 const donutSlices = computed(() => {
   let cursor = 0;
-
   return pieSlices.value.map((slice) => {
     const dash = (slice.ratio / 100) * DONUT_CIRCUMFERENCE;
     const offset = cursor;
     cursor += dash;
-
-    return {
-      ...slice,
-      dash,
-      gap: DONUT_CIRCUMFERENCE - dash,
-      offset,
-    };
+    return { ...slice, dash, gap: DONUT_CIRCUMFERENCE - dash, offset };
   });
 });
 
@@ -193,8 +189,8 @@ onMounted(async () => {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 12rem;
-  height: 12rem;
+  width: 10.5rem;
+  height: 10.5rem;
   border-radius: 50%;
   background: #fff;
   display: flex;
@@ -202,6 +198,10 @@ onMounted(async () => {
   justify-content: center;
   flex-direction: column;
   text-align: center;
+}
+
+.chart-title {
+  font-size: 2rem;
 }
 
 /* 중간 폭에서 오른쪽 카드 영역이 과도하게 좁아지는 구간을 미리 방지 */

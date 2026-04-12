@@ -1,5 +1,5 @@
 ﻿<template>
-  <BaseCard isPanel>
+  <BaseCard>
     <article>
       <div class="d-flex align-items-center justify-content-between mb-4">
         <div>
@@ -53,13 +53,13 @@
 </template>
 
 <script setup>
-import { computed, onMounted } from 'vue';
-import { useFinanceStore } from '@/stores/finance';
-import { useAuthStores } from '@/stores/auth';
+import { computed, onMounted } from "vue";
+import { useFinanceStore } from "@/stores/finance";
+import { useAuthStores } from "@/stores/auth";
 
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import { faAnglesLeft } from '@fortawesome/free-solid-svg-icons';
-import BaseCard from '@/components/common/BaseCard.vue';
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import { faAnglesLeft } from "@fortawesome/free-solid-svg-icons";
+import BaseCard from "@/components/common/BaseCard.vue";
 
 const financeStore = useFinanceStore();
 const { authState } = useAuthStores();
@@ -96,7 +96,7 @@ onMounted(async () => {
   font-size: 2rem;
   line-height: 1.1;
   font-weight: 900;
-  font-family: 'Pretendard', sans-serif;
+  font-family: "Pretendard", sans-serif;
 }
 
 .kb-transaction-item {

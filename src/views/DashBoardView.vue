@@ -45,7 +45,7 @@ const authStore = useAuthStores();
 
 const router = useRouter();
 
-const selectedBudget = ref(null);
+const selectedBudget = computed(() => budgetStore.userBudget);
 
 // 현재 사용자 예산 1건을 다시 읽어 화면 계산값을 최신으로 유지
 const loadBudgets = async () => {
@@ -70,7 +70,7 @@ const monthlyBudgetTargetValue = computed(() => {
 onMounted(() => {
   financeStore.getFixed();
   financeStore.getTransaction();
-  loadBudgets();
+  budgetStore.getBudget(authStore.authState.userId);
 });
 </script>
 
