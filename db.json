@@ -176,6 +176,114 @@
       "isFixed": false,
       "description": "교통카드 충전",
       "isRequired": true
+    },
+    {
+      "id": "15",
+      "userId": "user456",
+      "isExpense": true,
+      "categoryId": "exp_food",
+      "amount": 13500,
+      "date": "2026-04-09",
+      "isFixed": false,
+      "description": "점심 식사",
+      "isRequired": false
+    },
+    {
+      "id": "16",
+      "userId": "user456",
+      "isExpense": false,
+      "categoryId": "inc_side",
+      "amount": 420000,
+      "date": "2026-04-05",
+      "description": "부업 수입",
+      "isRequired": false
+    },
+    {
+      "id": "17",
+      "userId": "user789",
+      "isExpense": true,
+      "categoryId": "exp_trans",
+      "amount": 62000,
+      "date": "2026-04-06",
+      "isFixed": false,
+      "description": "교통카드 충전",
+      "isRequired": true
+    },
+    {
+      "id": "18",
+      "userId": "user789",
+      "isExpense": false,
+      "categoryId": "inc_salary",
+      "amount": 2600000,
+      "date": "2026-04-01",
+      "description": "4월 급여",
+      "isRequired": false
+    },
+    {
+      "id": "19",
+      "userId": "user456",
+      "isExpense": true,
+      "categoryId": "exp_shop",
+      "amount": 58000,
+      "date": "2026-04-11",
+      "isFixed": false,
+      "description": "생활용품 구매",
+      "isRequired": false
+    },
+    {
+      "id": "20",
+      "userId": "user456",
+      "isExpense": true,
+      "categoryId": "exp_hobby",
+      "amount": 24000,
+      "date": "2026-04-12",
+      "isFixed": false,
+      "description": "영화 관람",
+      "isRequired": false
+    },
+    {
+      "id": "21",
+      "userId": "user456",
+      "isExpense": true,
+      "categoryId": "exp_medical",
+      "amount": 18000,
+      "date": "2026-04-03",
+      "isFixed": false,
+      "description": "약국 구매",
+      "isRequired": true
+    },
+    {
+      "id": "22",
+      "userId": "user789",
+      "isExpense": true,
+      "categoryId": "exp_food",
+      "amount": 9800,
+      "date": "2026-04-08",
+      "isFixed": false,
+      "description": "아침 식사",
+      "isRequired": false
+    },
+    {
+      "id": "23",
+      "userId": "user789",
+      "isExpense": true,
+      "categoryId": "exp_fixed",
+      "amount": 55000,
+      "date": "2026-04-05",
+      "isFixed": true,
+      "paymentDate": 5,
+      "description": "헬스장 정기권",
+      "isRequired": true
+    },
+    {
+      "id": "24",
+      "userId": "user789",
+      "isExpense": false,
+      "categoryId": "inc_interest",
+      "amount": 45000,
+      "date": "2026-04-10",
+      "description": "예금 이자",
+      "isRequired": false
     }
   ],
   "budgets": [
@@ -192,17 +300,63 @@
         "exp_shop": 200003,
         "exp_etc": 200000
       }
+    },
+    {
+      "id": "2",
+      "userId": "user456",
+      "month": "2026-04",
+      "categoryBudgets": {
+        "exp_food": 220000,
+        "exp_trans": 120000,
+        "exp_medical": 50000,
+        "exp_hobby": 100000,
+        "exp_edu": 80000,
+        "exp_shop": 180000,
+        "exp_etc": 70000
+      }
+    },
+    {
+      "id": "3",
+      "userId": "user789",
+      "month": "2026-04",
+      "categoryBudgets": {
+        "exp_food": 180000,
+        "exp_trans": 150000,
+        "exp_medical": 60000,
+        "exp_hobby": 90000,
+        "exp_edu": 120000,
+        "exp_shop": 140000,
+        "exp_etc": 50000
+      }
     }
   ],
   "fixed_expense_settings": [
     {
+      "id": "1",
       "userId": "user123",
       "categoryId": "exp_fixed",
       "amount": 14900,
       "paymentDate": 10,
       "cycle": "monthly",
-      "description": "넷플릭스",
-      "id": "8VHyhymxBJw"
+      "description": "넷플릭스"
+    },
+    {
+      "id": "2",
+      "userId": "user456",
+      "categoryId": "exp_fixed",
+      "amount": 12900,
+      "paymentDate": 12,
+      "cycle": "monthly",
+      "description": "음악 스트리밍"
+    },
+    {
+      "id": "3",
+      "userId": "user789",
+      "categoryId": "exp_fixed",
+      "amount": 55000,
+      "paymentDate": 5,
+      "cycle": "monthly",
+      "description": "헬스장 정기권"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"
