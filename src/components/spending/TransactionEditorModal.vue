@@ -7,7 +7,7 @@
     <div class="kb-modal-card">
       <div class="d-flex align-items-center justify-content-between">
         <h4 class="fw-black">내역 수정</h4>
-        <button class="kb-btn-light" @click="handleClose">닫기</button>
+        <button class="btn-close" @click="handleClose"></button>
       </div>
 
       <div class="">

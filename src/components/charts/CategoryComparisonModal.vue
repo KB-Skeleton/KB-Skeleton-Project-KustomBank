@@ -36,7 +36,9 @@
           :key="row.category"
           class="comparison-row"
         >
-          <span class="comparison-cell cell-category fw-semibold kb-text-charcoal">
+          <span
+            class="comparison-cell cell-category fw-semibold kb-text-charcoal"
+          >
             {{ row.category }}
           </span>
           <span
@@ -69,12 +71,6 @@
         style="background: var(--kb-gray-100)"
       >
         비교할 카테고리 데이터가 없습니다.
-      </div>
-
-      <div class="d-flex justify-content-end mt-3">
-        <button type="button" class="kb-btn-light" @click="closeModal">
-          닫기
-        </button>
       </div>
     </div>
   </div>

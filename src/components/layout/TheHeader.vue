@@ -40,7 +40,7 @@
         <KbButton
           variant="light"
           customClass="rounded-pill user-btn"
-          @click="handleLogout($event)"
+          @click="handleLogout"
         >
           로그아웃
         </KbButton>
@@ -68,11 +68,7 @@ const goToProfile = () => {
   router.push('/profile');
 };
 
-const handleLogout = (event) => {
-  if (event?.currentTarget) {
-    event.currentTarget.blur();
-  }
-
+const handleLogout = () => {
   if (confirm('로그아웃 하시겠습니까?')) {
     authStore.logout();
     router.replace('/login');
