@@ -24,6 +24,7 @@
 
     <BaseModal
       :open="isTransactionModalOpen"
+      class="fw-black mb-0 kb-text-charcoal"
       title="지출/수입 내역 추가"
       @close="closeTransactionModal"
     >
@@ -36,14 +37,14 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
-import { RouterView } from "vue-router";
+import { ref } from 'vue';
+import { RouterView } from 'vue-router';
 
-import BaseButton from "./components/common/BaseButton.vue";
-import BaseModal from "./components/common/BaseModal.vue";
-import TransactionEditor from "./components/calendar/TransactionEditor.vue";
-import TheHeader from "./components/layout/TheHeader.vue";
-import TheSideBar from "./components/layout/TheSideBar.vue";
+import BaseButton from './components/common/BaseButton.vue';
+import BaseModal from './components/common/BaseModal.vue';
+import TransactionEditor from './components/calendar/TransactionEditor.vue';
+import TheHeader from './components/layout/TheHeader.vue';
+import TheSideBar from './components/layout/TheSideBar.vue';
 
 const isTransactionModalOpen = ref(false);
 
