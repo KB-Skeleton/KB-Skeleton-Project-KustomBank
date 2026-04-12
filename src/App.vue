@@ -24,7 +24,6 @@
 
     <BaseModal
       :open="isTransactionModalOpen"
-      class="fw-black mb-0 kb-text-charcoal"
       title="지출/수입 내역 추가"
       @close="closeTransactionModal"
     >
