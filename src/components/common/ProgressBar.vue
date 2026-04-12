@@ -1,6 +1,6 @@
 <template>
-  <div 
-    class="kb-progress-track" 
+  <div
+    class="kb-progress-track"
     :style="{ height: height }"
     :class="customClass"
   >
@@ -8,7 +8,7 @@
       class="kb-progress-fill"
       :style="{
         width: `${Math.min(value, 100)}%`,
-        backgroundColor: color || 'var(--kb-charcoal)'
+        backgroundColor: value > 100 ? '#dc2626' : '#222222',
       }"
     ></div>
   </div>
@@ -19,23 +19,23 @@ defineProps({
   // 진행률 (0 ~ 100)
   value: {
     type: Number,
-    default: 0
+    default: 0,
   },
   // 높이 (예: '20px'는 예산용, '8px'는 리스트용)
   height: {
     type: String,
-    default: '8px'
+    default: "8px",
   },
   // 색상 (지정 안 하면 기본 Charcoal 색상)
   color: {
     type: String,
-    default: ''
+    default: "",
   },
   // 추가 부트스트랩 유틸리티 클래스
   customClass: {
     type: String,
-    default: ''
-  }
+    default: "",
+  },
 });
 </script>
 
@@ -43,7 +43,7 @@ defineProps({
 .kb-progress-track {
   width: 100%;
   /* 아까 main.css에 정의한 연한 베이지색 배경 사용 */
-  background-color: var(--kb-gray-200); 
+  background-color: var(--kb-gray-200);
   border-radius: 999px;
   overflow: hidden;
   position: relative;
