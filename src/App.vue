@@ -101,6 +101,9 @@ onMounted(() => {
   }
 
   .fab-mobile-label {
+    font-size: 1.8rem;
+    line-height: 1;
+    font-weight: 800;
     display: inline;
   }
 
