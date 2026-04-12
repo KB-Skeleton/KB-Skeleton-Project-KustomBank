@@ -357,6 +357,15 @@
       "paymentDate": 5,
       "cycle": "monthly",
       "description": "헬스장 정기권"
+    },
+    {
+      "userId": "user123",
+      "categoryId": "exp_food",
+      "amount": 3200,
+      "paymentDate": 5,
+      "cycle": "monthly",
+      "description": "커피",
+      "id": "wbFxQIue7c0"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

@@ -1,8 +1,6 @@
-﻿<template>
+<template>
   <header class="kb-header py-3">
-    <div
-      class="container-xxl d-flex align-items-center justify-content-between"
-    >
+    <div class="container-xxl d-flex align-items-center justify-content-between">
       <RouterLink
         to="/dashboard"
         class="brand-link d-flex align-items-center text-decoration-none text-reset"
@@ -23,17 +21,17 @@
         </div>
       </RouterLink>
 
-      <div class="d-flex align-items-center gap-2">
+      <div v-if="isLoggedIn" class="d-flex align-items-center gap-2">
         <KbButton
           variant="dark"
-          customClass="user-btn text-btn d-none d-md-inline-flex"
+          customClass="rounded-pill user-btn text-btn d-none d-md-inline-flex"
           @click="goToProfile"
         >
           {{ profileButtonTitle }}
         </KbButton>
         <KbButton
           variant="light"
-          customClass="user-btn text-btn d-none d-md-inline-flex"
+          customClass="rounded-pill user-btn text-btn d-none d-md-inline-flex"
           @click="handleLogout"
         >
           로그아웃
@@ -41,7 +39,7 @@
 
         <KbButton
           variant="dark"
-          customClass="user-btn icon-btn d-inline-flex d-md-none"
+          customClass="rounded-circle user-btn icon-btn d-inline-flex d-md-none"
           :title="profileButtonTitle"
           @click="goToProfile"
         >
@@ -50,7 +48,7 @@
         </KbButton>
         <KbButton
           variant="light"
-          customClass="user-btn icon-btn d-inline-flex d-md-none"
+          customClass="rounded-circle user-btn icon-btn d-inline-flex d-md-none"
           title="로그아웃"
           @click="handleLogout"
         >
@@ -73,6 +71,9 @@ import { useAuthStores } from "@/stores/auth";
 const router = useRouter();
 const authStore = useAuthStores();
 
+// 복구됨: 로그인 상태 확인용 computed
+const isLoggedIn = computed(() => !!authStore.authState.userId);
+
 const profileButtonTitle = computed(() =>
   authStore.authState.name ? `${authStore.authState.name} \uB2D8` : "내 프로필",
 );
@@ -82,8 +83,11 @@ const goToProfile = () => {
 };
 
 const handleLogout = () => {
-  authStore.logout();
-  router.replace("/login");
+  // 복구됨: 로그아웃 확인 창
+  if (confirm('로그아웃 하시겠습니까?')) {
+    authStore.logout();
+    router.replace("/login");
+  }
 };
 </script>
 
