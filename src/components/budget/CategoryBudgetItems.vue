@@ -1,7 +1,7 @@
 ﻿<template>
   <article class="kb-panel">
     <!-- 카테고리 내역 섹션 제목 -->
-    <h3 class="h3 fw-black kb-text-charcoal mb-3">카테고리 내역</h3>
+    <h3 class="h3 fw-black kb-text-charcoal mb-3 kb-section-title">카테고리 내역</h3>
 
     <div class="d-grid gap-2">
       <!-- 지출 카테고리 목록을 카드 형태로 반복 렌더링 -->
@@ -14,20 +14,21 @@
         <div
           class="d-flex justify-content-between align-items-center gap-2 kb-item-head"
         >
-          <p class="mb-0 h6 fw-bold kb-text-charcoal">{{ row.category }}</p>
-          <div class="d-flex align-items-center gap-2">
-            <p class="mb-0 small fw-semibold text-secondary kb-item-spent">
-              {{ formatCurrency(row.spent) }} / {{ formatCurrency(row.budget) }}
-            </p>
-            <!-- 카테고리별 수정 버튼 -->
-            <button
-              type="button"
-              class="kb-btn-dark"
-              @click="beginInlineEdit(row.categoryId)"
-            >
-              수정
-            </button>
-          </div>
+          <p class="mb-0 h6 fw-bold kb-text-charcoal kb-item-category">{{ row.category }}</p>
+          <!-- 카테고리별 수정 버튼 -->
+          <button
+            type="button"
+            class="kb-btn-dark"
+            @click="beginInlineEdit(row.categoryId)"
+          >
+            수정
+          </button>
+        </div>
+
+        <div class="kb-item-spent-line mt-1">
+          <p class="mb-0 small fw-semibold text-secondary kb-item-spent">
+            {{ formatCurrency(row.spent) }} / {{ formatCurrency(row.budget) }}
+          </p>
         </div>
 
         <p
@@ -193,9 +194,28 @@ watch(
 </script>
 
 <style scoped>
+.kb-section-title {
+  font-size: 1.55rem;
+  font-weight: 900;
+}
+
+.kb-item-category {
+  font-size: 1.12rem;
+  font-weight: 900;
+}
+
+.kb-item-spent-line {
+  display: flex;
+  justify-content: flex-end;
+}
+
 @media (max-width: 768px) {
   .kb-item-head {
-    align-items: flex-start !important;
+    align-items: center !important;
+  }
+
+  .kb-item-spent-line {
+    justify-content: flex-start;
   }
 }
 

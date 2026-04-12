@@ -1,6 +1,8 @@
 ﻿<template>
   <div class="kb-panel h-100 d-flex flex-column justify-content-center w-100">
-    <h2 class="h4 fw-black kb-text-charcoal mb-3">카테고리별 지출</h2>
+    <h2 class="h3 fw-black kb-text-charcoal mb-3 chart-title">
+      카테고리별 지출
+    </h2>
 
     <div v-if="pieSlices.length" class="category-layout">
       <div class="donut-wrap">
@@ -84,9 +86,9 @@
 </template>
 
 <script setup>
-import { computed, onMounted } from 'vue';
-import { useFinanceStore } from '@/stores/finance';
-import { useStatisticsStore } from '@/stores/statistics';
+import { computed, onMounted } from "vue";
+import { useFinanceStore } from "@/stores/finance";
+import { useStatisticsStore } from "@/stores/statistics";
 
 // finance 스토어 메서드 사용
 const { getMonthlyExpensesByCategory, formatCurrency } = useFinanceStore();
@@ -98,14 +100,14 @@ const currentMonthKey = computed(() => getMonthKeys().currentMonthKey);
 
 // 카테고리별 고정 색상 맵
 const categoryColorMap = {
-  식비: '#ffd338',
-  교통: '#222222',
-  '의료/건강': '#7a5c3f',
-  '취미/여가': '#b99562',
-  '자기계발/교육': '#e87a5d',
-  '미용/쇼핑': '#5fa5d9',
-  '구독료/고정비': '#6b7280',
-  기타: '#000000',
+  식비: "#ffd338",
+  교통: "#222222",
+  "의료/건강": "#7a5c3f",
+  "취미/여가": "#b99562",
+  "자기계발/교육": "#e87a5d",
+  "미용/쇼핑": "#5fa5d9",
+  "구독료/고정비": "#6b7280",
+  기타: "#000000",
 };
 
 // 현재 월 카테고리별 지출 맵 조회
@@ -130,7 +132,7 @@ const pieSlices = computed(() => {
     .map(([category, value]) => ({
       category,
       value: Number(value || 0),
-      color: categoryColorMap[category] || '#222222',
+      color: categoryColorMap[category] || "#222222",
       ratio: Math.round((Number(value || 0) / total) * 100),
     }))
     .sort((a, b) => b.value - a.value);
@@ -202,6 +204,10 @@ onMounted(async () => {
   justify-content: center;
   flex-direction: column;
   text-align: center;
+}
+
+.chart-title {
+  font-size: 2rem;
 }
 
 /* 중간 폭에서 오른쪽 카드 영역이 과도하게 좁아지는 구간을 미리 방지 */

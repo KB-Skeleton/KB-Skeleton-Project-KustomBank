@@ -1,7 +1,7 @@
 ﻿<template>
   <div class="kb-panel h-100 d-flex flex-column w-100">
     <div class="d-flex align-items-center justify-content-between mb-3">
-      <h2 class="h4 fw-black kb-text-charcoal mb-0">월별 지출</h2>
+      <h2 class="h4 fw-black kb-text-charcoal mb-0 chart-title">월별 지출</h2>
       <button
         type="button"
         class="kb-btn-brown"
@@ -150,6 +150,10 @@ onBeforeUnmount(() => {
   font-size: 0.82rem;
   font-weight: 800;
   color: #4b5563;
+}
+
+.chart-title {
+  font-size: 2rem;
 }
 
 @media (max-width: 991.98px) {
