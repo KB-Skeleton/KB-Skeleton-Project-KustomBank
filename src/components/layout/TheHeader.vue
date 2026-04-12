@@ -29,13 +29,13 @@
         </div>
       </RouterLink>
 
-      <div class="d-flex align-items-center gap-2">
+      <div v-if="isLoggedIn" class="d-flex align-items-center gap-2">
         <KbButton
           variant="dark"
           customClass="rounded-pill user-btn text-btn d-none d-md-inline-flex"
           @click="goToProfile"
         >
-          {{ profileButtonTitle }}
+          {{ buttonLabel }}
         </KbButton>
         <KbButton
           variant="light"
@@ -48,11 +48,11 @@
         <KbButton
           variant="dark"
           customClass="rounded-circle user-btn icon-btn d-inline-flex d-md-none"
-          :title="profileButtonTitle"
+          :title="buttonLabel"
           @click="goToProfile"
         >
           <FontAwesomeIcon :icon="faUser" />
-          <span class="visually-hidden">{{ profileButtonTitle }}</span>
+          <span class="visually-hidden">{{ buttonLabel }}</span>
         </KbButton>
         <KbButton
           variant="light"
@@ -69,27 +69,31 @@
 </template>
 
 <script setup>
-import { computed } from "vue";
-import { RouterLink, useRouter } from "vue-router";
-import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-import { faRightFromBracket, faUser } from "@fortawesome/free-solid-svg-icons";
-import KbButton from "@/components/common/BaseButton.vue";
-import { useAuthStores } from "@/stores/auth";
+import { computed } from 'vue';
+import { RouterLink, useRouter } from 'vue-router';
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import { faRightFromBracket, faUser } from '@fortawesome/free-solid-svg-icons';
+import KbButton from '@/components/common/BaseButton.vue';
+import { useAuthStores } from '@/stores/auth';
 
 const router = useRouter();
 const authStore = useAuthStores();
 
-const profileButtonTitle = computed(() =>
-  authStore.authState.name ? `${authStore.authState.name} \uB2D8` : "내 프로필",
+const isLoggedIn = computed(() => !!authStore.authState.userId);
+
+const buttonLabel = computed(() =>
+  authStore.authState.name ? `${authStore.authState.name} \uB2D8` : '내 프로필',
 );
 
 const goToProfile = () => {
-  router.push("/profile");
+  router.push('/profile');
 };
 
 const handleLogout = () => {
-  authStore.logout();
-  router.replace("/login");
+  if (confirm('로그아웃 하시겠습니까?')) {
+    authStore.logout();
+    router.replace('/login');
+  }
 };
 </script>
 
