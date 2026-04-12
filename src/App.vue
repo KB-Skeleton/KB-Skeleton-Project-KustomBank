@@ -44,21 +44,21 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref } from "vue";
-import { RouterView, useRoute } from "vue-router";
+import { computed, onMounted, ref } from 'vue';
+import { RouterView, useRoute } from 'vue-router';
 
-import BaseButton from "./components/common/BaseButton.vue";
-import BaseModal from "./components/common/BaseModal.vue";
-import TransactionForm from "./components/calendar/TransactionForm.vue";
-import TheHeader from "./components/layout/TheHeader.vue";
-import TheSideBar from "./components/layout/TheSideBar.vue";
-import { useAuthStores } from "./stores/auth";
+import BaseButton from './components/common/BaseButton.vue';
+import BaseModal from './components/common/BaseModal.vue';
+import TransactionForm from './components/calendar/TransactionForm.vue';
+import TheHeader from './components/layout/TheHeader.vue';
+import TheSideBar from './components/layout/TheSideBar.vue';
+import { useAuthStores } from './stores/auth';
 
 const route = useRoute();
 const authStore = useAuthStores();
 const isTransactionModalOpen = ref(false);
 
-const isLoginPage = computed(() => route.path === "/login");
+const isLoginPage = computed(() => route.path === '/login');
 
 const openTransactionModal = () => {
   isTransactionModalOpen.value = true;
@@ -75,7 +75,7 @@ onMounted(() => {
 
 <style>
 .custom-main {
-  padding: 24px 24px 60px 24px;
+  padding: 0 24px 60px 24px;
 }
 
 .login-main {

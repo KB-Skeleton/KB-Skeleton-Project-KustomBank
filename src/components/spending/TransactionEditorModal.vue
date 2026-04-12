@@ -44,6 +44,32 @@
             </option>
           </select>
         </div>
+        <div v-if="editForm.isExpense" class="mt-3">
+          <label class="small fw-bold kb-text-charcoal mb-2 d-block"
+            >이 소비, 어떠셨나요?</label
+          >
+          <div class="d-flex gap-2">
+            <button
+              type="button"
+              class="evaluation-btn flex-fill"
+              :class="{ 'active-good': !editForm.isRequired }"
+              @click="editForm.isRequired = false"
+            >
+              😊 만족해요
+            </button>
+            <button
+              type="button"
+              class="evaluation-btn flex-fill"
+              :class="{ 'active-bad': editForm.isRequired }"
+              @click="editForm.isRequired = true"
+            >
+              💸 아까워요
+            </button>
+          </div>
+          <p class="text-secondary small text-center mt-2 mb-0">
+            '아까워요'를 선택하면 불필요한 지출로 분류돼요.
+          </p>
+        </div>
       </div>
       <div class="d-flex justify-content-end mt-3 gap-2">
         <button class="kb-btn-dark" @click="handleSave">저장</button>
@@ -75,6 +101,7 @@ const editForm = reactive({
   categoryId: null,
   type: 'expense',
   isExpense: true,
+  isRequired: false,
 });
 
 watch(
@@ -89,6 +116,7 @@ watch(
       editForm.categoryId = props.transaction.categoryId;
       editForm.type = props.transaction.type;
       editForm.isExpense = props.transaction.isExpense;
+      editForm.isRequired = props.transaction.isRequired || false;
     }
   },
 );
@@ -124,3 +152,27 @@ const handleClose = () => {
   emit('close');
 };
 </script>
+
+<style scoped>
+.evaluation-btn {
+  padding: 10px;
+  border-radius: 12px;
+  border: 1px solid rgba(34, 34, 34, 0.15);
+  background: #f8f9fa;
+  font-weight: 700;
+  transition: all 0.2s;
+  color: #495057;
+}
+
+.active-good {
+  background: #e7f5ff;
+  border-color: #228be6;
+  color: #1c7ed6;
+}
+
+.active-bad {
+  background: #fff5f5;
+  border-color: #fa5252;
+  color: #e03131;
+}
+</style>

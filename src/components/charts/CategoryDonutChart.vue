@@ -86,9 +86,9 @@
 </template>
 
 <script setup>
-import { computed, onMounted } from "vue";
-import { useFinanceStore } from "@/stores/finance";
-import { useStatisticsStore } from "@/stores/statistics";
+import { computed, onMounted } from 'vue';
+import { useFinanceStore } from '@/stores/finance';
+import { useStatisticsStore } from '@/stores/statistics';
 
 // finance 스토어 메서드 사용
 const { getMonthlyExpensesByCategory, formatCurrency } = useFinanceStore();
@@ -100,16 +100,16 @@ const currentMonthKey = computed(() => getMonthKeys().currentMonthKey);
 
 // 카테고리별 고정 색상 맵
 const pieColors = [
-  "#FFD338", // KB 옐로우
-  "#B2C700", // 라임 그린
-  "#59B7AF", // 틸 민트
-  "#0E88AE", // 딥 아쿠아 블루
-  "#D6AA74", // 샌드 브라운
-  "#6F7F99", // 뮤트 스틸 블루
-  "#8F98A6", // 스모키 블루그레이
-  "#6E727B", // 미디엄 슬레이트 그레이
-  "#C2C7CF", // 실버 그레이
-  "#D3D5D8", // 페일 라이트 그레이
+  '#FFD338', // KB 옐로우
+  '#B2C700', // 라임 그린
+  '#59B7AF', // 틸 민트
+  '#0E88AE', // 딥 아쿠아 블루
+  '#D6AA74', // 샌드 브라운
+  '#6F7F99', // 뮤트 스틸 블루
+  '#8F98A6', // 스모키 블루그레이
+  '#6E727B', // 미디엄 슬레이트 그레이
+  '#C2C7CF', // 실버 그레이
+  '#D3D5D8', // 페일 라이트 그레이
 ];
 
 // 현재 월 카테고리별 지출 맵 조회
