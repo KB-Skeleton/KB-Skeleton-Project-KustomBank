@@ -43,18 +43,21 @@
       />
     </div>
 
+
     <div class="form-group">
       <label for="category">카테고리</label>
-      <select id="category" v-model="form.categoryId" class="kb-input">
-        <option value="">카테고리를 선택하세요</option>
-        <option
-          v-for="category in currentCategories"
-          :key="category.id"
-          :value="category.id"
+      <div class="category-button-group">
+        <button
+        v-for="category in currentCategories"
+        :key="category.id"
+        type="button"
+        class="category-button"
+        :class="{active:form.categoryId === category.id}"
+        @click="form.categoryId = category.id"
         >
-          {{ category.name }}
-        </option>
-      </select>
+      {{ category.name }}
+      </button>
+      </div>
     </div>
 
     <div v-if="!form.isFixed" class="form-group">
@@ -277,5 +280,26 @@ const handleSubmit = async () => {
   justify-content: flex-end;
   gap: 8px;
   margin-top: 8px;
+}
+.category-button-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.category-button {
+  border: 1px solid rgba(34, 34, 34, 0.15);
+  border-radius: 999px;
+  background: #f8f9fa;
+  color: #495057;
+  font-weight: 700;
+  font-size: 0.78rem;
+  padding: 3px 14px;
+}
+
+.category-button.active {
+  border-color: var(--kb-charcoal);
+  background: var(--kb-charcoal);
+  color: var(--kb-yellow);
 }
 </style>

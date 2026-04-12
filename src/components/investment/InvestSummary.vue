@@ -6,7 +6,7 @@
       </h2>
       <RouterLink to="/beRequired">
         <button
-          class="kb-btn-dark d-flex align-items-center justify-content-center p-2"
+          class="kb-btn-brown d-flex align-items-center justify-content-center p-2"
           style="width: 32px; height: 32px"
         >
           <FontAwesomeIcon :icon="faAnglesRight" />
@@ -51,12 +51,12 @@
 </template>
 
 <script setup>
-import { computed, onMounted } from 'vue';
-import { useFinanceStore } from '@/stores/finance';
-import { useHotStock } from '@/stores/hotStock';
-import { useAuthStores } from '@/stores/auth';
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import { faAnglesRight } from '@fortawesome/free-solid-svg-icons';
+import { computed, onMounted } from "vue";
+import { useFinanceStore } from "@/stores/finance";
+import { useHotStock } from "@/stores/hotStock";
+import { useAuthStores } from "@/stores/auth";
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import { faAnglesRight } from "@fortawesome/free-solid-svg-icons";
 
 const { getBerquiredOutcome, formatCurrency, getTransaction } =
   useFinanceStore();
@@ -91,7 +91,7 @@ onMounted(() => {
   font-size: 2rem;
   line-height: 1.1;
   font-weight: 900;
-  font-family: 'Pretendard', sans-serif;
+  font-family: "Pretendard", sans-serif;
 }
 
 .summary-invest-hint {

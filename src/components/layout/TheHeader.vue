@@ -32,17 +32,36 @@
       <div v-if="isLoggedIn" class="d-flex align-items-center gap-2">
         <KbButton
           variant="dark"
-          customClass="rounded-pill user-btn"
+          customClass="rounded-pill user-btn text-btn d-none d-md-inline-flex"
           @click="goToProfile"
         >
-          {{ buttonLabel }}
+          {{ profileButtonTitle }}
         </KbButton>
         <KbButton
           variant="light"
-          customClass="rounded-pill user-btn"
+          customClass="rounded-pill user-btn text-btn d-none d-md-inline-flex"
           @click="handleLogout"
         >
           로그아웃
+        </KbButton>
+
+        <KbButton
+          variant="dark"
+          customClass="rounded-circle user-btn icon-btn d-inline-flex d-md-none"
+          :title="profileButtonTitle"
+          @click="goToProfile"
+        >
+          <FontAwesomeIcon :icon="faUser" />
+          <span class="visually-hidden">{{ profileButtonTitle }}</span>
+        </KbButton>
+        <KbButton
+          variant="light"
+          customClass="rounded-circle user-btn icon-btn d-inline-flex d-md-none"
+          title="로그아웃"
+          @click="handleLogout"
+        >
+          <FontAwesomeIcon :icon="faRightFromBracket" />
+          <span class="visually-hidden">로그아웃</span>
         </KbButton>
       </div>
     </div>
@@ -52,13 +71,13 @@
 <script setup>
 import { computed } from 'vue';
 import { RouterLink, useRouter } from 'vue-router';
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import { faRightFromBracket, faUser } from '@fortawesome/free-solid-svg-icons';
 import KbButton from '@/components/common/BaseButton.vue';
 import { useAuthStores } from '@/stores/auth';
 
 const router = useRouter();
 const authStore = useAuthStores();
-
-const isLoggedIn = computed(() => !!authStore.authState.userId);
 
 const buttonLabel = computed(() =>
   authStore.authState.name ? `${authStore.authState.name} \uB2D8` : '내 프로필',
@@ -100,9 +119,9 @@ const handleLogout = () => {
 }
 
 .user-btn {
-  font-size: 1.05rem !important;
+  font-size: 1rem !important;
   font-weight: 700 !important;
-  padding: 7px 18px !important;
+  padding: 0.65rem !important;
   transition: all 0.2s ease-in-out;
 }
 
@@ -114,5 +133,18 @@ const handleLogout = () => {
 
 a {
   color: inherit;
+}
+
+.icon-btn {
+  width: 44px;
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.text-btn {
+  padding: 7px 18px !important;
+  font-size: 1.05rem !important;
 }
 </style>
