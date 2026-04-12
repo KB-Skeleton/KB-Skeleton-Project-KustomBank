@@ -1,52 +1,65 @@
 <template>
   <div class="kb-bg">
-    <TheHeader />
+    <template v-if="isLoginPage">
+      <main class="container-xxl login-main">
+        <RouterView />
+      </main>
+    </template>
 
-    <div class="container-xxl py-3">
-      <div class="row g-3">
-        <TheSideBar />
+    <template v-else>
+      <TheHeader />
 
-        <main class="col-12 col-lg-9 col-xl-10 custom-main">
-          <RouterView />
-        </main>
+      <div class="container-xxl py-3">
+        <div class="row g-3">
+          <TheSideBar />
+
+          <main class="col-12 col-lg-9 col-xl-10 custom-main">
+            <RouterView />
+          </main>
+        </div>
       </div>
-    </div>
 
-    <BaseButton
-      variant="fab"
-      type="button"
-      aria-label="Open transaction modal"
-      @click="openTransactionModal"
-    >
-      <span class="fab-mobile-label">+</span>
-      <span class="fab-desktop-label">+지출/수입 내역 추가</span>
-    </BaseButton>
+      <BaseButton
+        variant="fab"
+        type="button"
+        aria-label="Open transaction modal"
+        @click="openTransactionModal"
+      >
+        <span class="fab-mobile-label">+</span>
+        <span class="fab-desktop-label">+지출/수입 내역 추가</span>
+      </BaseButton>
 
-    <BaseModal
-      :open="isTransactionModalOpen"
-      class="fw-black mb-0 kb-text-charcoal"
-      title="지출/수입 내역 추가"
-      @close="closeTransactionModal"
-    >
-      <TransactionEditor
-        @cancel="closeTransactionModal"
-        @saved="closeTransactionModal"
-      />
-    </BaseModal>
+      <BaseModal
+        :open="isTransactionModalOpen"
+        class="fw-black mb-0 kb-text-charcoal"
+        title="지출/수입 내역 추가"
+        @close="closeTransactionModal"
+      >
+        <TransactionEditor
+          @cancel="closeTransactionModal"
+          @saved="closeTransactionModal"
+        />
+      </BaseModal>
+    </template>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import { RouterView } from 'vue-router';
+import { computed, onMounted, ref } from "vue";
+import { RouterView, useRoute } from "vue-router";
 
-import BaseButton from './components/common/BaseButton.vue';
-import BaseModal from './components/common/BaseModal.vue';
-import TransactionEditor from './components/calendar/TransactionEditor.vue';
-import TheHeader from './components/layout/TheHeader.vue';
-import TheSideBar from './components/layout/TheSideBar.vue';
+import BaseButton from "./components/common/BaseButton.vue";
+import BaseModal from "./components/common/BaseModal.vue";
+import TransactionEditor from "./components/calendar/TransactionForm.vue";
+import TheHeader from "./components/layout/TheHeader.vue";
+import TheSideBar from "./components/layout/TheSideBar.vue";
+import { useAuthStores } from "./stores/auth";
 
+const route = useRoute();
+const authStore = useAuthStores();
 const isTransactionModalOpen = ref(false);
+
+const isLoginPage = computed(() => route.path === "/login");
 
 const openTransactionModal = () => {
   isTransactionModalOpen.value = true;
@@ -55,11 +68,24 @@ const openTransactionModal = () => {
 const closeTransactionModal = () => {
   isTransactionModalOpen.value = false;
 };
+
+onMounted(() => {
+  authStore.restoreAuth();
+});
 </script>
 
 <style>
 .custom-main {
   padding: 24px 24px 60px 24px;
+}
+
+.login-main {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
 }
 
 .fab-mobile-label {

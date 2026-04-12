@@ -1,22 +1,21 @@
-<template>
-  <div
-    class="d-flex align-items-center justify-content-center"
-    style="min-height: 60vh"
-  >
+﻿<template>
+  <div class="d-flex align-items-center justify-content-center" style="min-height: 60vh">
     <div class="kb-modal-card w-100" style="max-width: 400px; padding: 2rem">
       <div class="text-center mb-4">
-        <div class="kb-logo-mark mx-auto mb-2">KB</div>
-        <h1 class="h4 fw-black kb-text-charcoal">Kustom Bank</h1>
-        <p class="text-secondary small mt-1">
-          서비스를 이용하려면 로그인해 주세요.
-        </p>
+        <img
+          src="@/assets/logo.png"
+          alt="KustomBank mascot logo"
+          class="login-logo mx-auto mb-2"
+        />
+        <h1 class="login-brand-title mb-2">
+          <span class="brand-kb">K</span>ustom <span class="brand-kb">B</span>ank
+        </h1>
+        <p class="text-secondary small mt-1">서비스를 이용하려면 로그인해 주세요.</p>
       </div>
 
       <form @submit.prevent="handleLogin">
         <div class="mb-3">
-          <label for="userId" class="form-label fw-bold small text-secondary">
-            아이디
-          </label>
+          <label for="userId" class="form-label fw-bold small text-secondary">아이디</label>
           <input
             id="userId"
             v-model="loginForm.userId"
@@ -29,9 +28,7 @@
         </div>
 
         <div class="mb-4">
-          <label for="password" class="form-label fw-bold small text-secondary">
-            비밀번호
-          </label>
+          <label for="password" class="form-label fw-bold small text-secondary">비밀번호</label>
           <input
             id="password"
             v-model="loginForm.password"
@@ -42,19 +39,12 @@
           />
         </div>
 
-        <button
-          type="submit"
-          class="kb-btn-brown w-100 py-2 fw-bold"
-          :disabled="isLoading"
-        >
+        <button type="submit" class="kb-btn-brown w-100 py-2 fw-bold" :disabled="isLoading">
           {{ isLoading ? "로그인 중..." : "로그인" }}
         </button>
       </form>
 
-      <div
-        v-if="errorMessage"
-        class="text-danger mt-3 text-center small fw-bold"
-      >
+      <div v-if="errorMessage" class="text-danger mt-3 text-center small fw-bold">
         {{ errorMessage }}
       </div>
     </div>
@@ -121,3 +111,24 @@ onMounted(() => {
   }
 });
 </script>
+
+<style scoped>
+.login-logo {
+  width: 72px;
+  height: 72px;
+  object-fit: contain;
+  display: block;
+}
+
+.login-brand-title {
+  margin: 0;
+  font-size: 2rem;
+  line-height: 1.1;
+  font-weight: 900;
+  color: var(--kb-charcoal);
+}
+
+.brand-kb {
+  color: var(--kb-brown);
+}
+</style>
