@@ -42,7 +42,7 @@
           {{ financeStore.formatCurrency(availableAmount) }}
         </p>
         <p class="small fw-semibold text-secondary mb-0">
-          설정 금액 {{ financeStore.formatCurrency(monthlyBudgetTarget) }}
+          설정 금액: {{ financeStore.formatCurrency(monthlyBudgetTarget) }}
         </p>
       </BaseCard>
     </div>
@@ -55,9 +55,12 @@
         @click="router.push('/fixed-expenses')"
       >
         <p class="kb-card-value kb-text-brown mb-0">
-          {{ financeStore.formatCurrency(fixedSummary.totalFixed) }}
+          {{ financeStore.formatCurrency(fixedSummary.spentFixed) }}
         </p>
-        <p class="small fw-semibold text-secondary mb-0 invisible">설정 금액</p>
+        <p class="small fw-semibold text-secondary mb-0">
+          설정 금액:
+          {{ financeStore.formatCurrency(fixedSummary.settingFixed) }}
+        </p>
       </BaseCard>
     </div>
   </div>
