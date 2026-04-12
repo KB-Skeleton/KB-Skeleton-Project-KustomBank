@@ -4,6 +4,7 @@
     <div class="position-relative donut-shell">
       <svg viewBox="0 0 120 120" class="w-100 h-100">
         <g transform="rotate(-90 60 60)">
+          <!-- 도넛 배경 트랙(라이트 그레이) -->
           <circle
             cx="60"
             cy="60"
@@ -68,13 +69,16 @@ import { useFinanceStore } from "@/stores/finance";
 const financeStore = useFinanceStore();
 
 const pieColors = [
-  "#ffd338",
-  "#222222",
-  "#7a5c3f",
-  "#b99562",
-  "#5fa5d9",
-  "#e87a5d",
-  "#7c8695",
+  "#FFD338", // KB 옐로우
+  "#B2C700", // 라임 그린
+  "#59B7AF", // 틸 민트
+  "#0E88AE", // 딥 아쿠아 블루
+  "#D6AA74", // 샌드 브라운
+  "#6F7F99", // 뮤트 스틸 블루
+  "#8F98A6", // 스모키 블루그레이
+  "#6E727B", // 미디엄 슬레이트 그레이
+  "#C2C7CF", // 실버 그레이
+  "#D3D5D8", // 페일 라이트 그레이
 ];
 
 const currentMonth = new Date().toISOString().slice(0, 7);
@@ -85,14 +89,14 @@ const pieSlices = computed(() => {
   const data = financeStore.getMonthlyExpensesByCategory(currentMonth);
   const total = Object.values(data).reduce((sum, value) => sum + value, 0) || 1;
 
-  return Object.entries(data)
-    .map(([category, value], index) => ({
-      category,
-      value,
-      color: pieColors[index % pieColors.length],
-      ratio: Math.round((value / total) * 100),
-    }))
-    .sort((a, b) => b.value - a.value);
+  const sortedEntries = Object.entries(data).sort((a, b) => b[1] - a[1]);
+
+  return sortedEntries.map(([category, value], index) => ({
+    category,
+    value,
+    color: pieColors[index % pieColors.length],
+    ratio: Math.round((value / total) * 100),
+  }));
 });
 
 const DONUT_RADIUS = 42;
@@ -145,6 +149,6 @@ const donutSlices = computed(() => {
 
 .legend-progress {
   height: 0.35rem;
-  background: #fff;
+  background: #fff; /* 레전드 진행바 트랙(화이트) */
 }
 </style>

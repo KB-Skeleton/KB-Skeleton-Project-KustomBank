@@ -8,7 +8,8 @@
       class="kb-progress-fill"
       :style="{
         width: `${Math.min(value, 100)}%`,
-        backgroundColor: value > 100 ? '#dc2626' : '#222222',
+        backgroundColor:
+          value > 100 ? '#dc2626' : value > 75 ? '#f7503a' : '#222222',
       }"
     ></div>
   </div>
