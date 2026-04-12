@@ -26,14 +26,14 @@
       <div class="d-flex align-items-center gap-2">
         <KbButton
           variant="dark"
-          customClass="rounded-pill user-btn text-btn d-none d-md-inline-flex"
+          customClass="user-btn text-btn d-none d-md-inline-flex"
           @click="goToProfile"
         >
           {{ profileButtonTitle }}
         </KbButton>
         <KbButton
           variant="light"
-          customClass="rounded-pill user-btn text-btn d-none d-md-inline-flex"
+          customClass="user-btn text-btn d-none d-md-inline-flex"
           @click="handleLogout"
         >
           로그아웃
@@ -41,7 +41,7 @@
 
         <KbButton
           variant="dark"
-          customClass="rounded-circle user-btn icon-btn d-inline-flex d-md-none"
+          customClass="user-btn icon-btn d-inline-flex d-md-none"
           :title="profileButtonTitle"
           @click="goToProfile"
         >
@@ -50,7 +50,7 @@
         </KbButton>
         <KbButton
           variant="light"
-          customClass="rounded-circle user-btn icon-btn d-inline-flex d-md-none"
+          customClass="user-btn icon-btn d-inline-flex d-md-none"
           title="로그아웃"
           @click="handleLogout"
         >
