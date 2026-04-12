@@ -29,18 +29,32 @@
         <span class="fab-desktop-label">+지출/수입 내역 추가</span>
       </BaseButton>
 
+      <<<<<<< HEAD
       <BaseModal
         :open="isTransactionModalOpen"
         class="fw-black mb-0 kb-text-charcoal"
         title="지출/수입 내역 추가"
         @close="closeTransactionModal"
       >
-        <TransactionEditor
+        <TransactionForm
           @cancel="closeTransactionModal"
           @saved="closeTransactionModal"
         />
       </BaseModal>
     </template>
+    =======
+    <BaseModal
+      :open="isTransactionModalOpen"
+      class="fw-black mb-0 kb-text-charcoal"
+      title="지출/수입 내역 추가"
+      @close="closeTransactionModal"
+    >
+      <TransactionForm
+        @cancel="closeTransactionModal"
+        @saved="closeTransactionModal"
+      />
+    </BaseModal>
+    >>>>>>> origin/develop
   </div>
 </template>
 
@@ -50,7 +64,7 @@ import { RouterView, useRoute } from "vue-router";
 
 import BaseButton from "./components/common/BaseButton.vue";
 import BaseModal from "./components/common/BaseModal.vue";
-import TransactionEditor from "./components/calendar/TransactionForm.vue";
+import TransactionForm from "./components/calendar/TransactionForm.vue";
 import TheHeader from "./components/layout/TheHeader.vue";
 import TheSideBar from "./components/layout/TheSideBar.vue";
 import { useAuthStores } from "./stores/auth";
