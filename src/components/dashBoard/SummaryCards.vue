@@ -1,5 +1,5 @@
 ﻿<template>
-  <div class="row g-3 row-cols-1 row-cols-md-2 row-cols-xl-4">
+  <div class="row g-3 row-cols-1 row-cols-md-2 row-cols-xl-4 summary-cards">
     <div class="col">
       <BaseCard
         accent="blue"
@@ -11,7 +11,9 @@
         <p class="kb-card-value text-primary mb-0">
           {{ financeStore.formatCurrency(summary.income) }}
         </p>
-        <p class="small fw-semibold text-secondary mb-0 invisible">설정 금액</p>
+        <p class="summary-subtext fw-semibold text-secondary mb-0 invisible">
+          설정 금액
+        </p>
       </BaseCard>
     </div>
 
@@ -26,7 +28,9 @@
         <p class="kb-card-value text-danger mb-0">
           {{ financeStore.formatCurrency(summary.expense) }}
         </p>
-        <p class="small fw-semibold text-secondary mb-0 invisible">설정 금액</p>
+        <p class="summary-subtext fw-semibold text-secondary mb-0 invisible">
+          설정 금액
+        </p>
       </BaseCard>
     </div>
 
@@ -44,7 +48,7 @@
         >
           {{ financeStore.formatCurrency(availableAmount) }}
         </p>
-        <p class="small fw-semibold text-secondary mb-0">
+        <p class="summary-subtext fw-semibold text-secondary mb-0">
           설정 금액: {{ financeStore.formatCurrency(monthlyBudgetTarget) }}
         </p>
       </BaseCard>
@@ -60,7 +64,7 @@
         <p class="kb-card-value kb-text-brown mb-0">
           {{ financeStore.formatCurrency(fixedSummary.spentFixed) }}
         </p>
-        <p class="small fw-semibold text-secondary mb-0">
+        <p class="summary-subtext fw-semibold text-secondary mb-0">
           설정 금액:
           {{ financeStore.formatCurrency(fixedSummary.settingFixed) }}
         </p>
@@ -129,3 +133,33 @@ const fixedSummary = computed(() => {
   };
 });
 </script>
+
+<style scoped>
+@media (max-width: 767.98px) {
+  .summary-cards {
+    --bs-gutter-x: 0.65rem;
+    --bs-gutter-y: 0.65rem;
+  }
+
+  .summary-cards > .col {
+    flex: 0 0 50%;
+    max-width: 50%;
+  }
+
+  .summary-cards :deep(.kb-card-label) {
+    font-size: 0.78rem;
+  }
+
+  .summary-cards :deep(.kb-card-value) {
+    font-size: 1.28rem;
+    line-height: 1.15;
+    margin-top: -0.2rem;
+    margin-bottom: 0.15rem !important;
+  }
+
+  .summary-subtext {
+    font-size: 0.72rem !important;
+    line-height: 1.2;
+  }
+}
+</style>
