@@ -8,6 +8,9 @@ const BASE_URL = "http://localhost:3000/";
 export const useFinanceStore = defineStore("transactionList", () => {
   const transactions = ref([]);
   const fixedExpenseSetting = ref([]);
+  const checkFixed = reactive({
+    date: "",
+  });
   const { authState } = useAuthStores();
 
   const state = reactive({
@@ -64,6 +67,28 @@ export const useFinanceStore = defineStore("transactionList", () => {
       currency: "KRW",
       maximumFractionDigits: 0,
     }).format(Number(amount || 0));
+
+  const getTodayDateKey = () => new Date().toISOString().slice(0, 10);
+  const getFixedCheckStorageKey = () =>
+    `fixed-auto-date:${String(authState.userId || "guest")}`;
+
+  const hydrateFixedCheckDate = () => {
+    try {
+      const savedDate = localStorage.getItem(getFixedCheckStorageKey());
+      checkFixed.date = savedDate || "";
+    } catch (error) {
+      checkFixed.date = "";
+    }
+  };
+
+  const persistFixedCheckDate = (dateKey) => {
+    checkFixed.date = dateKey;
+    try {
+      localStorage.setItem(getFixedCheckStorageKey(), dateKey);
+    } catch (error) {
+      // ignore localStorage access errors
+    }
+  };
 
   const sortedTransactions = computed(() => {
     const allCategories = [...categories.expense, ...categories.income];
@@ -514,10 +539,81 @@ export const useFinanceStore = defineStore("transactionList", () => {
     }
   };
 
+  // 앱 시작 시 하루 1회, 오늘 결제일인 고정지출을 거래내역으로 자동 등록
+  const runDailyFixedExpenseAutoPost = async () => {
+    const userId = String(authState.userId || "").trim();
+    if (!userId) return false;
+
+    const todayKey = getTodayDateKey();
+    hydrateFixedCheckDate();
+
+    if (checkFixed.date === todayKey) {
+      return true;
+    }
+
+    await Promise.all([getFixed(), getTransaction()]);
+
+    const todayPaymentDate = Number(todayKey.slice(-2));
+    const dueFixedItems = fixedExpenseSetting.value.filter((item) => {
+      return (
+        String(item.userId || "") === userId &&
+        Number(item.paymentDate || 0) === todayPaymentDate
+      );
+    });
+
+    if (dueFixedItems.length === 0) {
+      persistFixedCheckDate(todayKey);
+      return true;
+    }
+
+    const existingTodayFixedKeys = new Set(
+      transactions.value
+        .filter((tx) => {
+          const isToday = String(tx.date || "") === todayKey;
+          const isExpense = tx.isExpense === true || tx.type === "expense";
+          const isFixed = tx.isFixed === true || tx.categoryId === "exp_fixed";
+          const isMine = String(tx.userId || "") === userId;
+          return isToday && isExpense && isFixed && isMine;
+        })
+        .map(
+          (tx) =>
+            `${Number(tx.amount || 0)}|${String(tx.categoryId || "exp_fixed")}|${String(tx.description || "")}`,
+        ),
+    );
+
+    for (const item of dueFixedItems) {
+      const amount = Number(item.amount || 0);
+      const categoryId = String(item.categoryId || "exp_fixed");
+      const description =
+        String(item.description || "").trim() || "고정지출 자동 등록";
+      const dedupeKey = `${amount}|${categoryId}|${description}`;
+
+      if (existingTodayFixedKeys.has(dedupeKey)) continue;
+
+      await postTransaction({
+        userId,
+        isExpense: true,
+        type: "expense",
+        categoryId,
+        amount,
+        date: todayKey,
+        isFixed: true,
+        paymentDate: Number(item.paymentDate || 0),
+        description,
+      });
+
+      existingTodayFixedKeys.add(dedupeKey);
+    }
+
+    persistFixedCheckDate(todayKey);
+    return true;
+  };
+
   return {
     state,
     transactions,
     fixedExpenseSetting,
+    checkFixed,
     categories,
     toMonthKey,
     toDate,
@@ -550,5 +646,6 @@ export const useFinanceStore = defineStore("transactionList", () => {
     monthlyBudgetTarget,
     getMonthlyExpensesByCategory,
     syncFixedExpenses,
+    runDailyFixedExpenseAutoPost,
   };
 });
